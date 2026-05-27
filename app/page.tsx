@@ -1,0 +1,15 @@
+import { Header } from '@/components/layout/header'
+import { BottomNav } from '@/components/layout/bottom-nav'
+import { WorldFeed } from '@/components/world-feed'
+
+export default function WorldPage() {
+  return (
+    <div className="min-h-screen bg-background pb-16">
+      <Header title="PANGEA" />
+      <main className="max-w-lg mx-auto">
+        <WorldFeed />
+      </main>
+      <BottomNav />
+    </div>
+  )
+}
