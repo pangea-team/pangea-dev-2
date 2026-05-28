@@ -36,7 +36,9 @@ export interface TraceCard {
   user: User
   book: Book
   quote: string // 밑줄 친 문장
-  layers: TraceLayer[] // 다층 감상
+  meThought: string // 나의 한 줄 생각 (Me)
+  traceExpanded: string // 확장된 흔적 글 (Trace Expanded)
+  layers: TraceLayer[] // 다층 감상 (레거시, 추후 제거 가능)
   isPublic: boolean
   createdAt: Date
   updatedAt: Date

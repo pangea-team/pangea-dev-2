@@ -1,4 +1,4 @@
-import type { User, Book, TraceCard, Notification } from './types'
+import type { Book, Notification, TraceCard, User } from './types'
 
 // 목업 사용자
 export const mockUsers: User[] = [
@@ -70,18 +70,29 @@ export const mockTraceCards: TraceCard[] = [
     userId: 'user-2',
     user: mockUsers[1],
     book: mockBooks[0],
-    quote: '새는 알에서 나오려고 투쟁한다. 알은 세계이다. 태어나려는 자는 하나의 세계를 깨뜨려야 한다.',
+    quote:
+      '새는 알에서 나오려고 투쟁한다. 알은 세계이다. 태어나려는 자는 하나의 세계를 깨뜨려야 한다.',
+    meThought: '성장한다는 것은 결국 기존의 나를 깨부수는 일이구나.',
+    traceExpanded: `익숙한 것에서 벗어나는 용기가 필요하다.
+
+싱클레어가 데미안을 만나면서 시작된 내면의 여정. 우리 모두에겐 깨야 할 알이 있다.
+
+나는 지금 어떤 알 속에 있는 걸까? 안전하다고 느끼는 이 공간이 사실은 나를 가두고 있는 건 아닐까.
+
+변화를 두려워하지 말자. 깨어짐은 끝이 아니라 시작이니까.`,
     layers: [
       {
         id: 'layer-1-1',
         type: 'me',
-        content: '성장한다는 것은 결국 기존의 나를 깨부수는 일이구나. 익숙한 것에서 벗어나는 용기가 필요하다.',
+        content:
+          '성장한다는 것은 결국 기존의 나를 깨부수는 일이구나. 익숙한 것에서 벗어나는 용기가 필요하다.',
         order: 0,
       },
       {
         id: 'layer-1-2',
         type: 'from-book',
-        content: '싱클레어가 데미안을 만나면서 시작된 내면의 여정. 우리 모두에겐 깨야 할 알이 있다.',
+        content:
+          '싱클레어가 데미안을 만나면서 시작된 내면의 여정. 우리 모두에겐 깨야 할 알이 있다.',
         order: 1,
       },
     ],
@@ -97,11 +108,20 @@ export const mockTraceCards: TraceCard[] = [
     user: mockUsers[2],
     book: mockBooks[2],
     quote: '사막이 아름다운 것은 어딘가에 샘을 숨기고 있기 때문이야.',
+    meThought: '보이지 않는 것들의 가치를 믿는다.',
+    traceExpanded: `눈에 보이는 것만 쫓다 보면 정작 중요한 것을 놓치게 된다.
+
+어린 왕자가 여우에게 배운 것처럼, 본질적인 것은 눈에 보이지 않는다.
+
+우리는 너무 빨리 지나치고, 너무 쉽게 판단하고, 너무 자주 잊어버린다.
+
+가끔은 멈춰 서서, 보이지 않는 것들을 느껴보는 시간이 필요하다.`,
     layers: [
       {
         id: 'layer-2-1',
         type: 'me',
-        content: '보이지 않는 것들의 가치. 눈에 보이는 것만 쫓다 보면 정작 중요한 것을 놓치게 된다.',
+        content:
+          '보이지 않는 것들의 가치. 눈에 보이는 것만 쫓다 보면 정작 중요한 것을 놓치게 된다.',
         order: 0,
       },
     ],
@@ -117,6 +137,14 @@ export const mockTraceCards: TraceCard[] = [
     user: mockUsers[0],
     book: mockBooks[1],
     quote: '자유는 2 더하기 2가 4라고 말할 수 있는 자유다.',
+    meThought: '진실을 말할 수 있는 자유, 그것이 진짜 자유다.',
+    traceExpanded: `지금 우리 사회에서도 여전히 유효한 메시지다.
+
+오웰이 전체주의 사회를 비판하며 쓴 이 문장은 70년이 지난 지금도 울림이 있다.
+
+당연한 것을 당연하다고 말할 수 없을 때, 우리는 이미 자유를 잃은 것이다.
+
+2+2=4. 이 단순한 진실을 지키는 것이 왜 이렇게 어려운 걸까.`,
     layers: [
       {
         id: 'layer-3-1',
@@ -143,6 +171,14 @@ export const mockTraceCards: TraceCard[] = [
     user: mockUsers[1],
     book: mockBooks[3],
     quote: '행복하기 위해서는 진실을 외면해야 하고, 진실을 보기 위해서는 행복을 포기해야 한다.',
+    meThought: '편안한 무지와 불편한 진실 사이, 나는 어디에 서 있는가.',
+    traceExpanded: `소마로 마취된 사회에서 버나드의 질문은 불편하지만 필수적이다.
+
+나는 어떤 삶을 살고 싶은가? 편안하지만 거짓된 삶인가, 불편하지만 진실한 삶인가.
+
+헉슬리가 그린 미래는 더 이상 미래가 아니다. 우리는 이미 그 안에 살고 있다.
+
+스마트폰, SNS, 알고리즘... 우리의 소마는 이미 우리 손안에 있다.`,
     layers: [
       {
         id: 'layer-4-1',
@@ -163,12 +199,45 @@ export const mockTraceCards: TraceCard[] = [
     reactions: { heart: 31, bookmark: 12, comment: 5 },
     userReaction: { hearted: true, bookmarked: true },
   },
+  {
+    id: 'trace-5',
+    userId: 'user-1',
+    user: mockUsers[0],
+    book: {
+      id: 'book-5',
+      title: '피노키오',
+      author: '카를로 콜로디',
+      publisher: '민음사',
+      publishedDate: '1883-01-01',
+    },
+    quote: '값비싼 나무토막이 아니라 단순한 땔감용 나무토막이었습니다.',
+    meThought: '완성된 존재보다, 자유롭게 흔들리며 자기 모습을 만들어가는 존재가 좋다.',
+    traceExpanded: `처음부터 특별한 존재였다는 이야기보다, 평범하고 작은 시작이 더 오래 남았다.
+
+피노키오는 착한 아이는 아니다. 거짓말도 하고, 사고도 치고, 자꾸 옆길로 샌다. 근데 이상하게 살아 있다.
+
+자유롭고, 당당하고, 자기 호기심을 숨기지 않는다.
+
+그래서 미워하기보다 "그냥 어린애지 뭐" 하는 마음으로 보게 된다.
+
+그리고 그런 피노키오 곁에는 귀뚜라미와 새처럼 붙잡아주는 존재들이 있고, 악역조차 재채기로 연민을 숨기지 못한다.
+
+완벽하게 선하거나 완성된 세계가 아니라, 흔들리고 부딪히면서도 조금씩 자기 모습을 만들어가는 세계.
+
+결국 이 문장에 끌렸다.
+
+"값비싼 나무토막이 아니라 단순한 땔감용 나무토막이었습니다."`,
+    layers: [],
+    isPublic: true,
+    createdAt: new Date('2024-05-21T11:00:00'),
+    updatedAt: new Date('2024-05-21T11:00:00'),
+    reactions: { heart: 56, bookmark: 23, comment: 12 },
+    userReaction: { hearted: false, bookmarked: false },
+  },
 ]
 
 // 내 Trace Cards (현재 사용자)
-export const myTraceCards = mockTraceCards.filter(
-  (card) => card.userId === currentUser.id
-)
+export const myTraceCards = mockTraceCards.filter((card) => card.userId === currentUser.id)
 
 // 피드용 Trace Cards (공개된 것만)
 export const feedTraceCards = mockTraceCards.filter((card) => card.isPublic)
