@@ -1,17 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Settings, BookOpen } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Header } from '@/components/layout/header'
 import { BottomNav } from '@/components/layout/bottom-nav'
-import { TraceCard, TraceCardFull } from '@/components/trace-card'
-import { currentUser, myTraceCards, mockTraceCards } from '@/lib/mock-data'
-import type { TraceCard as TraceCardType } from '@/lib/types'
+import { TraceCard } from '@/components/trace-card'
+import { currentUser, mockTraceCards } from '@/lib/mock-data'
 
 export default function ProfilePage() {
-  const [selectedCard, setSelectedCard] = useState<TraceCardType | null>(null)
+  const router = useRouter()
   
   // For demo: show all cards for current user (in real app, filter by userId)
   const userCards = mockTraceCards.filter(card => card.userId === currentUser.id)
@@ -69,7 +68,7 @@ export default function ProfilePage() {
               <TraceCard
                 key={card.id}
                 card={card}
-                onCardClick={() => setSelectedCard(card)}
+                onCardClick={() => router.push(`/trace/${card.id}`)}
               />
             ))
           ) : (
@@ -87,13 +86,6 @@ export default function ProfilePage() {
       </main>
 
       <BottomNav />
-
-      {selectedCard && (
-        <TraceCardFull
-          card={selectedCard}
-          onClose={() => setSelectedCard(null)}
-        />
-      )}
     </div>
   )
 }

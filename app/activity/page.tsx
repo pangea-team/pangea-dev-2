@@ -1,14 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Heart, MessageCircle, ArrowLeftRight, Check } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Header } from '@/components/layout/header'
 import { BottomNav } from '@/components/layout/bottom-nav'
-import { TraceCardFull } from '@/components/trace-card'
 import { mockNotifications } from '@/lib/mock-data'
 import { cn } from '@/lib/utils'
-import type { Notification, TraceCard as TraceCardType, NotificationType } from '@/lib/types'
+import type { Notification, NotificationType } from '@/lib/types'
 
 function getNotificationIcon(type: NotificationType) {
   switch (type) {
@@ -41,7 +40,7 @@ function NotificationItem({
   onCardClick 
 }: { 
   notification: Notification
-  onCardClick: (card: TraceCardType) => void 
+  onCardClick: (traceCardId: string) => void 
 }) {
   return (
     <button
@@ -49,7 +48,7 @@ function NotificationItem({
         'w-full flex items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/50',
         !notification.isRead && 'bg-primary/5'
       )}
-      onClick={() => notification.traceCard && onCardClick(notification.traceCard)}
+      onClick={() => notification.traceCard && onCardClick(notification.traceCard.id)}
     >
       <div className="relative">
         <Avatar className="size-10">
@@ -89,8 +88,12 @@ function NotificationItem({
 }
 
 export default function ActivityPage() {
-  const [selectedCard, setSelectedCard] = useState<TraceCardType | null>(null)
-  const [notifications] = useState<Notification[]>(mockNotifications)
+  const router = useRouter()
+  const notifications = mockNotifications
+
+  const handleCardClick = (traceCardId: string) => {
+    router.push(`/trace/${traceCardId}`)
+  }
 
   return (
     <div className="min-h-screen bg-background pb-16">
@@ -103,7 +106,7 @@ export default function ActivityPage() {
               <NotificationItem
                 key={notification.id}
                 notification={notification}
-                onCardClick={setSelectedCard}
+                onCardClick={handleCardClick}
               />
             ))}
           </div>
@@ -121,13 +124,6 @@ export default function ActivityPage() {
       </main>
 
       <BottomNav />
-
-      {selectedCard && (
-        <TraceCardFull
-          card={selectedCard}
-          onClose={() => setSelectedCard(null)}
-        />
-      )}
     </div>
   )
 }
