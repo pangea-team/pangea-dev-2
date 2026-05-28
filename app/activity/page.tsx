@@ -98,7 +98,7 @@ export default function ActivityPage() {
     <div className="min-h-screen bg-background pb-16">
       <Header title="활동" />
 
-      <main className="max-w-lg mx-auto">
+      <main className="max-w-2xl mx-auto">
         {notifications.length > 0 ? (
           <div className="divide-y divide-border">
             {notifications.map((notification) => (

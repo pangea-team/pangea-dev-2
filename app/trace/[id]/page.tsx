@@ -120,7 +120,7 @@ export default function TracePage({ params }: TracePageProps) {
       </header>
 
       {/* Content */}
-      <main className="max-w-lg mx-auto py-4">
+      <main className="max-w-2xl mx-auto py-4">
         {/* Trace Card */}
         <article className="bg-card rounded-2xl border border-border px-6 py-6 mb-4">
           {/* User Info */}

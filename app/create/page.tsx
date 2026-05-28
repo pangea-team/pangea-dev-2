@@ -103,7 +103,7 @@ export default function CreatePage() {
     <div className="min-h-screen bg-background pb-16">
       <Header title="새 Trace Card" />
 
-      <main className="max-w-lg mx-auto">
+      <main className="max-w-2xl mx-auto">
         {/* Progress */}
         <div className="py-3 border-b">
           <div className="flex items-center gap-1">
@@ -280,7 +280,7 @@ export default function CreatePage() {
 
         {/* Navigation */}
         <div className="fixed bottom-14 left-0 right-0 border-t bg-background p-4">
-          <div className="flex gap-3 max-w-lg mx-auto">
+          <div className="flex gap-3 max-w-2xl mx-auto">
             {currentStepIndex > 0 && (
               <Button variant="outline" onClick={goPrev} className="flex-1">
                 <ArrowLeft className="size-4 mr-2" />

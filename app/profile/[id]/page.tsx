@@ -41,7 +41,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
         </div>
       </header>
 
-      <main className="max-w-lg mx-auto">
+      <main className="max-w-2xl mx-auto">
         {/* Profile Header - Threads style */}
         <div className="py-6 border-b">
           <div className="flex items-start justify-between">
