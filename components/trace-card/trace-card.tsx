@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
-import { Heart, MessageCircle, Bookmark, MoreHorizontal } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import type { TraceCard as TraceCardType } from '@/lib/types'
 import { cn } from '@/lib/utils'
+import { Bookmark, Heart, MessageCircle, MoreHorizontal } from 'lucide-react'
+import { useState } from 'react'
 
 interface TraceCardProps {
   card: TraceCardType
@@ -42,122 +42,96 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
     setBookmarked(!bookmarked)
   }
 
-  const firstLayer = card.layers[0]
-
   return (
     <article
-      className="border-b border-border px-4 py-4 transition-colors hover:bg-muted/30 cursor-pointer"
+      className="border-b border-border px-4 py-5 transition-colors hover:bg-muted/30 cursor-pointer"
       onClick={onCardClick}
     >
-      <div className="flex gap-3">
-        {/* Avatar */}
-        <Avatar className="size-10 shrink-0">
+      {/* Header with Avatar */}
+      <div className="flex items-center gap-3 mb-4">
+        <Avatar className="size-8 shrink-0">
           <AvatarImage src={card.user.avatarUrl} alt={card.user.displayName} />
-          <AvatarFallback className="text-sm font-medium">
+          <AvatarFallback className="text-xs font-medium">
             {card.user.displayName[0]}
           </AvatarFallback>
         </Avatar>
-
-        {/* Content */}
-        <div className="flex-1 min-w-0">
-          {/* Header */}
-          <div className="flex items-center gap-2 mb-1">
-            <span className="font-semibold text-foreground truncate">
-              {card.user.displayName}
-            </span>
-            <span className="text-muted-foreground text-sm">
-              @{card.user.username}
-            </span>
-            <span className="text-muted-foreground text-sm">·</span>
-            <span className="text-muted-foreground text-sm">
-              {formatDate(card.createdAt)}
-            </span>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              className="ml-auto -mr-2 text-muted-foreground hover:text-foreground"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <MoreHorizontal className="size-4" />
-            </Button>
-          </div>
-
-          {/* Book Info */}
-          <div className="mb-2">
-            <span className="text-muted-foreground text-sm">
-              {card.book.title}
-            </span>
-            <span className="text-muted-foreground text-sm mx-1">·</span>
-            <span className="text-muted-foreground text-sm">
-              {card.book.author}
-            </span>
-          </div>
-
-          {/* Quote */}
-          <blockquote className="border-l-2 border-primary/50 pl-3 mb-3">
-            <p className="text-foreground leading-relaxed text-balance">
-              {`"${card.quote}"`}
-            </p>
-          </blockquote>
-
-          {/* First Layer (Me) */}
-          {firstLayer && (
-            <div className="mb-3">
-              <p className="text-foreground/90 leading-relaxed">
-                {firstLayer.content}
-              </p>
-            </div>
-          )}
-
-          {/* Show more indicator if there are more layers */}
-          {card.layers.length > 1 && (
-            <p className="text-muted-foreground text-sm mb-3">
-              +{card.layers.length - 1}개의 레이어 더 보기
-            </p>
-          )}
-
-          {/* Actions */}
-          <div className="flex items-center gap-1 -ml-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              className={cn(
-                'text-muted-foreground hover:text-rose-500 gap-1.5 px-2',
-                hearted && 'text-rose-500'
-              )}
-              onClick={handleHeart}
-            >
-              <Heart
-                className={cn('size-4', hearted && 'fill-current')}
-              />
-              <span className="text-sm tabular-nums">{heartCount}</span>
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground hover:text-primary gap-1.5 px-2"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <MessageCircle className="size-4" />
-              <span className="text-sm tabular-nums">{card.reactions.comment}</span>
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              className={cn(
-                'text-muted-foreground hover:text-primary px-2',
-                bookmarked && 'text-primary'
-              )}
-              onClick={handleBookmark}
-            >
-              <Bookmark
-                className={cn('size-4', bookmarked && 'fill-current')}
-              />
-            </Button>
-          </div>
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+          <span className="font-medium text-foreground text-sm truncate">
+            {card.user.displayName}
+          </span>
+          <span className="text-muted-foreground text-sm">{formatDate(card.createdAt)}</span>
         </div>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          className="text-muted-foreground hover:text-foreground -mr-2"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <MoreHorizontal className="size-4" />
+        </Button>
+      </div>
+
+      {/* Card Content */}
+      <div className="space-y-4">
+        {/* Me Section */}
+        <div>
+          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Me</p>
+          <p className="text-foreground leading-relaxed text-balance">{`"${card.meThought}"`}</p>
+        </div>
+
+        {/* Divider */}
+        <div className="text-muted-foreground/50 text-center">⸻</div>
+
+        {/* From the Book Section */}
+        <div>
+          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">
+            From the Book
+          </p>
+          <p className="text-foreground/80 leading-relaxed mb-2 text-balance">
+            {`"${card.quote}"`}
+          </p>
+          <p className="text-muted-foreground text-sm">
+            — 《{card.book.title}》, {card.book.author}
+          </p>
+        </div>
+      </div>
+
+      {/* Actions */}
+      <div className="flex items-center gap-1 mt-4 -ml-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          className={cn(
+            'text-muted-foreground hover:text-rose-500 gap-1.5 px-2',
+            hearted && 'text-rose-500',
+          )}
+          onClick={handleHeart}
+        >
+          <Heart className={cn('size-4', hearted && 'fill-current')} />
+          <span className="text-sm tabular-nums">{heartCount}</span>
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-muted-foreground hover:text-primary gap-1.5 px-2"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <MessageCircle className="size-4" />
+          <span className="text-sm tabular-nums">{card.reactions.comment}</span>
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          className={cn(
+            'text-muted-foreground hover:text-primary px-2',
+            bookmarked && 'text-primary',
+          )}
+          onClick={handleBookmark}
+        >
+          <Bookmark className={cn('size-4', bookmarked && 'fill-current')} />
+        </Button>
       </div>
     </article>
   )
