@@ -32,7 +32,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
   return (
     <div className="min-h-screen bg-background pb-16">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
         <div className="flex items-center gap-3 px-4 h-14">
           <Button variant="ghost" size="icon-sm" onClick={() => router.push(fromPage)}>
             <ArrowLeft className="size-5" />
@@ -47,7 +47,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
           <div className="flex items-start justify-between">
             {/* Left: Name, ID, Bio */}
             <div className="flex-1">
-              <h2 className="text-2xl font-bold">{user.displayName}</h2>
+              <h2 className="text-heading-lg">{user.displayName}</h2>
               <p className="text-muted-foreground text-sm">@{user.username}</p>
               {user.bio && <p className="text-sm mt-3 text-foreground/90">{user.bio}</p>}
             </div>

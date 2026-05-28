@@ -110,7 +110,7 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
         {/* Me Section */}
         <div>
           <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2.5">Me</p>
-          <p className="text-foreground leading-relaxed text-balance text-[15px]">
+          <p className="text-foreground leading-relaxed text-balance [font-size:var(--text-base)]">
             {card.meThought}
           </p>
         </div>
@@ -120,7 +120,7 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
           <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2.5">
             From the Book
           </p>
-          <p className="text-foreground/80 leading-relaxed mb-2.5 text-balance text-[15px]">
+          <p className="text-foreground/80 leading-relaxed mb-2.5 text-balance [font-size:var(--text-base)]">
             {`"${card.quote}"`}
           </p>
           <p className="text-muted-foreground text-sm">
@@ -135,8 +135,8 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
           variant="ghost"
           size="sm"
           className={cn(
-            'text-muted-foreground hover:text-rose-500 gap-1.5 px-2',
-            hearted && 'text-rose-500',
+            'text-muted-foreground hover:text-foreground gap-1.5 px-2',
+            hearted && 'text-primary',
           )}
           onClick={handleHeart}
         >

@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
-import { Heart, MessageCircle, Bookmark, X, MoreHorizontal } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import type { TraceCard as TraceCardType } from '@/lib/types'
 import { cn } from '@/lib/utils'
+import { Bookmark, Heart, MessageCircle, MoreHorizontal, X } from 'lucide-react'
+import { useState } from 'react'
 
 interface TraceCardFullProps {
   card: TraceCardType
@@ -65,22 +65,12 @@ export function TraceCardFull({ card, onClose }: TraceCardFullProps) {
             </Avatar>
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <span className="font-semibold text-foreground">
-                  {card.user.displayName}
-                </span>
-                <span className="text-muted-foreground text-sm">
-                  @{card.user.username}
-                </span>
+                <span className="font-semibold text-foreground">{card.user.displayName}</span>
+                <span className="text-muted-foreground text-sm">@{card.user.username}</span>
               </div>
-              <p className="text-muted-foreground text-sm">
-                {formatDate(card.createdAt)}
-              </p>
+              <p className="text-muted-foreground text-sm">{formatDate(card.createdAt)}</p>
             </div>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              className="text-muted-foreground"
-            >
+            <Button variant="ghost" size="icon-sm" className="text-muted-foreground">
               <MoreHorizontal className="size-5" />
             </Button>
           </div>
@@ -105,9 +95,7 @@ export function TraceCardFull({ card, onClose }: TraceCardFullProps) {
 
           {/* Layers */}
           <div className="space-y-4">
-            <p className="text-xs uppercase tracking-wider text-muted-foreground">
-              독서의 흔적
-            </p>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">독서의 흔적</p>
             {card.layers.map((layer, index) => (
               <div
                 key={layer.id}
@@ -115,20 +103,16 @@ export function TraceCardFull({ card, onClose }: TraceCardFullProps) {
                   'rounded-lg p-4',
                   layer.type === 'me' && 'bg-primary/5 border border-primary/10',
                   layer.type === 'from-book' && 'bg-muted/50 border border-muted',
-                  layer.type === 'context' && 'bg-accent/50 border border-accent'
+                  layer.type === 'context' && 'bg-accent/50 border border-accent',
                 )}
               >
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     {layerTypeLabel[layer.type]}
                   </span>
-                  <span className="text-xs text-muted-foreground">
-                    #{index + 1}
-                  </span>
+                  <span className="text-xs text-muted-foreground">#{index + 1}</span>
                 </div>
-                <p className="text-foreground leading-relaxed">
-                  {layer.content}
-                </p>
+                <p className="text-foreground leading-relaxed">{layer.content}</p>
               </div>
             ))}
           </div>
@@ -141,21 +125,14 @@ export function TraceCardFull({ card, onClose }: TraceCardFullProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                className={cn(
-                  'gap-1.5',
-                  hearted ? 'text-rose-500' : 'text-muted-foreground'
-                )}
+                className={cn('gap-1.5', hearted ? 'text-primary' : 'text-muted-foreground')}
                 onClick={handleHeart}
               >
                 <Heart className={cn('size-5', hearted && 'fill-current')} />
                 <span className="tabular-nums">{heartCount}</span>
               </Button>
 
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-muted-foreground gap-1.5"
-              >
+              <Button variant="ghost" size="sm" className="text-muted-foreground gap-1.5">
                 <MessageCircle className="size-5" />
                 <span className="tabular-nums">{card.reactions.comment}</span>
               </Button>
@@ -163,9 +140,7 @@ export function TraceCardFull({ card, onClose }: TraceCardFullProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                className={cn(
-                  bookmarked ? 'text-primary' : 'text-muted-foreground'
-                )}
+                className={cn(bookmarked ? 'text-primary' : 'text-muted-foreground')}
                 onClick={handleBookmark}
               >
                 <Bookmark className={cn('size-5', bookmarked && 'fill-current')} />

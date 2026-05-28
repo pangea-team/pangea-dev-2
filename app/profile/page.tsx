@@ -24,7 +24,7 @@ export default function ProfilePage() {
           <div className="flex items-start justify-between">
             {/* Left: Name, ID, Bio */}
             <div className="flex-1">
-              <h2 className="text-2xl font-bold">{currentUser.displayName}</h2>
+              <h2 className="text-heading-lg">{currentUser.displayName}</h2>
               <p className="text-muted-foreground text-sm">@{currentUser.username}</p>
               {currentUser.bio && (
                 <p className="text-sm mt-3 text-foreground/90">{currentUser.bio}</p>

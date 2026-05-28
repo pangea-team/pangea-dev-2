@@ -115,7 +115,7 @@ export default function TracePage({ params }: TracePageProps) {
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
         <div className="flex items-center gap-3 px-4 py-3">
           <Button variant="ghost" size="icon-sm" onClick={() => router.push(fromPage)}>
             <ArrowLeft className="size-5" />
@@ -154,7 +154,7 @@ export default function TracePage({ params }: TracePageProps) {
         {/* Me Section */}
         <section className="mb-10">
           <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">Me</p>
-          <p className="text-xl text-foreground leading-relaxed font-medium">{card.meThought}</p>
+          <p className="text-heading-sm text-foreground">{card.meThought}</p>
         </section>
 
         {/* Divider */}
@@ -214,7 +214,7 @@ export default function TracePage({ params }: TracePageProps) {
           <Button
             variant="ghost"
             size="sm"
-            className={cn('gap-1.5', hearted ? 'text-rose-500' : 'text-muted-foreground')}
+            className={cn('gap-1.5', hearted ? 'text-primary' : 'text-muted-foreground')}
             onClick={handleHeart}
           >
             <Heart className={cn('size-5', hearted && 'fill-current')} />
