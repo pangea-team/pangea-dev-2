@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import type { TraceCard as TraceCardType } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { Bookmark, Heart, MessageCircle, MoreHorizontal } from 'lucide-react'
+import { Bookmark, Heart, MessageCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -74,14 +74,6 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
           </span>
           <span className="text-muted-foreground text-sm">{formatDate(card.createdAt)}</span>
         </div>
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          className="text-muted-foreground hover:text-foreground -mr-2"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <MoreHorizontal className="size-4" />
-        </Button>
       </div>
 
       {/* Card Content */}
