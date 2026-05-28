@@ -68,7 +68,7 @@ export default function ProfilePage() {
               <TraceCard
                 key={card.id}
                 card={card}
-                onCardClick={() => router.push(`/trace/${card.id}`)}
+                onCardClick={() => router.push(`/trace/${card.id}?from=/profile`)}
               />
             ))
           ) : (

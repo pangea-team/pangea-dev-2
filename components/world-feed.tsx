@@ -13,7 +13,7 @@ export function WorldFeed() {
         <TraceCard
           key={card.id}
           card={card}
-          onCardClick={() => router.push(`/trace/${card.id}`)}
+          onCardClick={() => router.push(`/trace/${card.id}?from=/`)}
         />
       ))}
     </div>

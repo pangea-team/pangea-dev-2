@@ -92,7 +92,7 @@ export default function ActivityPage() {
   const notifications = mockNotifications
 
   const handleCardClick = (traceCardId: string) => {
-    router.push(`/trace/${traceCardId}`)
+    router.push(`/trace/${traceCardId}?from=/activity`)
   }
 
   return (

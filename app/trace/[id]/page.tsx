@@ -8,7 +8,7 @@ import type { Comment } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { ArrowLeft, Bookmark, Heart, MessageCircle, MoreHorizontal, Send } from 'lucide-react'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { use, useState } from 'react'
 
 interface TracePageProps {
@@ -18,6 +18,8 @@ interface TracePageProps {
 export default function TracePage({ params }: TracePageProps) {
   const { id } = use(params)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const fromPage = searchParams.get('from') || '/'
 
   const card = mockTraceCards.find((c) => c.id === id)
   const initialComments = card ? getCommentsByTraceCardId(card.id) : []
@@ -90,13 +92,7 @@ export default function TracePage({ params }: TracePageProps) {
           <Button
             variant="ghost"
             size="icon-sm"
-            onClick={() => {
-              if (window.history.length > 1) {
-                router.back()
-              } else {
-                router.push('/')
-              }
-            }}
+            onClick={() => router.push(fromPage)}
           >
             <ArrowLeft className="size-5" />
           </Button>
