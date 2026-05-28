@@ -47,7 +47,7 @@ export function TraceCardFull({ card, onClose }: TraceCardFullProps) {
       <div className="fixed inset-x-0 bottom-0 z-50 h-[90vh] rounded-t-xl border-t bg-background shadow-lg animate-in slide-in-from-bottom duration-300 overflow-hidden flex flex-col md:inset-4 md:bottom-4 md:h-auto md:max-h-[90vh] md:max-w-2xl md:mx-auto md:rounded-xl md:border">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b shrink-0">
-          <h2 className="font-semibold">Trace Card</h2>
+          <h2 className="text-heading-sm">Trace Card</h2>
           <Button variant="ghost" size="icon-sm" onClick={onClose}>
             <X className="size-5" />
           </Button>
@@ -59,16 +59,14 @@ export function TraceCardFull({ card, onClose }: TraceCardFullProps) {
           <div className="flex items-start gap-3 mb-4">
             <Avatar className="size-12">
               <AvatarImage src={card.user.avatarUrl} alt={card.user.displayName} />
-              <AvatarFallback className="text-base font-medium">
-                {card.user.displayName[0]}
-              </AvatarFallback>
+              <AvatarFallback className="text-body-md">{card.user.displayName[0]}</AvatarFallback>
             </Avatar>
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <span className="font-semibold text-foreground">{card.user.displayName}</span>
-                <span className="text-muted-foreground text-sm">@{card.user.username}</span>
+                <span className="text-heading-sm text-foreground">{card.user.displayName}</span>
+                <span className="text-body-sm text-muted-foreground">@{card.user.username}</span>
               </div>
-              <p className="text-muted-foreground text-sm">{formatDate(card.createdAt)}</p>
+              <p className="text-body-sm text-muted-foreground">{formatDate(card.createdAt)}</p>
             </div>
             <Button variant="ghost" size="icon-sm" className="text-muted-foreground">
               <MoreHorizontal className="size-5" />
@@ -77,25 +75,25 @@ export function TraceCardFull({ card, onClose }: TraceCardFullProps) {
 
           {/* Book Info */}
           <div className="bg-muted/50 rounded-lg p-3 mb-4">
-            <p className="font-medium text-foreground">{card.book.title}</p>
-            <p className="text-muted-foreground text-sm">{card.book.author}</p>
+            <p className="text-heading-sm text-foreground">{card.book.title}</p>
+            <p className="text-body-sm text-muted-foreground">{card.book.author}</p>
           </div>
 
           {/* Quote */}
           <div className="mb-6">
-            <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
+            <p className="text-caption uppercase tracking-wider text-muted-foreground mb-2">
               밑줄 친 문장
             </p>
             <blockquote className="border-l-2 border-primary pl-4 py-1">
-              <p className="text-lg text-foreground leading-relaxed text-balance">
-                {`"${card.quote}"`}
-              </p>
+              <p className="text-quote text-foreground text-balance">{`"${card.quote}"`}</p>
             </blockquote>
           </div>
 
           {/* Layers */}
           <div className="space-y-4">
-            <p className="text-xs uppercase tracking-wider text-muted-foreground">독서의 흔적</p>
+            <p className="text-caption uppercase tracking-wider text-muted-foreground">
+              독서의 흔적
+            </p>
             {card.layers.map((layer, index) => (
               <div
                 key={layer.id}
@@ -107,12 +105,12 @@ export function TraceCardFull({ card, onClose }: TraceCardFullProps) {
                 )}
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <span className="text-caption font-medium text-muted-foreground uppercase tracking-wider">
                     {layerTypeLabel[layer.type]}
                   </span>
-                  <span className="text-xs text-muted-foreground">#{index + 1}</span>
+                  <span className="text-caption text-muted-foreground">#{index + 1}</span>
                 </div>
-                <p className="text-foreground leading-relaxed">{layer.content}</p>
+                <p className="text-body-lg text-foreground">{layer.content}</p>
               </div>
             ))}
           </div>

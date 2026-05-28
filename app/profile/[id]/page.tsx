@@ -37,7 +37,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
           <Button variant="ghost" size="icon-sm" onClick={() => router.push(fromPage)}>
             <ArrowLeft className="size-5" />
           </Button>
-          <h1 className="font-semibold">프로필</h1>
+          <h1 className="text-heading-sm">프로필</h1>
         </div>
       </header>
 
@@ -48,8 +48,8 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
             {/* Left: Name, ID, Bio */}
             <div className="flex-1">
               <h2 className="text-heading-lg">{user.displayName}</h2>
-              <p className="text-muted-foreground text-sm">@{user.username}</p>
-              {user.bio && <p className="text-sm mt-3 text-foreground/90">{user.bio}</p>}
+              <p className="text-body-sm text-muted-foreground">@{user.username}</p>
+              {user.bio && <p className="text-body-sm mt-3 text-foreground/90">{user.bio}</p>}
             </div>
 
             {/* Right: Avatar */}
@@ -64,12 +64,12 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
           {/* Stats */}
           <div className="flex items-center gap-6 mt-4 pt-4 border-t">
             <div className="text-center">
-              <p className="font-semibold">{userCards.length}</p>
-              <p className="text-xs text-muted-foreground">Trace Cards</p>
+              <p className="text-heading-sm">{userCards.length}</p>
+              <p className="text-caption text-muted-foreground">Trace Cards</p>
             </div>
             <div className="text-center">
-              <p className="font-semibold">{new Set(userCards.map((c) => c.book.id)).size}</p>
-              <p className="text-xs text-muted-foreground">Books</p>
+              <p className="text-heading-sm">{new Set(userCards.map((c) => c.book.id)).size}</p>
+              <p className="text-caption text-muted-foreground">Books</p>
             </div>
           </div>
         </div>
@@ -89,8 +89,8 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
               <div className="inline-flex items-center justify-center size-16 rounded-full bg-muted mb-4">
                 <BookOpen className="size-8 text-muted-foreground" />
               </div>
-              <h3 className="font-medium mb-1">아직 Trace Card가 없습니다</h3>
-              <p className="text-sm text-muted-foreground">독서의 흔적을 남겨보세요</p>
+              <h3 className="text-heading-sm mb-1">아직 Trace Card가 없습니다</h3>
+              <p className="text-body-sm text-muted-foreground">독서의 흔적을 남겨보세요</p>
             </div>
           )}
         </div>

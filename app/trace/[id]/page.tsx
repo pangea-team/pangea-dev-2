@@ -120,7 +120,7 @@ export default function TracePage({ params }: TracePageProps) {
           <Button variant="ghost" size="icon-sm" onClick={() => router.push(fromPage)}>
             <ArrowLeft className="size-5" />
           </Button>
-          <h1 className="font-semibold">TRACE CARD</h1>
+          <h1 className="text-heading-sm">TRACE CARD</h1>
           <Button
             variant="ghost"
             size="icon-sm"
@@ -143,19 +143,17 @@ export default function TracePage({ params }: TracePageProps) {
           >
             <Avatar className="size-10">
               <AvatarImage src={card.user.avatarUrl} alt={card.user.displayName} />
-              <AvatarFallback className="text-sm font-medium">
-                {card.user.displayName[0]}
-              </AvatarFallback>
+              <AvatarFallback className="text-label-sm">{card.user.displayName[0]}</AvatarFallback>
             </Avatar>
             <div>
-              <p className="font-medium text-foreground">{card.user.displayName}</p>
-              <p className="text-sm text-muted-foreground">@{card.user.username}</p>
+              <p className="text-heading-sm text-foreground">{card.user.displayName}</p>
+              <p className="text-body-sm text-muted-foreground">@{card.user.username}</p>
             </div>
           </div>
 
           {/* Me Section */}
           <section className="mb-10">
-            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">Me</p>
+            <p className="text-caption uppercase tracking-wider text-muted-foreground mb-4">Me</p>
             <p className="text-heading-sm text-foreground">{card.meThought}</p>
           </section>
 
@@ -164,7 +162,7 @@ export default function TracePage({ params }: TracePageProps) {
 
           {/* From the Book Section */}
           <section className="mb-10">
-            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">
+            <p className="text-caption uppercase tracking-wider text-muted-foreground mb-4">
               From the Book
             </p>
 
@@ -179,16 +177,16 @@ export default function TracePage({ params }: TracePageProps) {
                     className="object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
+                  <div className="w-full h-full flex items-center justify-center text-caption text-muted-foreground">
                     No Cover
                   </div>
                 )}
               </div>
               <div className="flex flex-col justify-center">
-                <p className="font-medium text-foreground">{card.book.title}</p>
-                <p className="text-sm text-muted-foreground">{card.book.author}</p>
+                <p className="text-heading-sm text-foreground">{card.book.title}</p>
+                <p className="text-body-sm text-muted-foreground">{card.book.author}</p>
                 {card.book.publisher && (
-                  <p className="text-xs text-muted-foreground mt-1">{card.book.publisher}</p>
+                  <p className="text-caption text-muted-foreground mt-1">{card.book.publisher}</p>
                 )}
               </div>
             </div>
@@ -203,10 +201,10 @@ export default function TracePage({ params }: TracePageProps) {
 
           {/* Trace Expanded Section */}
           <section className="mb-8">
-            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">
+            <p className="text-caption uppercase tracking-wider text-muted-foreground mb-4">
               Trace Expanded
             </p>
-            <div className="text-foreground leading-loose whitespace-pre-line">
+            <div className="text-body-lg text-foreground whitespace-pre-line">
               {card.traceExpanded}
             </div>
           </section>
@@ -241,14 +239,14 @@ export default function TracePage({ params }: TracePageProps) {
 
         {/* Comments Section */}
         <section className="mt-8 px-2">
-          <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">
+          <p className="text-caption uppercase tracking-wider text-muted-foreground mb-4">
             댓글 {comments.length}개
           </p>
 
           {/* Comment List */}
           <div className="space-y-4 mb-6">
             {comments.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-8">
+              <p className="text-body-sm text-muted-foreground text-center py-8">
                 아직 댓글이 없습니다. 첫 댓글을 남겨보세요!
               </p>
             ) : (
@@ -259,23 +257,23 @@ export default function TracePage({ params }: TracePageProps) {
                     onClick={() => handleCommentUserClick(comment.user.id)}
                   >
                     <AvatarImage src={comment.user.avatarUrl} alt={comment.user.displayName} />
-                    <AvatarFallback className="text-xs font-medium">
+                    <AvatarFallback className="text-caption">
                       {comment.user.displayName[0]}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <span
-                        className="text-sm font-medium text-foreground cursor-pointer hover:underline"
+                        className="text-label-sm text-foreground cursor-pointer hover:underline"
                         onClick={() => handleCommentUserClick(comment.user.id)}
                       >
                         {comment.user.displayName}
                       </span>
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-caption text-muted-foreground">
                         {formatDate(comment.createdAt)}
                       </span>
                     </div>
-                    <p className="text-sm text-foreground leading-relaxed">{comment.content}</p>
+                    <p className="text-body-sm text-foreground">{comment.content}</p>
                   </div>
                 </div>
               ))

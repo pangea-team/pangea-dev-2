@@ -57,7 +57,7 @@ function NotificationItem({
             src={notification.fromUser.avatarUrl}
             alt={notification.fromUser.displayName}
           />
-          <AvatarFallback className="text-sm font-medium">
+          <AvatarFallback className="text-label-sm">
             {notification.fromUser.displayName[0]}
           </AvatarFallback>
         </Avatar>
@@ -67,16 +67,16 @@ function NotificationItem({
       </div>
 
       <div className="flex-1 min-w-0">
-        <p className="text-sm">
+        <p className="text-body-sm">
           <span className="font-semibold">{notification.fromUser.displayName}</span>
           <span className="text-muted-foreground">{notification.message}</span>
         </p>
         {notification.traceCard && (
-          <p className="text-xs text-muted-foreground mt-1 truncate">
+          <p className="text-caption text-muted-foreground mt-1 truncate">
             &quot;{notification.traceCard.quote.slice(0, 40)}...&quot;
           </p>
         )}
-        <p className="text-xs text-muted-foreground mt-1">
+        <p className="text-caption text-muted-foreground mt-1">
           {formatRelativeTime(notification.createdAt)}
         </p>
       </div>
@@ -114,8 +114,8 @@ export default function ActivityPage() {
             <div className="inline-flex items-center justify-center size-16 rounded-full bg-muted mb-4">
               <Heart className="size-8 text-muted-foreground" />
             </div>
-            <h3 className="font-medium mb-1">아직 알림이 없습니다</h3>
-            <p className="text-sm text-muted-foreground">
+            <h3 className="text-heading-sm mb-1">아직 알림이 없습니다</h3>
+            <p className="text-body-sm text-muted-foreground">
               다른 사용자가 회원님의 Trace Card에 반응하면 여기에 표시됩니다.
             </p>
           </div>

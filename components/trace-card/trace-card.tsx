@@ -82,18 +82,16 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
           onClick={handleAvatarClick}
         >
           <AvatarImage src={card.user.avatarUrl} alt={card.user.displayName} />
-          <AvatarFallback className="text-xs font-medium">
-            {card.user.displayName[0]}
-          </AvatarFallback>
+          <AvatarFallback className="text-caption">{card.user.displayName[0]}</AvatarFallback>
         </Avatar>
         <div className="flex items-center gap-2 flex-1 min-w-0">
           <span
-            className="font-medium text-foreground text-sm truncate cursor-pointer hover:underline"
+            className="text-label-sm text-foreground truncate cursor-pointer hover:underline"
             onClick={handleAvatarClick}
           >
             {card.user.displayName}
           </span>
-          <span className="text-muted-foreground text-sm">{formatDate(card.createdAt)}</span>
+          <span className="text-body-sm text-muted-foreground">{formatDate(card.createdAt)}</span>
         </div>
         <Button
           variant="ghost"
@@ -109,19 +107,17 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
       <div className="space-y-5">
         {/* Me Section */}
         <div>
-          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2.5">Me</p>
-          <p className="text-foreground leading-relaxed text-balance [font-size:var(--text-base)]">
-            {card.meThought}
-          </p>
+          <p className="text-caption text-muted-foreground uppercase tracking-wider mb-2.5">Me</p>
+          <p className="text-body-lg text-foreground text-balance">{card.meThought}</p>
         </div>
 
         {/* From the Book Section */}
         <div>
-          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2.5">
+          <p className="text-caption text-muted-foreground uppercase tracking-wider mb-2.5">
             From the Book
           </p>
           <p className="text-foreground/80  mb-2.5 text-quote">{`"${card.quote}"`}</p>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-body-sm text-muted-foreground">
             《{card.book.title}》, {card.book.author}
           </p>
         </div>
@@ -139,7 +135,7 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
           onClick={handleHeart}
         >
           <Heart className={cn('size-4', hearted && 'fill-current')} />
-          <span className="text-sm tabular-nums">{heartCount}</span>
+          <span className="text-body-sm tabular-nums">{heartCount}</span>
         </Button>
 
         <Button
@@ -149,7 +145,7 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
           onClick={onCardClick}
         >
           <MessageCircle className="size-4" />
-          <span className="text-sm tabular-nums">{card.reactions.comment}</span>
+          <span className="text-body-sm tabular-nums">{card.reactions.comment}</span>
         </Button>
 
         <Button
