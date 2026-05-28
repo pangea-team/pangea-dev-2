@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import type { TraceCard as TraceCardType } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { Bookmark, Heart, MessageCircle } from 'lucide-react'
+import { ArrowLeftRight, Bookmark, Heart, MessageCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -36,6 +36,11 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
   const handleAvatarClick = (e: React.MouseEvent) => {
     e.stopPropagation()
     router.push(`/profile/${card.user.id}?from=${window.location.pathname}`)
+  }
+
+  const handleExchangeRequest = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    // TODO: 교환 요청 기능 구현
   }
 
   const handleHeart = (e: React.MouseEvent) => {
@@ -74,6 +79,15 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
           </span>
           <span className="text-muted-foreground text-sm">{formatDate(card.createdAt)}</span>
         </div>
+        <Button
+          variant="outline"
+          size="sm"
+          className="text-xs gap-1.5 h-7 px-2.5"
+          onClick={handleExchangeRequest}
+        >
+          <ArrowLeftRight className="size-3.5" />
+          교환 요청
+        </Button>
       </div>
 
       {/* Card Content */}
