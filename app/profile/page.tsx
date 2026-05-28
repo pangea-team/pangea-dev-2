@@ -16,7 +16,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-background pb-16">
-      <Header title="프로필" />
+      <Header title="프로필" align="left" />
 
       <main className="max-w-lg mx-auto">
         {/* Profile Header - Threads style */}

@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from 'react'
 const navItems = [
   { href: '/', icon: Globe },
   { href: '/create', icon: PlusCircle },
-  { href: '/activity', icon: Lightbulb },
+  { href: '/discover', icon: Lightbulb },
   { href: '/profile', icon: User },
 ]
 

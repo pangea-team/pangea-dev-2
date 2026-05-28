@@ -87,17 +87,17 @@ function NotificationItem({
   )
 }
 
-export default function ActivityPage() {
+export default function DiscoverPage() {
   const router = useRouter()
   const notifications = mockNotifications
 
   const handleCardClick = (traceCardId: string) => {
-    router.push(`/trace/${traceCardId}?from=/activity`)
+    router.push(`/trace/${traceCardId}?from=/discover`)
   }
 
   return (
     <div className="min-h-screen bg-background pb-16">
-      <Header title="활동" />
+      <Header title="발견" align="left" />
 
       <main className="max-w-lg mx-auto">
         {notifications.length > 0 ? (
