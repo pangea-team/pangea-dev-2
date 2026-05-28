@@ -125,7 +125,7 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
           variant="ghost"
           size="sm"
           className="text-muted-foreground hover:text-primary gap-1.5 px-2"
-          onClick={(e) => e.stopPropagation()}
+          onClick={onCardClick}
         >
           <MessageCircle className="size-4" />
           <span className="text-sm tabular-nums">{card.reactions.comment}</span>
