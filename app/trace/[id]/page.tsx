@@ -121,14 +121,6 @@ export default function TracePage({ params }: TracePageProps) {
             <ArrowLeft className="size-5" />
           </Button>
           <h1 className="text-heading-sm">TRACE CARD</h1>
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            className="ml-auto text-muted-foreground hover:text-primary"
-            onClick={handleExchangeRequest}
-          >
-            <ArrowLeftRight className="size-5" />
-          </Button>
         </div>
       </header>
 
@@ -137,18 +129,30 @@ export default function TracePage({ params }: TracePageProps) {
         {/* Trace Card */}
         <article className="bg-card rounded-2xl border border-border px-6 py-6 mb-4">
           {/* User Info */}
-          <div
-            className="flex items-center gap-3 mb-8 cursor-pointer hover:opacity-80 transition-opacity"
-            onClick={handleUserClick}
-          >
-            <Avatar className="size-10">
-              <AvatarImage src={card.user.avatarUrl} alt={card.user.displayName} />
-              <AvatarFallback className="text-label-sm">{card.user.displayName[0]}</AvatarFallback>
-            </Avatar>
-            <div>
-              <p className="text-heading-sm text-foreground">{card.user.displayName}</p>
-              <p className="text-body-sm text-muted-foreground">@{card.user.username}</p>
+          <div className="flex items-center gap-3 mb-8">
+            <div
+              className="flex items-center gap-3 flex-1 cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={handleUserClick}
+            >
+              <Avatar className="size-10">
+                <AvatarImage src={card.user.avatarUrl} alt={card.user.displayName} />
+                <AvatarFallback className="text-label-sm">
+                  {card.user.displayName[0]}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="text-heading-sm text-foreground">{card.user.displayName}</p>
+                <p className="text-body-sm text-muted-foreground">@{card.user.username}</p>
+              </div>
             </div>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              className="text-muted-foreground hover:text-primary"
+              onClick={handleExchangeRequest}
+            >
+              <ArrowLeftRight className="size-4" />
+            </Button>
           </div>
 
           {/* Me Section */}
