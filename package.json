@@ -17,9 +17,7 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json}": [
-      "biome check --write"
-    ]
+    "*.{js,jsx,ts,tsx,json}": ["biome check --write"]
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -81,14 +79,14 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@commitlint/cli": "^19.6.1",
-    "@commitlint/config-conventional": "^19.6.0",
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
     "@tailwindcss/postcss": "^4.2.0",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "husky": "^9.1.7",
-    "lint-staged": "^15.3.0",
+    "lint-staged": "^16.4.0",
     "postcss": "^8.5",
     "supabase": "^2.0.0",
     "tailwindcss": "^4.2.0",
