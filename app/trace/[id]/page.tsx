@@ -122,7 +122,7 @@ export default function TracePage({ params }: TracePageProps) {
       {/* Content */}
       <main className="max-w-2xl mx-auto py-4">
         {/* Trace Card */}
-        <article className="bg-card rounded-2xl border border-border px-6 py-6 mb-4">
+        <article className="px-4 py-6">
           {/* User Info */}
           <div className="flex items-center gap-3 mb-8">
             <div
@@ -157,7 +157,7 @@ export default function TracePage({ params }: TracePageProps) {
           </section>
 
           {/* Divider */}
-          <div className="border-t border-border my-8" />
+          <div className="border-t border-border my-6" />
 
           {/* From the Book Section */}
           <section className="mb-10">
@@ -196,7 +196,7 @@ export default function TracePage({ params }: TracePageProps) {
           </section>
 
           {/* Divider */}
-          <div className="border-t border-border my-8" />
+          <div className="border-t border-border my-6" />
 
           {/* Trace Expanded Section */}
           <section className="mb-8">
@@ -228,7 +228,7 @@ export default function TracePage({ params }: TracePageProps) {
         </article>
 
         {/* Comments Section */}
-        <section className="mt-8">
+        <section className="px-4 border-t border-border pt-6">
           <p className="text-caption uppercase tracking-wider text-muted-foreground mb-4">
             댓글 {comments.length}개
           </p>
