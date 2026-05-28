@@ -89,11 +89,7 @@ export default function TracePage({ params }: TracePageProps) {
       {/* Header */}
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
         <div className="flex items-center gap-3 px-4 py-3">
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={() => router.push(fromPage)}
-          >
+          <Button variant="ghost" size="icon-sm" onClick={() => router.push(fromPage)}>
             <ArrowLeft className="size-5" />
           </Button>
           <h1 className="font-semibold">TRACE CARD</h1>
@@ -122,9 +118,7 @@ export default function TracePage({ params }: TracePageProps) {
         {/* Me Section */}
         <section className="mb-10">
           <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">Me</p>
-          <p className="text-xl text-foreground leading-relaxed font-medium">
-            {`"${card.meThought}"`}
-          </p>
+          <p className="text-xl text-foreground leading-relaxed font-medium">{card.meThought}</p>
         </section>
 
         {/* Divider */}
