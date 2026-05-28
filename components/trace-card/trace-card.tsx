@@ -70,7 +70,7 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
       className="bg-background border-b border-border transition-colors hover:bg-muted/30 cursor-pointer"
       onClick={onCardClick}
     >
-      <div className="px-4 py-5">
+      <div className="max-w-2xl mx-auto px-4 py-5">
         {/* Header with Avatar */}
         <div className="flex items-center gap-3 mb-5">
           <Avatar

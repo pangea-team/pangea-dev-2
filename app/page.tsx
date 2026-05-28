@@ -6,7 +6,7 @@ export default function WorldPage() {
   return (
     <div className="min-h-screen bg-background pb-16">
       <Header title="PANGEA" align="center" />
-      <main className="max-w-2xl mx-auto">
+      <main>
         <WorldFeed />
       </main>
       <BottomNav />

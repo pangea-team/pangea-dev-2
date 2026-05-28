@@ -18,9 +18,9 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-background pb-16">
       <Header title="프로필" align="left" />
 
-      <main className="max-w-2xl mx-auto">
+      <main>
         {/* Profile Header - Threads style */}
-        <div className=" py-6 border-b border-border px-4">
+        <div className="max-w-2xl mx-auto py-6 border-b border-border px-4">
           <div className="flex items-start justify-between">
             {/* Left: Name, ID, Bio */}
             <div className="flex-1">
