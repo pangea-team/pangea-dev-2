@@ -4,9 +4,8 @@ import { BottomNav } from '@/components/layout/bottom-nav'
 import { Header } from '@/components/layout/header'
 import { TraceCard } from '@/components/trace-card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
 import { currentUser, mockTraceCards } from '@/lib/mock-data'
-import { BookOpen, Settings } from 'lucide-react'
+import { BookOpen } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 export default function ProfilePage() {
@@ -39,13 +38,6 @@ export default function ProfilePage() {
                 {currentUser.displayName[0]}
               </AvatarFallback>
             </Avatar>
-          </div>
-
-          {/* Settings Button */}
-          <div className="flex justify-end mt-2">
-            <Button variant="ghost" size="icon-sm">
-              <Settings className="size-5" />
-            </Button>
           </div>
 
           {/* Stats */}
