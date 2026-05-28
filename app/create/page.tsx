@@ -105,206 +105,207 @@ export default function CreatePage() {
       <div className="min-h-screen bg-background pb-16">
         <Header title="새 Trace Card" />
 
-      <main className="max-w-2xl mx-auto">
-        {/* Progress */}
-        <div className="py-3 border-b">
-          <div className="flex items-center gap-1">
-            {steps.map((step, index) => (
-              <div
-                key={step.id}
-                className={cn(
-                  'h-1 flex-1 rounded-full transition-colors',
-                  index <= currentStepIndex ? 'bg-foreground' : 'bg-muted',
-                )}
-              />
-            ))}
+        <main className="max-w-2xl mx-auto">
+          {/* Progress */}
+          <div className="py-3 border-b">
+            <div className="flex items-center gap-1">
+              {steps.map((step, index) => (
+                <div
+                  key={step.id}
+                  className={cn(
+                    'h-1 flex-1 rounded-full transition-colors',
+                    index <= currentStepIndex ? 'bg-foreground' : 'bg-muted',
+                  )}
+                />
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Step Header */}
-        <div className="py-6 border-b">
-          <h2 className="text-heading-lg text-foreground mb-1">{currentStepInfo.title}</h2>
-          <p className="text-body-sm text-muted-foreground">{currentStepInfo.subtitle}</p>
-        </div>
+          {/* Step Header */}
+          <div className="py-6 border-b">
+            <h2 className="text-heading-lg text-foreground mb-1">{currentStepInfo.title}</h2>
+            <p className="text-body-sm text-muted-foreground">{currentStepInfo.subtitle}</p>
+          </div>
 
-        {/* Step Content */}
-        <div className="py-6">
-          {currentStep === 'book' && (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">책 제목</Label>
-                <Input
-                  id="title"
-                  placeholder="예: 데미안"
-                  value={form.book.title}
-                  onChange={(e) =>
-                    setForm({ ...form, book: { ...form.book, title: e.target.value } })
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="author">작가</Label>
-                <Input
-                  id="author"
-                  placeholder="예: 헤르만 헤세"
-                  value={form.book.author}
-                  onChange={(e) =>
-                    setForm({ ...form, book: { ...form.book, author: e.target.value } })
-                  }
-                />
-              </div>
-            </div>
-          )}
-
-          {currentStep === 'quote' && (
-            <div className="space-y-2">
-              <Label htmlFor="quote">밑줄 친 문장</Label>
-              <Textarea
-                id="quote"
-                placeholder="책에서 마음에 남은 문장을 입력해주세요..."
-                value={form.quote}
-                onChange={(e) => setForm({ ...form, quote: e.target.value })}
-                className="min-h-32"
-              />
-            </div>
-          )}
-
-          {currentStep === 'layers' && (
-            <div className="space-y-6">
-              {form.layers.map((layer, index) => (
-                <div key={index} className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <Label>레이어 {index + 1}</Label>
-                    {form.layers.length > 1 && (
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        className="text-muted-foreground hover:text-destructive"
-                        onClick={() => removeLayer(index)}
-                      >
-                        <Trash2 className="size-4" />
-                      </Button>
-                    )}
-                  </div>
-
-                  <div className="flex gap-2">
-                    {layerTypeOptions.map((option) => (
-                      <button
-                        key={option.type}
-                        type="button"
-                        onClick={() => updateLayer(index, { type: option.type })}
-                        className={cn(
-                          'flex-1 py-2 px-3 text-body-sm rounded-lg border transition-colors',
-                          layer.type === option.type
-                            ? 'border-foreground bg-foreground text-background'
-                            : 'border-border hover:bg-muted',
-                        )}
-                      >
-                        {option.label}
-                      </button>
-                    ))}
-                  </div>
-
-                  <Textarea
-                    placeholder={layerTypeOptions.find((o) => o.type === layer.type)?.description}
-                    value={layer.content}
-                    onChange={(e) => updateLayer(index, { content: e.target.value })}
-                    className="min-h-24"
+          {/* Step Content */}
+          <div className="py-6">
+            {currentStep === 'book' && (
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="title">책 제목</Label>
+                  <Input
+                    id="title"
+                    placeholder="예: 데미안"
+                    value={form.book.title}
+                    onChange={(e) =>
+                      setForm({ ...form, book: { ...form.book, title: e.target.value } })
+                    }
                   />
                 </div>
-              ))}
-
-              <Button variant="outline" className="w-full" onClick={addLayer}>
-                <Plus className="size-4 mr-2" />
-                레이어 추가
-              </Button>
-            </div>
-          )}
-
-          {currentStep === 'preview' && (
-            <div className="space-y-6">
-              {/* Preview Card */}
-              <div className="border rounded-xl p-4 space-y-4">
-                {/* Book Info */}
-                <div className="bg-muted/50 rounded-lg p-3">
-                  <p className="text-heading-sm">{form.book.title}</p>
-                  <p className="text-body-sm text-muted-foreground">{form.book.author}</p>
-                </div>
-
-                {/* Quote */}
-                <blockquote className="border-l-2 border-primary pl-4">
-                  <p className="text-foreground">{`"${form.quote}"`}</p>
-                </blockquote>
-
-                {/* Layers */}
-                <div className="space-y-3">
-                  {form.layers
-                    .filter((l) => l.content.trim())
-                    .map((layer, index) => (
-                      <div
-                        key={index}
-                        className={cn(
-                          'rounded-lg p-3',
-                          layer.type === 'me' && 'bg-primary/5',
-                          layer.type === 'from-book' && 'bg-muted/50',
-                          layer.type === 'context' && 'bg-accent/50',
-                        )}
-                      >
-                        <p className="text-caption text-muted-foreground uppercase tracking-wider mb-1">
-                          {layerTypeOptions.find((o) => o.type === layer.type)?.label}
-                        </p>
-                        <p className="text-body-sm">{layer.content}</p>
-                      </div>
-                    ))}
+                <div className="space-y-2">
+                  <Label htmlFor="author">작가</Label>
+                  <Input
+                    id="author"
+                    placeholder="예: 헤르만 헤세"
+                    value={form.book.author}
+                    onChange={(e) =>
+                      setForm({ ...form, book: { ...form.book, author: e.target.value } })
+                    }
+                  />
                 </div>
               </div>
+            )}
 
-              {/* Visibility Toggle */}
-              <div className="flex items-center justify-between py-3 border-t border-b">
-                <div className="flex items-center gap-2">
-                  {form.isPublic ? (
-                    <Globe className="size-4 text-muted-foreground" />
-                  ) : (
-                    <Lock className="size-4 text-muted-foreground" />
-                  )}
-                  <span className="text-body-sm">
-                    {form.isPublic ? 'World에 공개' : '나만 보기'}
-                  </span>
-                </div>
-                <Switch
-                  checked={form.isPublic}
-                  onCheckedChange={(checked) => setForm({ ...form, isPublic: checked })}
+            {currentStep === 'quote' && (
+              <div className="space-y-2">
+                <Label htmlFor="quote">밑줄 친 문장</Label>
+                <Textarea
+                  id="quote"
+                  placeholder="책에서 마음에 남은 문장을 입력해주세요..."
+                  value={form.quote}
+                  onChange={(e) => setForm({ ...form, quote: e.target.value })}
+                  className="min-h-32"
                 />
               </div>
-            </div>
-          )}
-        </div>
-
-        {/* Navigation */}
-        <div className="fixed bottom-14 left-0 right-0 border-t bg-background p-4">
-          <div className="flex gap-3 max-w-2xl mx-auto">
-            {currentStepIndex > 0 && (
-              <Button variant="outline" onClick={goPrev} className="flex-1">
-                <ArrowLeft className="size-4 mr-2" />
-                이전
-              </Button>
             )}
 
-            {currentStep === 'preview' ? (
-              <Button onClick={handleSubmit} className="flex-1" disabled={!canGoNext()}>
-                저장하기
-              </Button>
-            ) : (
-              <Button onClick={goNext} className="flex-1" disabled={!canGoNext()}>
-                다음
-                <ArrowRight className="size-4 ml-2" />
-              </Button>
+            {currentStep === 'layers' && (
+              <div className="space-y-6">
+                {form.layers.map((layer, index) => (
+                  <div key={index} className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label>레이어 {index + 1}</Label>
+                      {form.layers.length > 1 && (
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          className="text-muted-foreground hover:text-destructive"
+                          onClick={() => removeLayer(index)}
+                        >
+                          <Trash2 className="size-4" />
+                        </Button>
+                      )}
+                    </div>
+
+                    <div className="flex gap-2">
+                      {layerTypeOptions.map((option) => (
+                        <button
+                          key={option.type}
+                          type="button"
+                          onClick={() => updateLayer(index, { type: option.type })}
+                          className={cn(
+                            'flex-1 py-2 px-3 text-body-sm rounded-lg border transition-colors',
+                            layer.type === option.type
+                              ? 'border-foreground bg-foreground text-background'
+                              : 'border-border hover:bg-muted',
+                          )}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    <Textarea
+                      placeholder={layerTypeOptions.find((o) => o.type === layer.type)?.description}
+                      value={layer.content}
+                      onChange={(e) => updateLayer(index, { content: e.target.value })}
+                      className="min-h-24"
+                    />
+                  </div>
+                ))}
+
+                <Button variant="outline" className="w-full" onClick={addLayer}>
+                  <Plus className="size-4 mr-2" />
+                  레이어 추가
+                </Button>
+              </div>
+            )}
+
+            {currentStep === 'preview' && (
+              <div className="space-y-6">
+                {/* Preview Card */}
+                <div className="border rounded-xl p-4 space-y-4">
+                  {/* Book Info */}
+                  <div className="bg-muted/50 rounded-lg p-3">
+                    <p className="text-heading-sm">{form.book.title}</p>
+                    <p className="text-body-sm text-muted-foreground">{form.book.author}</p>
+                  </div>
+
+                  {/* Quote */}
+                  <blockquote className="border-l-2 border-primary pl-4">
+                    <p className="text-foreground">{`"${form.quote}"`}</p>
+                  </blockquote>
+
+                  {/* Layers */}
+                  <div className="space-y-3">
+                    {form.layers
+                      .filter((l) => l.content.trim())
+                      .map((layer, index) => (
+                        <div
+                          key={index}
+                          className={cn(
+                            'rounded-lg p-3',
+                            layer.type === 'me' && 'bg-primary/5',
+                            layer.type === 'from-book' && 'bg-muted/50',
+                            layer.type === 'context' && 'bg-accent/50',
+                          )}
+                        >
+                          <p className="text-caption text-muted-foreground uppercase tracking-wider mb-1">
+                            {layerTypeOptions.find((o) => o.type === layer.type)?.label}
+                          </p>
+                          <p className="text-body-sm">{layer.content}</p>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+
+                {/* Visibility Toggle */}
+                <div className="flex items-center justify-between py-3 border-t border-b">
+                  <div className="flex items-center gap-2">
+                    {form.isPublic ? (
+                      <Globe className="size-4 text-muted-foreground" />
+                    ) : (
+                      <Lock className="size-4 text-muted-foreground" />
+                    )}
+                    <span className="text-body-sm">
+                      {form.isPublic ? 'World에 공개' : '나만 보기'}
+                    </span>
+                  </div>
+                  <Switch
+                    checked={form.isPublic}
+                    onCheckedChange={(checked) => setForm({ ...form, isPublic: checked })}
+                  />
+                </div>
+              </div>
             )}
           </div>
-        </div>
-      </main>
 
-      <BottomNav />
-    </div>
+          {/* Navigation */}
+          <div className="fixed bottom-14 left-0 right-0 border-t bg-background p-4">
+            <div className="flex gap-3 max-w-2xl mx-auto">
+              {currentStepIndex > 0 && (
+                <Button variant="outline" onClick={goPrev} className="flex-1">
+                  <ArrowLeft className="size-4 mr-2" />
+                  이전
+                </Button>
+              )}
+
+              {currentStep === 'preview' ? (
+                <Button onClick={handleSubmit} className="flex-1" disabled={!canGoNext()}>
+                  저장하기
+                </Button>
+              ) : (
+                <Button onClick={goNext} className="flex-1" disabled={!canGoNext()}>
+                  다음
+                  <ArrowRight className="size-4 ml-2" />
+                </Button>
+              )}
+            </div>
+          </div>
+        </main>
+
+        <BottomNav />
+      </div>
+    </RequireAuth>
   )
 }
