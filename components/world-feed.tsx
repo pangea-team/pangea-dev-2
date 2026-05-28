@@ -8,7 +8,7 @@ export function WorldFeed() {
   const router = useRouter()
 
   return (
-    <div className="divide-y divide-border">
+    <div>
       {feedTraceCards.map((card) => (
         <TraceCard
           key={card.id}

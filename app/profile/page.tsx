@@ -54,7 +54,7 @@ export default function ProfilePage() {
         </div>
 
         {/* Trace Cards */}
-        <div className="divide-y divide-border">
+        <div>
           {userCards.length > 0 ? (
             userCards.map((card) => (
               <TraceCard
