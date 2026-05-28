@@ -113,7 +113,7 @@ export default function TracePage({ params }: TracePageProps) {
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
         <div className="flex items-center gap-3 py-3">
           <button
-            className="flex items-center gap-2 hover:opacity-70 transition-opacity"
+            className="flex items-center gap-2 -ml-2 px-2 py-1 rounded-lg hover:bg-muted transition-colors"
             onClick={() => router.push(fromPage)}
           >
             <ArrowLeft className="size-5" />
