@@ -15,7 +15,10 @@
       "pnpm-lock.yaml",
       ".vercel",
       "supabase/.branches",
-      "supabase/.temp"
+      "supabase/.temp",
+      "components/ui/**",
+      "hooks/use-toast.ts",
+      "components/theme-provider.tsx"
     ]
   },
   "formatter": {
