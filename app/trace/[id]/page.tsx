@@ -87,7 +87,17 @@ export default function TracePage({ params }: TracePageProps) {
       {/* Header */}
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
         <div className="flex items-center gap-3 px-4 py-3">
-          <Button variant="ghost" size="icon-sm" onClick={() => router.back()}>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => {
+              if (window.history.length > 1) {
+                router.back()
+              } else {
+                router.push('/')
+              }
+            }}
+          >
             <ArrowLeft className="size-5" />
           </Button>
           <h1 className="font-semibold">TRACE CARD</h1>
