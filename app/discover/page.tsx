@@ -2,6 +2,7 @@
 
 import { BottomNav } from '@/components/layout/bottom-nav'
 import { Header } from '@/components/layout/header'
+import { RequireAuth } from '@/components/require-auth'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { mockNotifications } from '@/lib/mock-data'
 import type { Notification, NotificationType } from '@/lib/types'
@@ -95,8 +96,9 @@ export default function DiscoverPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-16">
-      <Header title="발견" align="left" />
+    <RequireAuth redirectTo="/discover">
+      <div className="min-h-screen bg-background pb-16">
+        <Header title="발견" align="left" />
 
       <main className="max-w-2xl mx-auto">
         {notifications.length > 0 ? (
@@ -123,6 +125,7 @@ export default function DiscoverPage() {
       </main>
 
       <BottomNav />
-    </div>
+      </div>
+    </RequireAuth>
   )
 }

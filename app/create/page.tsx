@@ -2,6 +2,7 @@
 
 import { BottomNav } from '@/components/layout/bottom-nav'
 import { Header } from '@/components/layout/header'
+import { RequireAuth } from '@/components/require-auth'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -100,8 +101,9 @@ export default function CreatePage() {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-16">
-      <Header title="새 Trace Card" />
+    <RequireAuth redirectTo="/create">
+      <div className="min-h-screen bg-background pb-16">
+        <Header title="새 Trace Card" />
 
       <main className="max-w-2xl mx-auto">
         {/* Progress */}

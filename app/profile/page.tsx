@@ -2,6 +2,7 @@
 
 import { BottomNav } from '@/components/layout/bottom-nav'
 import { Header } from '@/components/layout/header'
+import { RequireAuth } from '@/components/require-auth'
 import { TraceCard } from '@/components/trace-card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { currentUser, mockTraceCards } from '@/lib/mock-data'
@@ -15,8 +16,9 @@ export default function ProfilePage() {
   const userCards = mockTraceCards.filter((card) => card.userId === currentUser.id)
 
   return (
-    <div className="min-h-screen bg-background pb-16">
-      <Header title="프로필" align="left" />
+    <RequireAuth redirectTo="/profile">
+      <div className="min-h-screen bg-background pb-16">
+        <Header title="프로필" align="left" />
 
       <main className="max-w-2xl mx-auto">
         {/* Profile Header - Threads style */}
@@ -76,6 +78,7 @@ export default function ProfilePage() {
       </main>
 
       <BottomNav />
-    </div>
+      </div>
+    </RequireAuth>
   )
 }
