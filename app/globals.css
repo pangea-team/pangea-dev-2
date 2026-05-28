@@ -1,29 +1,27 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
-@import '../styles/index.css';
-
-
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "../styles/index.css";
 
 :root {
   /* Base — cool off-white (#FAFAFA) */
   --background: oklch(0.978 0.004 85);
-  --foreground: oklch(0.145 0 0);          /* #1A1A1A */
+  --foreground: oklch(0.145 0 0); /* #1A1A1A */
 
   /* Card / Surface — pure white */
-  --card: oklch(0.995 0.003 85); 
+  --card: oklch(0.995 0.003 85);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
 
   /* Primary (Brand) */
-  --primary: oklch(0.205 0 0);             /* #1A1A1A approx */
+  --primary: oklch(0.205 0 0); /* #1A1A1A approx */
   --primary-foreground: oklch(0.985 0 0);
 
   /* Secondary / Muted — #F4F4F4 */
   --secondary: oklch(0.963 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.963 0 0);
-  --muted-foreground: oklch(0.474 0 0);    /* #6B6B6B */
+  --muted-foreground: oklch(0.474 0 0); /* #6B6B6B */
   --accent: oklch(0.963 0 0);
   --accent-foreground: oklch(0.205 0 0);
 
@@ -56,10 +54,9 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
-
 @theme inline {
   --font-sans: var(--font-pretendard), system-ui, -apple-system, sans-serif;
-  --font-serif: var(--font-noto-serif), 'Times New Roman', serif;
+  --font-serif: var(--font-noto-serif), "Times New Roman", serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);

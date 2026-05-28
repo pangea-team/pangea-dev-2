@@ -4,33 +4,33 @@
 
 :root {
   /* Font Family */
-  --font-family-sans:  var(--font-sans), system-ui, -apple-system, sans-serif;
-  --font-family-serif: var(--font-serif), 'Times New Roman', serif;
+  --font-family-sans: var(--font-sans), system-ui, -apple-system, sans-serif;
+  --font-family-serif: var(--font-serif), "Times New Roman", serif;
 
   /* Font Size — 모바일 앱 기준 */
-  --text-xs:    11px;
-  --text-sm:    13px;
-  --text-base:  15px;
-  --text-md:    16px;
-  --text-lg:    18px;
-  --text-xl:    20px;
-  --text-2xl:   24px;
-  --text-3xl:   28px;
+  --text-xs: 11px;
+  --text-sm: 13px;
+  --text-base: 15px;
+  --text-md: 16px;
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 28px;
 
   /* Font Weight */
-  --weight-regular:  400;
-  --weight-medium:   500;
+  --weight-regular: 400;
+  --weight-medium: 500;
   --weight-semibold: 600;
-  --weight-bold:     700;
+  --weight-bold: 700;
 
   /* Line Height */
-  --leading-tight:    1.2;
-  --leading-snug:     1.4;
-  --leading-normal:   1.6;
-  --leading-relaxed:  1.75;
+  --leading-tight: 1.2;
+  --leading-snug: 1.4;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.75;
 
   /* Letter Spacing */
-  --tracking-tight:  -0.02em;
+  --tracking-tight: -0.02em;
   --tracking-normal: 0;
 }
 
@@ -38,11 +38,11 @@
 @media (min-width: 768px) {
   :root {
     --text-base: 16px;
-    --text-md:   17px;
-    --text-lg:   20px;
-    --text-xl:   22px;
-    --text-2xl:  28px;
-    --text-3xl:  34px;
+    --text-md: 17px;
+    --text-lg: 20px;
+    --text-xl: 22px;
+    --text-2xl: 28px;
+    --text-3xl: 34px;
   }
 }
 

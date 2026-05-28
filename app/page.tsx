@@ -1,5 +1,5 @@
-import { Header } from '@/components/layout/header'
 import { BottomNav } from '@/components/layout/bottom-nav'
+import { Header } from '@/components/layout/header'
 import { WorldFeed } from '@/components/world-feed'
 
 export default function WorldPage() {
