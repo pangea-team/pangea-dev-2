@@ -1,4 +1,4 @@
-import type { Book, Notification, TraceCard, User } from './types'
+import type { Book, Comment, Notification, TraceCard, User } from './types'
 
 // 목업 사용자
 export const mockUsers: User[] = [
@@ -37,6 +37,7 @@ export const mockBooks: Book[] = [
     id: 'book-1',
     title: '데미안',
     author: '헤르만 헤세',
+    coverUrl: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=300&h=450&fit=crop',
     publisher: '민음사',
     publishedDate: '2000-06-01',
   },
@@ -44,6 +45,7 @@ export const mockBooks: Book[] = [
     id: 'book-2',
     title: '1984',
     author: '조지 오웰',
+    coverUrl: 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=300&h=450&fit=crop',
     publisher: '민음사',
     publishedDate: '2003-06-01',
   },
@@ -51,6 +53,7 @@ export const mockBooks: Book[] = [
     id: 'book-3',
     title: '어린 왕자',
     author: '생텍쥐페리',
+    coverUrl: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300&h=450&fit=crop',
     publisher: '문학동네',
     publishedDate: '2007-01-01',
   },
@@ -58,6 +61,7 @@ export const mockBooks: Book[] = [
     id: 'book-4',
     title: '멋진 신세계',
     author: '올더스 헉슬리',
+    coverUrl: 'https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=300&h=450&fit=crop',
     publisher: '소담출판사',
     publishedDate: '2015-03-01',
   },
@@ -207,6 +211,7 @@ export const mockTraceCards: TraceCard[] = [
       id: 'book-5',
       title: '피노키오',
       author: '카를로 콜로디',
+      coverUrl: 'https://images.unsplash.com/photo-1476275466078-4007374efbbe?w=300&h=450&fit=crop',
       publisher: '민음사',
       publishedDate: '1883-01-01',
     },
@@ -241,6 +246,71 @@ export const myTraceCards = mockTraceCards.filter((card) => card.userId === curr
 
 // 피드용 Trace Cards (공개된 것만)
 export const feedTraceCards = mockTraceCards.filter((card) => card.isPublic)
+
+// 목업 댓글
+export const mockComments: Comment[] = [
+  {
+    id: 'comment-1',
+    userId: 'user-2',
+    user: mockUsers[1],
+    traceCardId: 'trace-1',
+    content: '정말 공감되는 해석이에요. 저도 데미안 읽으면서 비슷한 생각을 했어요.',
+    createdAt: new Date('2024-05-20T11:00:00'),
+  },
+  {
+    id: 'comment-2',
+    userId: 'user-3',
+    user: mockUsers[2],
+    traceCardId: 'trace-1',
+    content: '깨어짐은 끝이 아니라 시작이라는 말이 인상적이네요.',
+    createdAt: new Date('2024-05-20T12:30:00'),
+  },
+  {
+    id: 'comment-3',
+    userId: 'user-1',
+    user: mockUsers[0],
+    traceCardId: 'trace-1',
+    content: '이 문장 덕분에 데미안 다시 읽고 싶어졌어요!',
+    createdAt: new Date('2024-05-20T14:15:00'),
+  },
+  {
+    id: 'comment-4',
+    userId: 'user-1',
+    user: mockUsers[0],
+    traceCardId: 'trace-2',
+    content: '어린 왕자는 읽을 때마다 새로운 의미가 느껴지는 것 같아요.',
+    createdAt: new Date('2024-05-19T16:00:00'),
+  },
+  {
+    id: 'comment-5',
+    userId: 'user-2',
+    user: mockUsers[1],
+    traceCardId: 'trace-2',
+    content: '보이지 않는 것들의 가치... 요즘 세상에 정말 필요한 메시지예요.',
+    createdAt: new Date('2024-05-19T17:30:00'),
+  },
+  {
+    id: 'comment-6',
+    userId: 'user-3',
+    user: mockUsers[2],
+    traceCardId: 'trace-5',
+    content: '피노키오를 이런 시각으로 본 적이 없었는데, 완전 새롭네요!',
+    createdAt: new Date('2024-05-21T12:00:00'),
+  },
+  {
+    id: 'comment-7',
+    userId: 'user-2',
+    user: mockUsers[1],
+    traceCardId: 'trace-5',
+    content: '흔들리면서 자기 모습을 만들어간다는 표현이 좋아요.',
+    createdAt: new Date('2024-05-21T13:00:00'),
+  },
+]
+
+// traceCardId로 댓글 가져오기
+export const getCommentsByTraceCardId = (traceCardId: string): Comment[] => {
+  return mockComments.filter((comment) => comment.traceCardId === traceCardId)
+}
 
 // 목업 알림
 export const mockNotifications: Notification[] = [

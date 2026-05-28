@@ -66,6 +66,16 @@ export interface CreateTraceCardForm {
   isPublic: boolean
 }
 
+// 댓글
+export interface Comment {
+  id: string
+  userId: string
+  user: User
+  traceCardId: string
+  content: string
+  createdAt: Date
+}
+
 // 피드 필터
 export type FeedFilter = 'all' | 'following' | 'recent'
 

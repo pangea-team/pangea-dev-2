@@ -2,9 +2,12 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { mockTraceCards } from '@/lib/mock-data'
+import { Input } from '@/components/ui/input'
+import { getCommentsByTraceCardId, mockTraceCards } from '@/lib/mock-data'
+import type { Comment } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { ArrowLeft, Bookmark, Heart, MessageCircle, MoreHorizontal } from 'lucide-react'
+import { ArrowLeft, Bookmark, Heart, MessageCircle, MoreHorizontal, Send } from 'lucide-react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { use, useState } from 'react'
 
@@ -17,10 +20,13 @@ export default function TracePage({ params }: TracePageProps) {
   const router = useRouter()
 
   const card = mockTraceCards.find((c) => c.id === id)
+  const initialComments = card ? getCommentsByTraceCardId(card.id) : []
 
   const [hearted, setHearted] = useState(card?.userReaction?.hearted ?? false)
   const [bookmarked, setBookmarked] = useState(card?.userReaction?.bookmarked ?? false)
   const [heartCount, setHeartCount] = useState(card?.reactions.heart ?? 0)
+  const [comments, setComments] = useState<Comment[]>(initialComments)
+  const [newComment, setNewComment] = useState('')
 
   if (!card) {
     return (
@@ -39,8 +45,45 @@ export default function TracePage({ params }: TracePageProps) {
     setBookmarked(!bookmarked)
   }
 
+  const handleSubmitComment = () => {
+    if (!newComment.trim()) return
+
+    const comment: Comment = {
+      id: `comment-new-${Date.now()}`,
+      userId: 'user-1',
+      user: {
+        id: 'user-1',
+        username: 'bookworm_kim',
+        displayName: '김독서',
+        avatarUrl: undefined,
+        bio: '책과 함께 성장하는 중',
+        createdAt: new Date('2024-01-15'),
+      },
+      traceCardId: card.id,
+      content: newComment,
+      createdAt: new Date(),
+    }
+
+    setComments([...comments, comment])
+    setNewComment('')
+  }
+
+  const formatDate = (date: Date) => {
+    const now = new Date()
+    const diff = now.getTime() - date.getTime()
+    const minutes = Math.floor(diff / 60000)
+    const hours = Math.floor(diff / 3600000)
+    const days = Math.floor(diff / 86400000)
+
+    if (minutes < 1) return '방금 전'
+    if (minutes < 60) return `${minutes}분 전`
+    if (hours < 24) return `${hours}시간 전`
+    if (days < 7) return `${days}일 전`
+    return date.toLocaleDateString('ko-KR')
+  }
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
         <div className="flex items-center gap-3 px-4 py-3">
@@ -86,12 +129,35 @@ export default function TracePage({ params }: TracePageProps) {
           <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">
             From the Book
           </p>
+
+          {/* Book Cover */}
+          <div className="flex gap-4 mb-6">
+            <div className="relative w-20 h-28 flex-shrink-0 rounded-md overflow-hidden bg-muted">
+              {card.book.coverUrl ? (
+                <Image
+                  src={card.book.coverUrl}
+                  alt={card.book.title}
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
+                  No Cover
+                </div>
+              )}
+            </div>
+            <div className="flex flex-col justify-center">
+              <p className="font-medium text-foreground">{card.book.title}</p>
+              <p className="text-sm text-muted-foreground">{card.book.author}</p>
+              {card.book.publisher && (
+                <p className="text-xs text-muted-foreground mt-1">{card.book.publisher}</p>
+              )}
+            </div>
+          </div>
+
           <blockquote className="mb-4">
             <p className="text-lg text-foreground leading-relaxed italic">{`"${card.quote}"`}</p>
           </blockquote>
-          <p className="text-muted-foreground">
-            — 《{card.book.title}》, {card.book.author}
-          </p>
         </section>
 
         {/* Divider */}
@@ -121,7 +187,7 @@ export default function TracePage({ params }: TracePageProps) {
 
           <Button variant="ghost" size="sm" className="text-muted-foreground gap-1.5">
             <MessageCircle className="size-5" />
-            <span className="tabular-nums">{card.reactions.comment}</span>
+            <span className="tabular-nums">{comments.length}</span>
           </Button>
 
           <Button
@@ -133,6 +199,63 @@ export default function TracePage({ params }: TracePageProps) {
             <Bookmark className={cn('size-5', bookmarked && 'fill-current')} />
           </Button>
         </div>
+
+        {/* Comments Section */}
+        <section className="mt-8 pt-6 border-t border-border">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">
+            댓글 {comments.length}개
+          </p>
+
+          {/* Comment List */}
+          <div className="space-y-4 mb-6">
+            {comments.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-8">
+                아직 댓글이 없습니다. 첫 댓글을 남겨보세요!
+              </p>
+            ) : (
+              comments.map((comment) => (
+                <div key={comment.id} className="flex gap-3">
+                  <Avatar className="size-8 flex-shrink-0">
+                    <AvatarImage src={comment.user.avatarUrl} alt={comment.user.displayName} />
+                    <AvatarFallback className="text-xs font-medium">
+                      {comment.user.displayName[0]}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-sm font-medium text-foreground">
+                        {comment.user.displayName}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {formatDate(comment.createdAt)}
+                      </span>
+                    </div>
+                    <p className="text-sm text-foreground leading-relaxed">{comment.content}</p>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Comment Input */}
+          <div className="flex gap-2">
+            <Input
+              placeholder="댓글을 입력하세요..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault()
+                  handleSubmitComment()
+                }
+              }}
+              className="flex-1"
+            />
+            <Button size="icon" onClick={handleSubmitComment} disabled={!newComment.trim()}>
+              <Send className="size-4" />
+            </Button>
+          </div>
+        </section>
       </main>
     </div>
   )
