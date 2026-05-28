@@ -95,7 +95,7 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
             {`"${card.quote}"`}
           </p>
           <p className="text-muted-foreground text-sm">
-            — 《{card.book.title}》, {card.book.author}
+            《{card.book.title}》, {card.book.author}
           </p>
         </div>
       </div>
