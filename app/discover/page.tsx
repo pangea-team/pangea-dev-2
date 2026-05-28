@@ -1,24 +1,24 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import { Heart, MessageCircle, ArrowLeftRight, Check } from 'lucide-react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Header } from '@/components/layout/header'
 import { BottomNav } from '@/components/layout/bottom-nav'
+import { Header } from '@/components/layout/header'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { mockNotifications } from '@/lib/mock-data'
-import { cn } from '@/lib/utils'
 import type { Notification, NotificationType } from '@/lib/types'
+import { cn } from '@/lib/utils'
+import { ArrowLeftRight, Check, Heart, MessageCircle } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 function getNotificationIcon(type: NotificationType) {
   switch (type) {
     case 'like':
-      return <Heart className="size-4 text-rose-500 fill-rose-500" />
+      return <Heart className="size-4 text-foreground fill-current" />
     case 'comment':
-      return <MessageCircle className="size-4 text-blue-500" />
+      return <MessageCircle className="size-4 text-foreground" />
     case 'exchange_request':
-      return <ArrowLeftRight className="size-4 text-amber-500" />
+      return <ArrowLeftRight className="size-4 text-foreground" />
     case 'exchange_accepted':
-      return <Check className="size-4 text-emerald-500" />
+      return <Check className="size-4 text-(--color-success)" />
     default:
       return null
   }
@@ -27,7 +27,7 @@ function getNotificationIcon(type: NotificationType) {
 function formatRelativeTime(date: Date): string {
   const now = new Date()
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
-  
+
   if (diffInSeconds < 60) return '방금 전'
   if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}분 전`
   if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}시간 전`
@@ -35,28 +35,29 @@ function formatRelativeTime(date: Date): string {
   return date.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })
 }
 
-function NotificationItem({ 
-  notification, 
-  onCardClick 
-}: { 
+function NotificationItem({
+  notification,
+  onCardClick,
+}: {
   notification: Notification
-  onCardClick: (traceCardId: string) => void 
+  onCardClick: (traceCardId: string) => void
 }) {
   return (
     <button
+      type="button"
       className={cn(
         'w-full flex items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/50',
-        !notification.isRead && 'bg-primary/5'
+        !notification.isRead && 'bg-primary/5',
       )}
       onClick={() => notification.traceCard && onCardClick(notification.traceCard.id)}
     >
       <div className="relative">
         <Avatar className="size-10">
-          <AvatarImage 
-            src={notification.fromUser.avatarUrl} 
-            alt={notification.fromUser.displayName} 
+          <AvatarImage
+            src={notification.fromUser.avatarUrl}
+            alt={notification.fromUser.displayName}
           />
-          <AvatarFallback className="text-sm font-medium">
+          <AvatarFallback className="text-label-sm">
             {notification.fromUser.displayName[0]}
           </AvatarFallback>
         </Avatar>
@@ -66,23 +67,21 @@ function NotificationItem({
       </div>
 
       <div className="flex-1 min-w-0">
-        <p className="text-sm">
+        <p className="text-body-sm">
           <span className="font-semibold">{notification.fromUser.displayName}</span>
           <span className="text-muted-foreground">{notification.message}</span>
         </p>
         {notification.traceCard && (
-          <p className="text-xs text-muted-foreground mt-1 truncate">
+          <p className="text-caption text-muted-foreground mt-1 truncate">
             &quot;{notification.traceCard.quote.slice(0, 40)}...&quot;
           </p>
         )}
-        <p className="text-xs text-muted-foreground mt-1">
+        <p className="text-caption text-muted-foreground mt-1">
           {formatRelativeTime(notification.createdAt)}
         </p>
       </div>
 
-      {!notification.isRead && (
-        <div className="size-2 rounded-full bg-primary mt-2 shrink-0" />
-      )}
+      {!notification.isRead && <div className="size-2 rounded-full bg-primary mt-2 shrink-0" />}
     </button>
   )
 }
@@ -115,8 +114,8 @@ export default function DiscoverPage() {
             <div className="inline-flex items-center justify-center size-16 rounded-full bg-muted mb-4">
               <Heart className="size-8 text-muted-foreground" />
             </div>
-            <h3 className="font-medium mb-1">아직 알림이 없습니다</h3>
-            <p className="text-sm text-muted-foreground">
+            <h3 className="text-heading-sm mb-1">아직 알림이 없습니다</h3>
+            <p className="text-body-sm text-muted-foreground">
               다른 사용자가 회원님의 Trace Card에 반응하면 여기에 표시됩니다.
             </p>
           </div>

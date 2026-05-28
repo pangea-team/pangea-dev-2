@@ -1,0 +1,33 @@
+/* ============================================
+   Color Tokens
+   shadcn 토큰을 단일 진실(single source)로 참조.
+   PANGEA 고유 세분화 토큰만 직접 정의.
+   ============================================ */
+
+:root {
+  /* shadcn 토큰 참조 */
+  --color-background: var(--background);
+  --color-surface: var(--card);
+  --color-text-primary: var(--foreground);
+  --color-text-secondary: var(--muted-foreground);
+  --color-border: var(--border);
+
+  /* PANGEA 고유 토큰 */
+  --color-surface-elevated: #ffffff;
+  --color-surface-muted: #f4f4f4;
+  --color-text-tertiary: #999999;
+  --color-text-inverse: #ffffff;
+  --color-text-disabled: #c4c4c4;
+  --color-border-strong: #d4d4d4;
+  --color-border-subtle: #f0f0f0;
+
+  /* Brand (임시 — 디자인 확정 시 교체) */
+  --color-brand-primary: var(--primary);
+  --color-brand-hover: #333333;
+
+  /* Semantic */
+  --color-success: #16a34a;
+  --color-warning: #eab308;
+  --color-danger: var(--destructive);
+  --color-info: #2563eb;
+}

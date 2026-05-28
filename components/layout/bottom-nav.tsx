@@ -40,7 +40,7 @@ export function BottomNav() {
   return (
     <nav
       className={cn(
-        'fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 transition-transform duration-300',
+        'fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80 transition-transform duration-300',
         !isVisible && 'translate-y-full',
       )}
     >

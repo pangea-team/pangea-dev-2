@@ -1,17 +1,17 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { ArrowLeft, ArrowRight, Plus, Trash2, Eye, Globe, Lock } from 'lucide-react'
+import { BottomNav } from '@/components/layout/bottom-nav'
+import { Header } from '@/components/layout/header'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
-import { Header } from '@/components/layout/header'
-import { BottomNav } from '@/components/layout/bottom-nav'
+import { Textarea } from '@/components/ui/textarea'
 import type { CreateTraceCardForm, TraceLayer } from '@/lib/types'
 import { cn } from '@/lib/utils'
+import { ArrowLeft, ArrowRight, Globe, Lock, Plus, Trash2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 type Step = 'book' | 'quote' | 'layers' | 'preview'
 
@@ -73,10 +73,7 @@ export default function CreatePage() {
   const addLayer = () => {
     setForm({
       ...form,
-      layers: [
-        ...form.layers,
-        { type: 'me', content: '', order: form.layers.length },
-      ],
+      layers: [...form.layers, { type: 'me', content: '', order: form.layers.length }],
     })
   }
 
@@ -92,9 +89,7 @@ export default function CreatePage() {
   const updateLayer = (index: number, updates: Partial<Omit<TraceLayer, 'id'>>) => {
     setForm({
       ...form,
-      layers: form.layers.map((layer, i) =>
-        i === index ? { ...layer, ...updates } : layer
-      ),
+      layers: form.layers.map((layer, i) => (i === index ? { ...layer, ...updates } : layer)),
     })
   }
 
@@ -110,14 +105,14 @@ export default function CreatePage() {
 
       <main className="max-w-lg mx-auto">
         {/* Progress */}
-        <div className="px-4 py-3 border-b">
+        <div className="py-3 border-b">
           <div className="flex items-center gap-1">
             {steps.map((step, index) => (
               <div
                 key={step.id}
                 className={cn(
                   'h-1 flex-1 rounded-full transition-colors',
-                  index <= currentStepIndex ? 'bg-foreground' : 'bg-muted'
+                  index <= currentStepIndex ? 'bg-foreground' : 'bg-muted',
                 )}
               />
             ))}
@@ -125,17 +120,13 @@ export default function CreatePage() {
         </div>
 
         {/* Step Header */}
-        <div className="px-4 py-6 border-b">
-          <h2 className="text-xl font-semibold text-foreground mb-1">
-            {currentStepInfo.title}
-          </h2>
-          <p className="text-muted-foreground text-sm">
-            {currentStepInfo.subtitle}
-          </p>
+        <div className="py-6 border-b">
+          <h2 className="text-heading-lg text-foreground mb-1">{currentStepInfo.title}</h2>
+          <p className="text-body-sm text-muted-foreground">{currentStepInfo.subtitle}</p>
         </div>
 
         {/* Step Content */}
-        <div className="px-4 py-6">
+        <div className="py-6">
           {currentStep === 'book' && (
             <div className="space-y-4">
               <div className="space-y-2">
@@ -201,10 +192,10 @@ export default function CreatePage() {
                         type="button"
                         onClick={() => updateLayer(index, { type: option.type })}
                         className={cn(
-                          'flex-1 py-2 px-3 text-sm rounded-lg border transition-colors',
+                          'flex-1 py-2 px-3 text-body-sm rounded-lg border transition-colors',
                           layer.type === option.type
                             ? 'border-foreground bg-foreground text-background'
-                            : 'border-border hover:bg-muted'
+                            : 'border-border hover:bg-muted',
                         )}
                       >
                         {option.label}
@@ -213,9 +204,7 @@ export default function CreatePage() {
                   </div>
 
                   <Textarea
-                    placeholder={
-                      layerTypeOptions.find((o) => o.type === layer.type)?.description
-                    }
+                    placeholder={layerTypeOptions.find((o) => o.type === layer.type)?.description}
                     value={layer.content}
                     onChange={(e) => updateLayer(index, { content: e.target.value })}
                     className="min-h-24"
@@ -223,11 +212,7 @@ export default function CreatePage() {
                 </div>
               ))}
 
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={addLayer}
-              >
+              <Button variant="outline" className="w-full" onClick={addLayer}>
                 <Plus className="size-4 mr-2" />
                 레이어 추가
               </Button>
@@ -240,8 +225,8 @@ export default function CreatePage() {
               <div className="border rounded-xl p-4 space-y-4">
                 {/* Book Info */}
                 <div className="bg-muted/50 rounded-lg p-3">
-                  <p className="font-medium">{form.book.title}</p>
-                  <p className="text-sm text-muted-foreground">{form.book.author}</p>
+                  <p className="text-heading-sm">{form.book.title}</p>
+                  <p className="text-body-sm text-muted-foreground">{form.book.author}</p>
                 </div>
 
                 {/* Quote */}
@@ -260,13 +245,13 @@ export default function CreatePage() {
                           'rounded-lg p-3',
                           layer.type === 'me' && 'bg-primary/5',
                           layer.type === 'from-book' && 'bg-muted/50',
-                          layer.type === 'context' && 'bg-accent/50'
+                          layer.type === 'context' && 'bg-accent/50',
                         )}
                       >
-                        <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                        <p className="text-caption text-muted-foreground uppercase tracking-wider mb-1">
                           {layerTypeOptions.find((o) => o.type === layer.type)?.label}
                         </p>
-                        <p className="text-sm">{layer.content}</p>
+                        <p className="text-body-sm">{layer.content}</p>
                       </div>
                     ))}
                 </div>
@@ -280,7 +265,7 @@ export default function CreatePage() {
                   ) : (
                     <Lock className="size-4 text-muted-foreground" />
                   )}
-                  <span className="text-sm">
+                  <span className="text-body-sm">
                     {form.isPublic ? 'World에 공개' : '나만 보기'}
                   </span>
                 </div>
@@ -297,30 +282,18 @@ export default function CreatePage() {
         <div className="fixed bottom-14 left-0 right-0 border-t bg-background p-4">
           <div className="flex gap-3 max-w-lg mx-auto">
             {currentStepIndex > 0 && (
-              <Button
-                variant="outline"
-                onClick={goPrev}
-                className="flex-1"
-              >
+              <Button variant="outline" onClick={goPrev} className="flex-1">
                 <ArrowLeft className="size-4 mr-2" />
                 이전
               </Button>
             )}
 
             {currentStep === 'preview' ? (
-              <Button
-                onClick={handleSubmit}
-                className="flex-1"
-                disabled={!canGoNext()}
-              >
+              <Button onClick={handleSubmit} className="flex-1" disabled={!canGoNext()}>
                 저장하기
               </Button>
             ) : (
-              <Button
-                onClick={goNext}
-                className="flex-1"
-                disabled={!canGoNext()}
-              >
+              <Button onClick={goNext} className="flex-1" disabled={!canGoNext()}>
                 다음
                 <ArrowRight className="size-4 ml-2" />
               </Button>

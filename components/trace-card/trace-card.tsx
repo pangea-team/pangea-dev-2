@@ -14,7 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import type { TraceCard as TraceCardType } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { ArrowLeftRight, Bookmark, Heart, MessageCircle } from 'lucide-react'
+import { ArrowLeftRight, Heart, MessageCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -40,7 +40,7 @@ function formatDate(date: Date): string {
 export function TraceCard({ card, onCardClick }: TraceCardProps) {
   const router = useRouter()
   const [hearted, setHearted] = useState(card.userReaction?.hearted ?? false)
-  const [bookmarked, setBookmarked] = useState(card.userReaction?.bookmarked ?? false)
+
   const [heartCount, setHeartCount] = useState(card.reactions.heart)
   const [showExchangeDialog, setShowExchangeDialog] = useState(false)
 
@@ -65,14 +65,9 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
     setHeartCount(hearted ? heartCount - 1 : heartCount + 1)
   }
 
-  const handleBookmark = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    setBookmarked(!bookmarked)
-  }
-
   return (
     <article
-      className="border-b border-border px-5 py-6 transition-colors hover:bg-muted/30 cursor-pointer"
+      className="bg-card rounded-2xl border border-border px-5 py-6 mb-3 transition-colors hover:border-foreground/20 cursor-pointer"
       onClick={onCardClick}
     >
       {/* Header with Avatar */}
@@ -82,18 +77,16 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
           onClick={handleAvatarClick}
         >
           <AvatarImage src={card.user.avatarUrl} alt={card.user.displayName} />
-          <AvatarFallback className="text-xs font-medium">
-            {card.user.displayName[0]}
-          </AvatarFallback>
+          <AvatarFallback className="text-caption">{card.user.displayName[0]}</AvatarFallback>
         </Avatar>
         <div className="flex items-center gap-2 flex-1 min-w-0">
           <span
-            className="font-medium text-foreground text-sm truncate cursor-pointer hover:underline"
+            className="text-label-sm text-foreground truncate cursor-pointer hover:underline"
             onClick={handleAvatarClick}
           >
             {card.user.displayName}
           </span>
-          <span className="text-muted-foreground text-sm">{formatDate(card.createdAt)}</span>
+          <span className="text-body-sm text-muted-foreground">{formatDate(card.createdAt)}</span>
         </div>
         <Button
           variant="ghost"
@@ -109,21 +102,17 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
       <div className="space-y-5">
         {/* Me Section */}
         <div>
-          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2.5">Me</p>
-          <p className="text-foreground leading-relaxed text-balance text-[15px]">
-            {card.meThought}
-          </p>
+          <p className="text-caption text-muted-foreground uppercase tracking-wider mb-2.5">Me</p>
+          <p className="text-body-lg text-foreground text-balance">{card.meThought}</p>
         </div>
 
         {/* From the Book Section */}
         <div>
-          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2.5">
+          <p className="text-caption text-muted-foreground uppercase tracking-wider mb-2.5">
             From the Book
           </p>
-          <p className="text-foreground/80 leading-relaxed mb-2.5 text-balance text-[15px]">
-            {`"${card.quote}"`}
-          </p>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-foreground/80  mb-2.5 text-quote">{`"${card.quote}"`}</p>
+          <p className="text-body-sm text-muted-foreground">
             《{card.book.title}》, {card.book.author}
           </p>
         </div>
@@ -135,13 +124,13 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
           variant="ghost"
           size="sm"
           className={cn(
-            'text-muted-foreground hover:text-rose-500 gap-1.5 px-2',
-            hearted && 'text-rose-500',
+            'text-muted-foreground hover:text-foreground gap-1.5 px-2',
+            hearted && 'text-primary',
           )}
           onClick={handleHeart}
         >
           <Heart className={cn('size-4', hearted && 'fill-current')} />
-          <span className="text-sm tabular-nums">{heartCount}</span>
+          <span className="text-body-sm tabular-nums">{heartCount}</span>
         </Button>
 
         <Button
@@ -151,19 +140,7 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
           onClick={onCardClick}
         >
           <MessageCircle className="size-4" />
-          <span className="text-sm tabular-nums">{card.reactions.comment}</span>
-        </Button>
-
-        <Button
-          variant="ghost"
-          size="sm"
-          className={cn(
-            'text-muted-foreground hover:text-primary px-2',
-            bookmarked && 'text-primary',
-          )}
-          onClick={handleBookmark}
-        >
-          <Bookmark className={cn('size-4', bookmarked && 'fill-current')} />
+          <span className="text-body-sm tabular-nums">{card.reactions.comment}</span>
         </Button>
       </div>
 
