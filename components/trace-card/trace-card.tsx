@@ -76,7 +76,7 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
         {/* Me Section */}
         <div>
           <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Me</p>
-          <p className="text-foreground leading-relaxed text-balance">{`"${card.meThought}"`}</p>
+          <p className="text-foreground leading-relaxed text-balance">{card.meThought}</p>
         </div>
 
         {/* Divider */}
