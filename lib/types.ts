@@ -36,7 +36,9 @@ export interface TraceCard {
   user: User
   book: Book
   quote: string // 밑줄 친 문장
-  layers: TraceLayer[] // 다층 감상
+  meThought: string // 나의 한 줄 생각 (Me)
+  traceExpanded: string // 확장된 흔적 글 (Trace Expanded)
+  layers: TraceLayer[] // 다층 감상 (레거시, 추후 제거 가능)
   isPublic: boolean
   createdAt: Date
   updatedAt: Date
@@ -64,5 +66,29 @@ export interface CreateTraceCardForm {
   isPublic: boolean
 }
 
+// 댓글
+export interface Comment {
+  id: string
+  userId: string
+  user: User
+  traceCardId: string
+  content: string
+  createdAt: Date
+}
+
 // 피드 필터
 export type FeedFilter = 'all' | 'following' | 'recent'
+
+// 알림 타입
+export type NotificationType = 'like' | 'comment' | 'exchange_request' | 'exchange_accepted'
+
+// 알림
+export interface Notification {
+  id: string
+  type: NotificationType
+  fromUser: User
+  traceCard?: TraceCard
+  message: string
+  isRead: boolean
+  createdAt: Date
+}
