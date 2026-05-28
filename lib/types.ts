@@ -66,3 +66,17 @@ export interface CreateTraceCardForm {
 
 // 피드 필터
 export type FeedFilter = 'all' | 'following' | 'recent'
+
+// 알림 타입
+export type NotificationType = 'like' | 'comment' | 'exchange_request' | 'exchange_accepted'
+
+// 알림
+export interface Notification {
+  id: string
+  type: NotificationType
+  fromUser: User
+  traceCard?: TraceCard
+  message: string
+  isRead: boolean
+  createdAt: Date
+}

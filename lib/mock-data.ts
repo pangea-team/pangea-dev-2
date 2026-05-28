@@ -1,4 +1,4 @@
-import type { User, Book, TraceCard } from './types'
+import type { User, Book, TraceCard, Notification } from './types'
 
 // 목업 사용자
 export const mockUsers: User[] = [
@@ -172,3 +172,52 @@ export const myTraceCards = mockTraceCards.filter(
 
 // 피드용 Trace Cards (공개된 것만)
 export const feedTraceCards = mockTraceCards.filter((card) => card.isPublic)
+
+// 목업 알림
+export const mockNotifications: Notification[] = [
+  {
+    id: 'notif-1',
+    type: 'like',
+    fromUser: mockUsers[1],
+    traceCard: mockTraceCards[2],
+    message: '님이 회원님의 Trace Card를 좋아합니다.',
+    isRead: false,
+    createdAt: new Date('2024-05-20T14:30:00'),
+  },
+  {
+    id: 'notif-2',
+    type: 'comment',
+    fromUser: mockUsers[2],
+    traceCard: mockTraceCards[2],
+    message: '님이 회원님의 Trace Card에 댓글을 남겼습니다.',
+    isRead: false,
+    createdAt: new Date('2024-05-20T12:15:00'),
+  },
+  {
+    id: 'notif-3',
+    type: 'exchange_request',
+    fromUser: mockUsers[1],
+    traceCard: mockTraceCards[0],
+    message: '님이 교환을 요청했습니다.',
+    isRead: false,
+    createdAt: new Date('2024-05-19T18:45:00'),
+  },
+  {
+    id: 'notif-4',
+    type: 'like',
+    fromUser: mockUsers[2],
+    traceCard: mockTraceCards[2],
+    message: '님이 회원님의 Trace Card를 좋아합니다.',
+    isRead: true,
+    createdAt: new Date('2024-05-18T09:20:00'),
+  },
+  {
+    id: 'notif-5',
+    type: 'exchange_accepted',
+    fromUser: mockUsers[1],
+    traceCard: mockTraceCards[3],
+    message: '님이 교환 요청을 수락했습니다.',
+    isRead: true,
+    createdAt: new Date('2024-05-17T16:00:00'),
+  },
+]

@@ -2,12 +2,13 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Globe, PlusCircle, User } from 'lucide-react'
+import { Globe, Lightbulb, PlusCircle, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const navItems = [
   { href: '/', icon: Globe, label: 'World' },
   { href: '/create', icon: PlusCircle, label: 'Create' },
+  { href: '/activity', icon: Lightbulb, label: '활동' },
   { href: '/profile', icon: User, label: 'Profile' },
 ]
 
