@@ -1,11 +1,22 @@
 'use client'
 
-import { useState } from 'react'
-import { Heart, MessageCircle, Bookmark, MoreHorizontal } from 'lucide-react'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import type { TraceCard as TraceCardType } from '@/lib/types'
 import { cn } from '@/lib/utils'
+import { ArrowLeftRight, Bookmark, Heart, MessageCircle } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 interface TraceCardProps {
   card: TraceCardType
@@ -27,9 +38,26 @@ function formatDate(date: Date): string {
 }
 
 export function TraceCard({ card, onCardClick }: TraceCardProps) {
+  const router = useRouter()
   const [hearted, setHearted] = useState(card.userReaction?.hearted ?? false)
   const [bookmarked, setBookmarked] = useState(card.userReaction?.bookmarked ?? false)
   const [heartCount, setHeartCount] = useState(card.reactions.heart)
+  const [showExchangeDialog, setShowExchangeDialog] = useState(false)
+
+  const handleAvatarClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    router.push(`/profile/${card.user.id}?from=${window.location.pathname}`)
+  }
+
+  const handleExchangeRequest = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setShowExchangeDialog(true)
+  }
+
+  const handleConfirmExchange = () => {
+    // TODO: 교환 요청 API 호출
+    setShowExchangeDialog(false)
+  }
 
   const handleHeart = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -42,123 +70,118 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
     setBookmarked(!bookmarked)
   }
 
-  const firstLayer = card.layers[0]
-
   return (
     <article
-      className="border-b border-border px-4 py-4 transition-colors hover:bg-muted/30 cursor-pointer"
+      className="border-b border-border px-5 py-6 transition-colors hover:bg-muted/30 cursor-pointer"
       onClick={onCardClick}
     >
-      <div className="flex gap-3">
-        {/* Avatar */}
-        <Avatar className="size-10 shrink-0">
+      {/* Header with Avatar */}
+      <div className="flex items-center gap-3 mb-5">
+        <Avatar
+          className="size-9 shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={handleAvatarClick}
+        >
           <AvatarImage src={card.user.avatarUrl} alt={card.user.displayName} />
-          <AvatarFallback className="text-sm font-medium">
+          <AvatarFallback className="text-xs font-medium">
             {card.user.displayName[0]}
           </AvatarFallback>
         </Avatar>
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+          <span
+            className="font-medium text-foreground text-sm truncate cursor-pointer hover:underline"
+            onClick={handleAvatarClick}
+          >
+            {card.user.displayName}
+          </span>
+          <span className="text-muted-foreground text-sm">{formatDate(card.createdAt)}</span>
+        </div>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          className="text-muted-foreground hover:text-primary"
+          onClick={handleExchangeRequest}
+        >
+          <ArrowLeftRight className="size-4" />
+        </Button>
+      </div>
 
-        {/* Content */}
-        <div className="flex-1 min-w-0">
-          {/* Header */}
-          <div className="flex items-center gap-2 mb-1">
-            <span className="font-semibold text-foreground truncate">
-              {card.user.displayName}
-            </span>
-            <span className="text-muted-foreground text-sm">
-              @{card.user.username}
-            </span>
-            <span className="text-muted-foreground text-sm">·</span>
-            <span className="text-muted-foreground text-sm">
-              {formatDate(card.createdAt)}
-            </span>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              className="ml-auto -mr-2 text-muted-foreground hover:text-foreground"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <MoreHorizontal className="size-4" />
-            </Button>
-          </div>
+      {/* Card Content */}
+      <div className="space-y-5">
+        {/* Me Section */}
+        <div>
+          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2.5">Me</p>
+          <p className="text-foreground leading-relaxed text-balance text-[15px]">
+            {card.meThought}
+          </p>
+        </div>
 
-          {/* Book Info */}
-          <div className="mb-2">
-            <span className="text-muted-foreground text-sm">
-              {card.book.title}
-            </span>
-            <span className="text-muted-foreground text-sm mx-1">·</span>
-            <span className="text-muted-foreground text-sm">
-              {card.book.author}
-            </span>
-          </div>
-
-          {/* Quote */}
-          <blockquote className="border-l-2 border-primary/50 pl-3 mb-3">
-            <p className="text-foreground leading-relaxed text-balance">
-              {`"${card.quote}"`}
-            </p>
-          </blockquote>
-
-          {/* First Layer (Me) */}
-          {firstLayer && (
-            <div className="mb-3">
-              <p className="text-foreground/90 leading-relaxed">
-                {firstLayer.content}
-              </p>
-            </div>
-          )}
-
-          {/* Show more indicator if there are more layers */}
-          {card.layers.length > 1 && (
-            <p className="text-muted-foreground text-sm mb-3">
-              +{card.layers.length - 1}개의 레이어 더 보기
-            </p>
-          )}
-
-          {/* Actions */}
-          <div className="flex items-center gap-1 -ml-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              className={cn(
-                'text-muted-foreground hover:text-rose-500 gap-1.5 px-2',
-                hearted && 'text-rose-500'
-              )}
-              onClick={handleHeart}
-            >
-              <Heart
-                className={cn('size-4', hearted && 'fill-current')}
-              />
-              <span className="text-sm tabular-nums">{heartCount}</span>
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground hover:text-primary gap-1.5 px-2"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <MessageCircle className="size-4" />
-              <span className="text-sm tabular-nums">{card.reactions.comment}</span>
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              className={cn(
-                'text-muted-foreground hover:text-primary px-2',
-                bookmarked && 'text-primary'
-              )}
-              onClick={handleBookmark}
-            >
-              <Bookmark
-                className={cn('size-4', bookmarked && 'fill-current')}
-              />
-            </Button>
-          </div>
+        {/* From the Book Section */}
+        <div>
+          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2.5">
+            From the Book
+          </p>
+          <p className="text-foreground/80 leading-relaxed mb-2.5 text-balance text-[15px]">
+            {`"${card.quote}"`}
+          </p>
+          <p className="text-muted-foreground text-sm">
+            《{card.book.title}》, {card.book.author}
+          </p>
         </div>
       </div>
+
+      {/* Actions */}
+      <div className="flex items-center gap-2 mt-5 -ml-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          className={cn(
+            'text-muted-foreground hover:text-rose-500 gap-1.5 px-2',
+            hearted && 'text-rose-500',
+          )}
+          onClick={handleHeart}
+        >
+          <Heart className={cn('size-4', hearted && 'fill-current')} />
+          <span className="text-sm tabular-nums">{heartCount}</span>
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-muted-foreground hover:text-primary gap-1.5 px-2"
+          onClick={onCardClick}
+        >
+          <MessageCircle className="size-4" />
+          <span className="text-sm tabular-nums">{card.reactions.comment}</span>
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          className={cn(
+            'text-muted-foreground hover:text-primary px-2',
+            bookmarked && 'text-primary',
+          )}
+          onClick={handleBookmark}
+        >
+          <Bookmark className={cn('size-4', bookmarked && 'fill-current')} />
+        </Button>
+      </div>
+
+      {/* Exchange Request Dialog */}
+      <AlertDialog open={showExchangeDialog} onOpenChange={setShowExchangeDialog}>
+        <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+          <AlertDialogHeader>
+            <AlertDialogTitle>교환 요청</AlertDialogTitle>
+            <AlertDialogDescription>
+              {card.user.displayName}님에게 《{card.book.title}》 교환을 요청하시겠습니까?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>취소</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmExchange}>요청하기</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </article>
   )
 }
