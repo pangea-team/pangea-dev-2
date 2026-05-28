@@ -102,7 +102,6 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
       <div className="space-y-5">
         {/* Me Section */}
         <div>
-          <p className="text-caption text-muted-foreground uppercase tracking-wider mb-2.5">Me</p>
           <p className="text-body-lg text-foreground text-balance">{card.meThought}</p>
         </div>
 
