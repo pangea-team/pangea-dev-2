@@ -1,13 +1,3 @@
-import * as Sentry from '@sentry/nextjs'
-
 export async function register() {
-  if (process.env.NEXT_RUNTIME === 'nodejs') {
-    await import('./sentry.server.config')
-  }
-
-  if (process.env.NEXT_RUNTIME === 'edge') {
-    await import('./sentry.edge.config')
-  }
+  // 추후 모니터링 도구 추가 시 여기에 등록
 }
-
-export const onRequestError = Sentry.captureRequestError

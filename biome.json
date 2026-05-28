@@ -14,7 +14,6 @@
       "lib/supabase/database.types.ts",
       "pnpm-lock.yaml",
       ".vercel",
-      ".sentryclirc",
       "supabase/.branches",
       "supabase/.temp"
     ]
