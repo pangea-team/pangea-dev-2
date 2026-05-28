@@ -43,7 +43,7 @@ export default function TracePage({ params }: TracePageProps) {
   if (!card) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-muted-foreground">Trace Card를 찾을 수 없습니다.</p>
+        <p className="text-muted-foreground">Trace를 찾을 수 없습니다.</p>
       </div>
     )
   }
@@ -115,7 +115,7 @@ export default function TracePage({ params }: TracePageProps) {
           <Button variant="ghost" size="icon-sm" onClick={() => router.push(fromPage)}>
             <ArrowLeft className="size-5" />
           </Button>
-          <h1 className="text-heading-sm">TRACE CARD</h1>
+          <h1 className="text-heading-sm">TRACE</h1>
         </div>
       </header>
 
@@ -152,7 +152,6 @@ export default function TracePage({ params }: TracePageProps) {
 
           {/* Me Section */}
           <section className="mb-10">
-            <p className="text-caption uppercase tracking-wider text-muted-foreground mb-4">Me</p>
             <p className="text-heading-sm text-foreground">{card.meThought}</p>
           </section>
 
