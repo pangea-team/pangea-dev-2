@@ -51,13 +51,13 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
 
   return (
     <article
-      className="border-b border-border px-4 py-5 transition-colors hover:bg-muted/30 cursor-pointer"
+      className="border-b border-border px-5 py-6 transition-colors hover:bg-muted/30 cursor-pointer"
       onClick={onCardClick}
     >
       {/* Header with Avatar */}
-      <div className="flex items-center gap-3 mb-4">
+      <div className="flex items-center gap-3 mb-5">
         <Avatar
-          className="size-8 shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+          className="size-9 shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
           onClick={handleAvatarClick}
         >
           <AvatarImage src={card.user.avatarUrl} alt={card.user.displayName} />
@@ -85,19 +85,21 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
       </div>
 
       {/* Card Content */}
-      <div className="space-y-4">
+      <div className="space-y-5">
         {/* Me Section */}
         <div>
-          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Me</p>
-          <p className="text-foreground leading-relaxed text-balance">{card.meThought}</p>
+          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2.5">Me</p>
+          <p className="text-foreground leading-relaxed text-balance text-[15px]">
+            {card.meThought}
+          </p>
         </div>
 
         {/* From the Book Section */}
         <div>
-          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">
+          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2.5">
             From the Book
           </p>
-          <p className="text-foreground/80 leading-relaxed mb-2 text-balance">
+          <p className="text-foreground/80 leading-relaxed mb-2.5 text-balance text-[15px]">
             {`"${card.quote}"`}
           </p>
           <p className="text-muted-foreground text-sm">
@@ -107,7 +109,7 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-1 mt-4 -ml-2">
+      <div className="flex items-center gap-2 mt-5 -ml-2">
         <Button
           variant="ghost"
           size="sm"
