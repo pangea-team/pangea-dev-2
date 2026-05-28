@@ -67,82 +67,80 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
 
   return (
     <article
-      className="bg-background border-b border-border transition-colors hover:bg-muted/30 cursor-pointer"
+      className="bg-background px-4 py-5 transition-colors hover:bg-muted/30 cursor-pointer"
       onClick={onCardClick}
     >
-      <div className="max-w-2xl mx-auto px-4 py-5">
-        {/* Header with Avatar */}
-        <div className="flex items-center gap-3 mb-5">
-          <Avatar
-            className="size-9 shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+      {/* Header with Avatar */}
+      <div className="flex items-center gap-3 mb-5">
+        <Avatar
+          className="size-9 shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={handleAvatarClick}
+        >
+          <AvatarImage src={card.user.avatarUrl} alt={card.user.displayName} />
+          <AvatarFallback className="text-caption">{card.user.displayName[0]}</AvatarFallback>
+        </Avatar>
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+          <span
+            className="text-label-sm text-foreground truncate cursor-pointer hover:underline"
             onClick={handleAvatarClick}
           >
-            <AvatarImage src={card.user.avatarUrl} alt={card.user.displayName} />
-            <AvatarFallback className="text-caption">{card.user.displayName[0]}</AvatarFallback>
-          </Avatar>
-          <div className="flex items-center gap-2 flex-1 min-w-0">
-            <span
-              className="text-label-sm text-foreground truncate cursor-pointer hover:underline"
-              onClick={handleAvatarClick}
-            >
-              {card.user.displayName}
-            </span>
-            <span className="text-body-sm text-muted-foreground">{formatDate(card.createdAt)}</span>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            className="text-muted-foreground hover:text-primary"
-            onClick={handleExchangeRequest}
-          >
-            <ArrowLeftRight className="size-4" />
-          </Button>
+            {card.user.displayName}
+          </span>
+          <span className="text-body-sm text-muted-foreground">{formatDate(card.createdAt)}</span>
+        </div>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          className="text-muted-foreground hover:text-primary"
+          onClick={handleExchangeRequest}
+        >
+          <ArrowLeftRight className="size-4" />
+        </Button>
+      </div>
+
+      {/* Card Content */}
+      <div className="space-y-5">
+        {/* Me Section */}
+        <div>
+          <p className="text-body-lg text-foreground text-balance">{card.meThought}</p>
         </div>
 
-        {/* Card Content */}
-        <div className="space-y-5">
-          {/* Me Section */}
-          <div>
-            <p className="text-body-lg text-foreground text-balance">{card.meThought}</p>
-          </div>
-
-          {/* From the Book Section */}
-          <div>
-            <p className="text-caption text-muted-foreground uppercase tracking-wider mb-2.5">
-              From the Book
-            </p>
-            <p className="text-foreground/80  mb-2.5 text-quote">{`"${card.quote}"`}</p>
-            <p className="text-body-sm text-muted-foreground">
-              《{card.book.title}》, {card.book.author}
-            </p>
-          </div>
+        {/* From the Book Section */}
+        <div>
+          <p className="text-caption text-muted-foreground uppercase tracking-wider mb-2.5">
+            From the Book
+          </p>
+          <p className="text-foreground/80  mb-2.5 text-quote">{`"${card.quote}"`}</p>
+          <p className="text-body-sm text-muted-foreground">
+            《{card.book.title}》, {card.book.author}
+          </p>
         </div>
+      </div>
 
-        {/* Actions */}
-        <div className="flex items-center gap-2 mt-5 -ml-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            className={cn(
-              'text-muted-foreground hover:text-foreground gap-1.5 px-2',
-              hearted && 'text-primary',
-            )}
-            onClick={handleHeart}
-          >
-            <Heart className={cn('size-4', hearted && 'fill-current')} />
-            <span className="text-body-sm tabular-nums">{heartCount}</span>
-          </Button>
+      {/* Actions */}
+      <div className="flex items-center gap-2 mt-5 -ml-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          className={cn(
+            'text-muted-foreground hover:text-foreground gap-1.5 px-2',
+            hearted && 'text-primary',
+          )}
+          onClick={handleHeart}
+        >
+          <Heart className={cn('size-4', hearted && 'fill-current')} />
+          <span className="text-body-sm tabular-nums">{heartCount}</span>
+        </Button>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-muted-foreground hover:text-primary gap-1.5 px-2"
-            onClick={onCardClick}
-          >
-            <MessageCircle className="size-4" />
-            <span className="text-body-sm tabular-nums">{card.reactions.comment}</span>
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-muted-foreground hover:text-primary gap-1.5 px-2"
+          onClick={onCardClick}
+        >
+          <MessageCircle className="size-4" />
+          <span className="text-body-sm tabular-nums">{card.reactions.comment}</span>
+        </Button>
       </div>
 
       {/* Exchange Request Dialog */}
