@@ -1,9 +1,9 @@
-import { Analytics } from '@vercel/analytics/next'
+import { Toaster } from '@/components/ui/sonner'
+import { Providers } from '@/lib/providers/providers'
 import { GoogleAnalytics } from '@next/third-parties/google'
+import { Analytics } from '@vercel/analytics/next'
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
-import { Providers } from '@/lib/providers/providers'
-import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' })
@@ -14,11 +14,11 @@ export const metadata: Metadata = {
   description: '독서의 순간을 기록하고 공유하는 책 기반 SNS',
   icons: {
     icon: [
-      { url: '/icon-light-32x32.png', media: '(prefers-color-scheme: light)' },
-      { url: '/icon-dark-32x32.png', media: '(prefers-color-scheme: dark)' },
-      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/icons/icon-light-32x32.png', media: '(prefers-color-scheme: light)' },
+      { url: '/icons/icon-dark-32x32.png', media: '(prefers-color-scheme: dark)' },
+      { url: '/icons/icon.svg', type: 'image/svg+xml' },
     ],
-    apple: '/apple-icon.png',
+    apple: '/icons/apple-icon.png',
   },
 }
 
