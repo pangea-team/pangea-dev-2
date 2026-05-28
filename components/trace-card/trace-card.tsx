@@ -72,7 +72,7 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
 
   return (
     <article
-      className="border-b border-border px-5 py-6 transition-colors hover:bg-muted/30 cursor-pointer"
+      className="bg-card rounded-2xl border border-border px-5 py-6 mb-3 transition-colors hover:border-foreground/20 cursor-pointer"
       onClick={onCardClick}
     >
       {/* Header with Avatar */}
@@ -120,9 +120,7 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
           <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2.5">
             From the Book
           </p>
-          <p className="text-foreground/80 leading-relaxed mb-2.5 text-balance [font-size:var(--text-base)]">
-            {`"${card.quote}"`}
-          </p>
+          <p className="text-foreground/80  mb-2.5 text-quote">{`"${card.quote}"`}</p>
           <p className="text-muted-foreground text-sm">
             《{card.book.title}》, {card.book.author}
           </p>

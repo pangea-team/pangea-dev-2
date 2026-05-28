@@ -133,111 +133,114 @@ export default function TracePage({ params }: TracePageProps) {
       </header>
 
       {/* Content */}
-      <main className="max-w-lg mx-auto px-6 py-6">
-        {/* User Info */}
-        <div
-          className="flex items-center gap-3 mb-8 cursor-pointer hover:opacity-80 transition-opacity"
-          onClick={handleUserClick}
-        >
-          <Avatar className="size-10">
-            <AvatarImage src={card.user.avatarUrl} alt={card.user.displayName} />
-            <AvatarFallback className="text-sm font-medium">
-              {card.user.displayName[0]}
-            </AvatarFallback>
-          </Avatar>
-          <div>
-            <p className="font-medium text-foreground">{card.user.displayName}</p>
-            <p className="text-sm text-muted-foreground">@{card.user.username}</p>
-          </div>
-        </div>
-
-        {/* Me Section */}
-        <section className="mb-10">
-          <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">Me</p>
-          <p className="text-heading-sm text-foreground">{card.meThought}</p>
-        </section>
-
-        {/* Divider */}
-        <div className="border-t border-border my-8" />
-
-        {/* From the Book Section */}
-        <section className="mb-10">
-          <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">
-            From the Book
-          </p>
-
-          {/* Book Cover */}
-          <div className="flex gap-4 mb-6">
-            <div className="relative w-20 h-28 flex-shrink-0 rounded-md overflow-hidden bg-muted">
-              {card.book.coverUrl ? (
-                <Image
-                  src={card.book.coverUrl}
-                  alt={card.book.title}
-                  fill
-                  className="object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
-                  No Cover
-                </div>
-              )}
-            </div>
-            <div className="flex flex-col justify-center">
-              <p className="font-medium text-foreground">{card.book.title}</p>
-              <p className="text-sm text-muted-foreground">{card.book.author}</p>
-              {card.book.publisher && (
-                <p className="text-xs text-muted-foreground mt-1">{card.book.publisher}</p>
-              )}
+      <main className="max-w-lg mx-auto px-4 py-4">
+        {/* Trace Card */}
+        <article className="bg-card rounded-2xl border border-border px-6 py-6 mb-4">
+          {/* User Info */}
+          <div
+            className="flex items-center gap-3 mb-8 cursor-pointer hover:opacity-80 transition-opacity"
+            onClick={handleUserClick}
+          >
+            <Avatar className="size-10">
+              <AvatarImage src={card.user.avatarUrl} alt={card.user.displayName} />
+              <AvatarFallback className="text-sm font-medium">
+                {card.user.displayName[0]}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <p className="font-medium text-foreground">{card.user.displayName}</p>
+              <p className="text-sm text-muted-foreground">@{card.user.username}</p>
             </div>
           </div>
 
-          <blockquote className="mb-4">
-            <p className="text-lg text-foreground leading-relaxed italic">{`"${card.quote}"`}</p>
-          </blockquote>
-        </section>
+          {/* Me Section */}
+          <section className="mb-10">
+            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">Me</p>
+            <p className="text-heading-sm text-foreground">{card.meThought}</p>
+          </section>
 
-        {/* Divider */}
-        <div className="border-t border-border my-8" />
+          {/* Divider */}
+          <div className="border-t border-border my-8" />
 
-        {/* Trace Expanded Section */}
-        <section className="mb-10">
-          <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">
-            Trace Expanded
-          </p>
-          <div className="text-foreground leading-loose whitespace-pre-line">
-            {card.traceExpanded}
+          {/* From the Book Section */}
+          <section className="mb-10">
+            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">
+              From the Book
+            </p>
+
+            {/* Book Cover */}
+            <div className="flex gap-4 mb-6">
+              <div className="relative w-20 h-28 flex-shrink-0 rounded-md overflow-hidden bg-muted">
+                {card.book.coverUrl ? (
+                  <Image
+                    src={card.book.coverUrl}
+                    alt={card.book.title}
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
+                    No Cover
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col justify-center">
+                <p className="font-medium text-foreground">{card.book.title}</p>
+                <p className="text-sm text-muted-foreground">{card.book.author}</p>
+                {card.book.publisher && (
+                  <p className="text-xs text-muted-foreground mt-1">{card.book.publisher}</p>
+                )}
+              </div>
+            </div>
+
+            <blockquote className="mb-4">
+              <p className="text-quote text-foreground">{`"${card.quote}"`}</p>
+            </blockquote>
+          </section>
+
+          {/* Divider */}
+          <div className="border-t border-border my-8" />
+
+          {/* Trace Expanded Section */}
+          <section className="mb-8">
+            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">
+              Trace Expanded
+            </p>
+            <div className="text-foreground leading-loose whitespace-pre-line">
+              {card.traceExpanded}
+            </div>
+          </section>
+
+          {/* Actions */}
+          <div className="flex items-center gap-2 pt-4 border-t border-border">
+            <Button
+              variant="ghost"
+              size="sm"
+              className={cn('gap-1.5', hearted ? 'text-primary' : 'text-muted-foreground')}
+              onClick={handleHeart}
+            >
+              <Heart className={cn('size-5', hearted && 'fill-current')} />
+              <span className="tabular-nums">{heartCount}</span>
+            </Button>
+
+            <Button variant="ghost" size="sm" className="text-muted-foreground gap-1.5">
+              <MessageCircle className="size-5" />
+              <span className="tabular-nums">{comments.length}</span>
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              className={cn(bookmarked ? 'text-primary' : 'text-muted-foreground')}
+              onClick={handleBookmark}
+            >
+              <Bookmark className={cn('size-5', bookmarked && 'fill-current')} />
+            </Button>
           </div>
-        </section>
-
-        {/* Actions */}
-        <div className="flex items-center gap-2 pt-4 border-t border-border">
-          <Button
-            variant="ghost"
-            size="sm"
-            className={cn('gap-1.5', hearted ? 'text-primary' : 'text-muted-foreground')}
-            onClick={handleHeart}
-          >
-            <Heart className={cn('size-5', hearted && 'fill-current')} />
-            <span className="tabular-nums">{heartCount}</span>
-          </Button>
-
-          <Button variant="ghost" size="sm" className="text-muted-foreground gap-1.5">
-            <MessageCircle className="size-5" />
-            <span className="tabular-nums">{comments.length}</span>
-          </Button>
-
-          <Button
-            variant="ghost"
-            size="sm"
-            className={cn(bookmarked ? 'text-primary' : 'text-muted-foreground')}
-            onClick={handleBookmark}
-          >
-            <Bookmark className={cn('size-5', bookmarked && 'fill-current')} />
-          </Button>
-        </div>
+        </article>
 
         {/* Comments Section */}
-        <section className="mt-8 pt-6 border-t border-border">
+        <section className="mt-8 px-2">
           <p className="text-xs uppercase tracking-widest text-muted-foreground mb-4">
             댓글 {comments.length}개
           </p>
