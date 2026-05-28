@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils'
 
-export function Header({ title, align = 'center' }: { title: string; align?: 'left' | 'center' }) {
+export function Header({ title, align = 'left' }: { title: string; align?: 'left' | 'center' }) {
   return (
     <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
       <div
