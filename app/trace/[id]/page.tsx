@@ -1,12 +1,22 @@
 'use client'
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { getCommentsByTraceCardId, mockTraceCards } from '@/lib/mock-data'
 import type { Comment } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { ArrowLeft, Bookmark, Heart, MessageCircle, MoreHorizontal, Send } from 'lucide-react'
+import { ArrowLeft, ArrowLeftRight, Bookmark, Heart, MessageCircle, Send } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { use, useState } from 'react'
@@ -29,6 +39,7 @@ export default function TracePage({ params }: TracePageProps) {
   const [heartCount, setHeartCount] = useState(card?.reactions.heart ?? 0)
   const [comments, setComments] = useState<Comment[]>(initialComments)
   const [newComment, setNewComment] = useState('')
+  const [showExchangeDialog, setShowExchangeDialog] = useState(false)
 
   if (!card) {
     return (
@@ -40,6 +51,15 @@ export default function TracePage({ params }: TracePageProps) {
 
   const handleUserClick = () => {
     router.push(`/profile/${card.user.id}?from=/trace/${id}`)
+  }
+
+  const handleExchangeRequest = () => {
+    setShowExchangeDialog(true)
+  }
+
+  const handleConfirmExchange = () => {
+    // TODO: 교환 요청 API 호출
+    setShowExchangeDialog(false)
   }
 
   const handleHeart = () => {
@@ -97,8 +117,13 @@ export default function TracePage({ params }: TracePageProps) {
             <ArrowLeft className="size-5" />
           </Button>
           <h1 className="font-semibold">TRACE CARD</h1>
-          <Button variant="ghost" size="icon-sm" className="ml-auto text-muted-foreground">
-            <MoreHorizontal className="size-5" />
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className="ml-auto text-muted-foreground hover:text-primary"
+            onClick={handleExchangeRequest}
+          >
+            <ArrowLeftRight className="size-5" />
           </Button>
         </div>
       </header>
@@ -264,6 +289,22 @@ export default function TracePage({ params }: TracePageProps) {
           </div>
         </section>
       </main>
+
+      {/* Exchange Request Dialog */}
+      <AlertDialog open={showExchangeDialog} onOpenChange={setShowExchangeDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>교환 요청</AlertDialogTitle>
+            <AlertDialogDescription>
+              {card.user.displayName}님에게 《{card.book.title}》 교환을 요청하시겠습니까?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>취소</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmExchange}>요청하기</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
