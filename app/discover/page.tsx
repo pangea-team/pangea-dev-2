@@ -96,7 +96,7 @@ export default function DiscoverPage() {
 
   return (
     <div className="min-h-screen bg-background pb-16">
-      <Header title="발견" align="left" />
+      <Header title="발견" align="center" />
 
       <main className="max-w-2xl mx-auto">
         {notifications.length > 0 ? (
