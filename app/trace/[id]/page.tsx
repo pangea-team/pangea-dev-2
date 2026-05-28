@@ -38,6 +38,10 @@ export default function TracePage({ params }: TracePageProps) {
     )
   }
 
+  const handleUserClick = () => {
+    router.push(`/profile/${card.user.id}?from=/trace/${id}`)
+  }
+
   const handleHeart = () => {
     setHearted(!hearted)
     setHeartCount(hearted ? heartCount - 1 : heartCount + 1)
@@ -102,7 +106,10 @@ export default function TracePage({ params }: TracePageProps) {
       {/* Content */}
       <main className="max-w-lg mx-auto px-6 py-6">
         {/* User Info */}
-        <div className="flex items-center gap-3 mb-8">
+        <div
+          className="flex items-center gap-3 mb-8 cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={handleUserClick}
+        >
           <Avatar className="size-10">
             <AvatarImage src={card.user.avatarUrl} alt={card.user.displayName} />
             <AvatarFallback className="text-sm font-medium">

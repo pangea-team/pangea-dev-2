@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import type { TraceCard as TraceCardType } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { Bookmark, Heart, MessageCircle, MoreHorizontal } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 interface TraceCardProps {
@@ -27,9 +28,15 @@ function formatDate(date: Date): string {
 }
 
 export function TraceCard({ card, onCardClick }: TraceCardProps) {
+  const router = useRouter()
   const [hearted, setHearted] = useState(card.userReaction?.hearted ?? false)
   const [bookmarked, setBookmarked] = useState(card.userReaction?.bookmarked ?? false)
   const [heartCount, setHeartCount] = useState(card.reactions.heart)
+
+  const handleAvatarClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    router.push(`/profile/${card.user.id}?from=${window.location.pathname}`)
+  }
 
   const handleHeart = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -49,14 +56,20 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
     >
       {/* Header with Avatar */}
       <div className="flex items-center gap-3 mb-4">
-        <Avatar className="size-8 shrink-0">
+        <Avatar
+          className="size-8 shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={handleAvatarClick}
+        >
           <AvatarImage src={card.user.avatarUrl} alt={card.user.displayName} />
           <AvatarFallback className="text-xs font-medium">
             {card.user.displayName[0]}
           </AvatarFallback>
         </Avatar>
         <div className="flex items-center gap-2 flex-1 min-w-0">
-          <span className="font-medium text-foreground text-sm truncate">
+          <span
+            className="font-medium text-foreground text-sm truncate cursor-pointer hover:underline"
+            onClick={handleAvatarClick}
+          >
             {card.user.displayName}
           </span>
           <span className="text-muted-foreground text-sm">{formatDate(card.createdAt)}</span>

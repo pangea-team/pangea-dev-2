@@ -1,23 +1,45 @@
 'use client'
 
-import { BottomNav } from '@/components/layout/bottom-nav'
-import { Header } from '@/components/layout/header'
 import { TraceCard } from '@/components/trace-card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { currentUser, mockTraceCards } from '@/lib/mock-data'
-import { BookOpen, Settings } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { mockTraceCards, mockUsers } from '@/lib/mock-data'
+import { ArrowLeft, BookOpen } from 'lucide-react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { use } from 'react'
 
-export default function ProfilePage() {
+interface UserProfilePageProps {
+  params: Promise<{ id: string }>
+}
+
+export default function UserProfilePage({ params }: UserProfilePageProps) {
+  const { id } = use(params)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const fromPage = searchParams.get('from') || '/'
 
-  // For demo: show all cards for current user (in real app, filter by userId)
-  const userCards = mockTraceCards.filter((card) => card.userId === currentUser.id)
+  const user = mockUsers.find((u) => u.id === id)
+  const userCards = mockTraceCards.filter((card) => card.userId === id)
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground">사용자를 찾을 수 없습니다.</p>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-background pb-16">
-      <Header title="프로필" />
+      {/* Header */}
+      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+        <div className="flex items-center gap-3 px-4 h-14">
+          <Button variant="ghost" size="icon-sm" onClick={() => router.push(fromPage)}>
+            <ArrowLeft className="size-5" />
+          </Button>
+          <h1 className="font-semibold">프로필</h1>
+        </div>
+      </header>
 
       <main className="max-w-lg mx-auto">
         {/* Profile Header - Threads style */}
@@ -25,27 +47,18 @@ export default function ProfilePage() {
           <div className="flex items-start justify-between">
             {/* Left: Name, ID, Bio */}
             <div className="flex-1">
-              <h2 className="text-2xl font-bold">{currentUser.displayName}</h2>
-              <p className="text-muted-foreground text-sm">@{currentUser.username}</p>
-              {currentUser.bio && (
-                <p className="text-sm mt-3 text-foreground/90">{currentUser.bio}</p>
-              )}
+              <h2 className="text-2xl font-bold">{user.displayName}</h2>
+              <p className="text-muted-foreground text-sm">@{user.username}</p>
+              {user.bio && <p className="text-sm mt-3 text-foreground/90">{user.bio}</p>}
             </div>
 
             {/* Right: Avatar */}
             <Avatar className="size-20 shrink-0">
-              <AvatarImage src={currentUser.avatarUrl} alt={currentUser.displayName} />
+              <AvatarImage src={user.avatarUrl} alt={user.displayName} />
               <AvatarFallback className="text-2xl font-medium">
-                {currentUser.displayName[0]}
+                {user.displayName[0]}
               </AvatarFallback>
             </Avatar>
-          </div>
-
-          {/* Settings Button */}
-          <div className="flex justify-end mt-2">
-            <Button variant="ghost" size="icon-sm">
-              <Settings className="size-5" />
-            </Button>
           </div>
 
           {/* Stats */}
@@ -68,7 +81,7 @@ export default function ProfilePage() {
               <TraceCard
                 key={card.id}
                 card={card}
-                onCardClick={() => router.push(`/trace/${card.id}?from=/profile`)}
+                onCardClick={() => router.push(`/trace/${card.id}?from=/profile/${id}`)}
               />
             ))
           ) : (
@@ -82,8 +95,6 @@ export default function ProfilePage() {
           )}
         </div>
       </main>
-
-      <BottomNav />
     </div>
   )
 }
