@@ -33,7 +33,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
     <div className="min-h-screen bg-background pb-16">
       {/* Header */}
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
-        <div className="flex items-center gap-3 px-4 h-14">
+        <div className="flex items-center gap-3 h-14">
           <Button variant="ghost" size="icon-sm" onClick={() => router.push(fromPage)}>
             <ArrowLeft className="size-5" />
           </Button>
@@ -43,7 +43,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
 
       <main className="max-w-lg mx-auto">
         {/* Profile Header - Threads style */}
-        <div className="px-4 py-6 border-b">
+        <div className="py-6 border-b">
           <div className="flex items-start justify-between">
             {/* Left: Name, ID, Bio */}
             <div className="flex-1">

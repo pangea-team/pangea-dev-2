@@ -14,7 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import type { TraceCard as TraceCardType } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { ArrowLeftRight, Bookmark, Heart, MessageCircle } from 'lucide-react'
+import { ArrowLeftRight, Heart, MessageCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -40,7 +40,7 @@ function formatDate(date: Date): string {
 export function TraceCard({ card, onCardClick }: TraceCardProps) {
   const router = useRouter()
   const [hearted, setHearted] = useState(card.userReaction?.hearted ?? false)
-  const [bookmarked, setBookmarked] = useState(card.userReaction?.bookmarked ?? false)
+
   const [heartCount, setHeartCount] = useState(card.reactions.heart)
   const [showExchangeDialog, setShowExchangeDialog] = useState(false)
 
@@ -63,11 +63,6 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
     e.stopPropagation()
     setHearted(!hearted)
     setHeartCount(hearted ? heartCount - 1 : heartCount + 1)
-  }
-
-  const handleBookmark = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    setBookmarked(!bookmarked)
   }
 
   return (
@@ -146,18 +141,6 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
         >
           <MessageCircle className="size-4" />
           <span className="text-body-sm tabular-nums">{card.reactions.comment}</span>
-        </Button>
-
-        <Button
-          variant="ghost"
-          size="sm"
-          className={cn(
-            'text-muted-foreground hover:text-primary px-2',
-            bookmarked && 'text-primary',
-          )}
-          onClick={handleBookmark}
-        >
-          <Bookmark className={cn('size-4', bookmarked && 'fill-current')} />
         </Button>
       </div>
 

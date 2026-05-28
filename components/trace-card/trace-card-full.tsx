@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import type { TraceCard as TraceCardType } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { Bookmark, Heart, MessageCircle, MoreHorizontal, X } from 'lucide-react'
+import { Heart, MessageCircle, MoreHorizontal, X } from 'lucide-react'
 import { useState } from 'react'
 
 interface TraceCardFullProps {
@@ -30,16 +30,11 @@ const layerTypeLabel = {
 
 export function TraceCardFull({ card, onClose }: TraceCardFullProps) {
   const [hearted, setHearted] = useState(card.userReaction?.hearted ?? false)
-  const [bookmarked, setBookmarked] = useState(card.userReaction?.bookmarked ?? false)
   const [heartCount, setHeartCount] = useState(card.reactions.heart)
 
   const handleHeart = () => {
     setHearted(!hearted)
     setHeartCount(hearted ? heartCount - 1 : heartCount + 1)
-  }
-
-  const handleBookmark = () => {
-    setBookmarked(!bookmarked)
   }
 
   return (
@@ -133,15 +128,6 @@ export function TraceCardFull({ card, onClose }: TraceCardFullProps) {
               <Button variant="ghost" size="sm" className="text-muted-foreground gap-1.5">
                 <MessageCircle className="size-5" />
                 <span className="tabular-nums">{card.reactions.comment}</span>
-              </Button>
-
-              <Button
-                variant="ghost"
-                size="sm"
-                className={cn(bookmarked ? 'text-primary' : 'text-muted-foreground')}
-                onClick={handleBookmark}
-              >
-                <Bookmark className={cn('size-5', bookmarked && 'fill-current')} />
               </Button>
             </div>
           </div>

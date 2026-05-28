@@ -105,7 +105,7 @@ export default function CreatePage() {
 
       <main className="max-w-lg mx-auto">
         {/* Progress */}
-        <div className="px-4 py-3 border-b">
+        <div className="py-3 border-b">
           <div className="flex items-center gap-1">
             {steps.map((step, index) => (
               <div
@@ -120,13 +120,13 @@ export default function CreatePage() {
         </div>
 
         {/* Step Header */}
-        <div className="px-4 py-6 border-b">
+        <div className="py-6 border-b">
           <h2 className="text-heading-lg text-foreground mb-1">{currentStepInfo.title}</h2>
           <p className="text-body-sm text-muted-foreground">{currentStepInfo.subtitle}</p>
         </div>
 
         {/* Step Content */}
-        <div className="px-4 py-6">
+        <div className="py-6">
           {currentStep === 'book' && (
             <div className="space-y-4">
               <div className="space-y-2">

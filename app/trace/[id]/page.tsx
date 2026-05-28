@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input'
 import { getCommentsByTraceCardId, mockTraceCards } from '@/lib/mock-data'
 import type { Comment } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { ArrowLeft, ArrowLeftRight, Bookmark, Heart, MessageCircle, Send } from 'lucide-react'
+import { ArrowLeft, ArrowLeftRight, Heart, MessageCircle, Send } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { use, useState } from 'react'
@@ -35,7 +35,6 @@ export default function TracePage({ params }: TracePageProps) {
   const initialComments = card ? getCommentsByTraceCardId(card.id) : []
 
   const [hearted, setHearted] = useState(card?.userReaction?.hearted ?? false)
-  const [bookmarked, setBookmarked] = useState(card?.userReaction?.bookmarked ?? false)
   const [heartCount, setHeartCount] = useState(card?.reactions.heart ?? 0)
   const [comments, setComments] = useState<Comment[]>(initialComments)
   const [newComment, setNewComment] = useState('')
@@ -69,10 +68,6 @@ export default function TracePage({ params }: TracePageProps) {
   const handleHeart = () => {
     setHearted(!hearted)
     setHeartCount(hearted ? heartCount - 1 : heartCount + 1)
-  }
-
-  const handleBookmark = () => {
-    setBookmarked(!bookmarked)
   }
 
   const handleSubmitComment = () => {
@@ -116,7 +111,7 @@ export default function TracePage({ params }: TracePageProps) {
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
-        <div className="flex items-center gap-3 px-4 py-3">
+        <div className="flex items-center gap-3 py-3">
           <Button variant="ghost" size="icon-sm" onClick={() => router.push(fromPage)}>
             <ArrowLeft className="size-5" />
           </Button>
@@ -125,7 +120,7 @@ export default function TracePage({ params }: TracePageProps) {
       </header>
 
       {/* Content */}
-      <main className="max-w-lg mx-auto px-4 py-4">
+      <main className="max-w-lg mx-auto py-4">
         {/* Trace Card */}
         <article className="bg-card rounded-2xl border border-border px-6 py-6 mb-4">
           {/* User Info */}
@@ -229,20 +224,11 @@ export default function TracePage({ params }: TracePageProps) {
               <MessageCircle className="size-5" />
               <span className="tabular-nums">{comments.length}</span>
             </Button>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              className={cn(bookmarked ? 'text-primary' : 'text-muted-foreground')}
-              onClick={handleBookmark}
-            >
-              <Bookmark className={cn('size-5', bookmarked && 'fill-current')} />
-            </Button>
           </div>
         </article>
 
         {/* Comments Section */}
-        <section className="mt-8 px-2">
+        <section className="mt-8">
           <p className="text-caption uppercase tracking-wider text-muted-foreground mb-4">
             댓글 {comments.length}개
           </p>
