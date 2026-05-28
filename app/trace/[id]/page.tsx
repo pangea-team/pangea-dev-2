@@ -53,6 +53,10 @@ export default function TracePage({ params }: TracePageProps) {
     router.push(`/profile/${card.user.id}?from=/trace/${id}`)
   }
 
+  const handleCommentUserClick = (userId: string) => {
+    router.push(`/profile/${userId}?from=/trace/${id}`)
+  }
+
   const handleExchangeRequest = () => {
     setShowExchangeDialog(true)
   }
@@ -247,7 +251,10 @@ export default function TracePage({ params }: TracePageProps) {
             ) : (
               comments.map((comment) => (
                 <div key={comment.id} className="flex gap-3">
-                  <Avatar className="size-8 flex-shrink-0">
+                  <Avatar
+                    className="size-8 flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={() => handleCommentUserClick(comment.user.id)}
+                  >
                     <AvatarImage src={comment.user.avatarUrl} alt={comment.user.displayName} />
                     <AvatarFallback className="text-xs font-medium">
                       {comment.user.displayName[0]}
@@ -255,7 +262,10 @@ export default function TracePage({ params }: TracePageProps) {
                   </Avatar>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-medium text-foreground">
+                      <span
+                        className="text-sm font-medium text-foreground cursor-pointer hover:underline"
+                        onClick={() => handleCommentUserClick(comment.user.id)}
+                      >
                         {comment.user.displayName}
                       </span>
                       <span className="text-xs text-muted-foreground">
