@@ -110,24 +110,26 @@ export default function TracePage({ params }: TracePageProps) {
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
-        <div className="flex items-center gap-3 py-3">
-          <button
-            className="flex items-center gap-2 -ml-2 px-2 py-1 rounded-lg hover:bg-muted transition-colors"
-            onClick={() => router.push(fromPage)}
-          >
-            <ArrowLeft className="size-5" />
-            <h1 className="text-heading-sm">TRACE</h1>
-          </button>
+      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80 border-b border-border">
+        <div className="max-w-2xl mx-auto px-4">
+          <div className="flex items-center h-12">
+            <button
+              className="flex items-center gap-2 -ml-2 px-2 py-1.5 rounded-lg hover:bg-muted transition-colors"
+              onClick={() => router.push(fromPage)}
+            >
+              <ArrowLeft className="size-5" />
+              <span className="text-label-sm font-medium">TRACE</span>
+            </button>
+          </div>
         </div>
       </header>
 
       {/* Content */}
-      <main className="max-w-2xl mx-auto py-4">
-        {/* Trace Card */}
+      <main className="max-w-2xl mx-auto">
+        {/* Trace Content */}
         <article className="px-4 py-6">
           {/* User Info */}
-          <div className="flex items-center gap-3 mb-8">
+          <div className="flex items-center gap-3 mb-6">
             <div
               className="flex items-center gap-3 flex-1 cursor-pointer hover:opacity-80 transition-opacity"
               onClick={handleUserClick}
@@ -139,7 +141,7 @@ export default function TracePage({ params }: TracePageProps) {
                 </AvatarFallback>
               </Avatar>
               <div>
-                <p className="text-heading-sm text-foreground">{card.user.displayName}</p>
+                <p className="text-label-sm text-foreground">{card.user.displayName}</p>
                 <p className="text-body-sm text-muted-foreground">@{card.user.username}</p>
               </div>
             </div>
@@ -153,23 +155,18 @@ export default function TracePage({ params }: TracePageProps) {
             </Button>
           </div>
 
-          {/* Me Section */}
-          <section className="mb-10">
-            <p className="text-heading-sm text-foreground">{card.meThought}</p>
-          </section>
-
-          {/* Divider */}
-          <div className="border-t border-border my-6" />
+          {/* Me Section - Main thought */}
+          <p className="text-body-lg text-foreground leading-relaxed mb-8">{card.meThought}</p>
 
           {/* From the Book Section */}
-          <section className="mb-10">
-            <p className="text-caption uppercase tracking-wider text-muted-foreground mb-4">
+          <div className="mb-8">
+            <p className="text-caption text-muted-foreground uppercase tracking-wider mb-3">
               From the Book
             </p>
 
-            {/* Book Cover */}
-            <div className="flex gap-4 mb-6">
-              <div className="relative w-20 h-28 flex-shrink-0 rounded-md overflow-hidden bg-muted">
+            {/* Book Info */}
+            <div className="flex gap-4 mb-4">
+              <div className="relative w-16 h-24 flex-shrink-0 rounded overflow-hidden bg-muted">
                 {card.book.coverUrl ? (
                   <Image
                     src={card.book.coverUrl}
@@ -184,45 +181,39 @@ export default function TracePage({ params }: TracePageProps) {
                 )}
               </div>
               <div className="flex flex-col justify-center">
-                <p className="text-heading-sm text-foreground">{card.book.title}</p>
+                <p className="text-label-sm text-foreground">{card.book.title}</p>
                 <p className="text-body-sm text-muted-foreground">{card.book.author}</p>
-                {card.book.publisher && (
-                  <p className="text-caption text-muted-foreground mt-1">{card.book.publisher}</p>
-                )}
               </div>
             </div>
 
-            <blockquote className="mb-4">
-              <p className="text-quote text-foreground">{`"${card.quote}"`}</p>
+            <blockquote>
+              <p className="text-quote text-foreground/80">{`"${card.quote}"`}</p>
             </blockquote>
-          </section>
-
-          {/* Divider */}
-          <div className="border-t border-border my-6" />
+          </div>
 
           {/* Trace Expanded Section */}
-          <section className="mb-8">
-            <p className="text-caption uppercase tracking-wider text-muted-foreground mb-4">
+          <div className="mb-6">
+            <p className="text-caption text-muted-foreground uppercase tracking-wider mb-3">
               Trace Expanded
             </p>
-            <div className="text-body-lg text-foreground whitespace-pre-line">
+            <p className="text-body-md text-foreground leading-relaxed whitespace-pre-line">
               {card.traceExpanded}
-            </div>
-          </section>
+            </p>
+          </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-2 pt-4 border-t border-border">
+          <div className="flex items-center gap-1 pt-4 border-t border-border -mx-2">
             <Button
               variant="ghost"
               size="sm"
-              className={cn('gap-1.5', hearted ? 'text-primary' : 'text-muted-foreground')}
+              className={cn('gap-1.5 px-2', hearted ? 'text-primary' : 'text-muted-foreground')}
               onClick={handleHeart}
             >
               <Heart className={cn('size-5', hearted && 'fill-current')} />
               <span className="tabular-nums">{heartCount}</span>
             </Button>
 
-            <Button variant="ghost" size="sm" className="text-muted-foreground gap-1.5">
+            <Button variant="ghost" size="sm" className="text-muted-foreground gap-1.5 px-2">
               <MessageCircle className="size-5" />
               <span className="tabular-nums">{comments.length}</span>
             </Button>
@@ -230,8 +221,8 @@ export default function TracePage({ params }: TracePageProps) {
         </article>
 
         {/* Comments Section */}
-        <section className="px-4 border-t border-border pt-6">
-          <p className="text-caption uppercase tracking-wider text-muted-foreground mb-4">
+        <section className="px-4 py-6 border-t border-border">
+          <p className="text-caption text-muted-foreground uppercase tracking-wider mb-4">
             댓글 {comments.length}개
           </p>
 
