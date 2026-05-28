@@ -1,5 +1,15 @@
 'use client'
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import type { TraceCard as TraceCardType } from '@/lib/types'
@@ -32,6 +42,7 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
   const [hearted, setHearted] = useState(card.userReaction?.hearted ?? false)
   const [bookmarked, setBookmarked] = useState(card.userReaction?.bookmarked ?? false)
   const [heartCount, setHeartCount] = useState(card.reactions.heart)
+  const [showExchangeDialog, setShowExchangeDialog] = useState(false)
 
   const handleAvatarClick = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -40,7 +51,12 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
 
   const handleExchangeRequest = (e: React.MouseEvent) => {
     e.stopPropagation()
-    // TODO: 교환 요청 기능 구현
+    setShowExchangeDialog(true)
+  }
+
+  const handleConfirmExchange = () => {
+    // TODO: 교환 요청 API 호출
+    setShowExchangeDialog(false)
   }
 
   const handleHeart = (e: React.MouseEvent) => {
@@ -80,13 +96,12 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
           <span className="text-muted-foreground text-sm">{formatDate(card.createdAt)}</span>
         </div>
         <Button
-          variant="outline"
-          size="sm"
-          className="text-xs gap-1.5 h-7 px-2.5"
+          variant="ghost"
+          size="icon-sm"
+          className="text-muted-foreground hover:text-primary"
           onClick={handleExchangeRequest}
         >
-          <ArrowLeftRight className="size-3.5" />
-          교환 요청
+          <ArrowLeftRight className="size-4" />
         </Button>
       </div>
 
@@ -151,6 +166,22 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
           <Bookmark className={cn('size-4', bookmarked && 'fill-current')} />
         </Button>
       </div>
+
+      {/* Exchange Request Dialog */}
+      <AlertDialog open={showExchangeDialog} onOpenChange={setShowExchangeDialog}>
+        <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+          <AlertDialogHeader>
+            <AlertDialogTitle>교환 요청</AlertDialogTitle>
+            <AlertDialogDescription>
+              {card.user.displayName}님에게 《{card.book.title}》 교환을 요청하시겠습니까?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>취소</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmExchange}>요청하기</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </article>
   )
 }
