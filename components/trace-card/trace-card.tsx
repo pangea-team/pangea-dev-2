@@ -67,7 +67,7 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
 
   return (
     <article
-      className="bg-card rounded-2xl border border-border px-5 py-6 mb-3 transition-colors hover:border-foreground/20 cursor-pointer"
+      className="bg-background px-4 py-5 transition-colors hover:bg-muted/30 cursor-pointer"
       onClick={onCardClick}
     >
       {/* Header with Avatar */}
@@ -102,7 +102,6 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
       <div className="space-y-5">
         {/* Me Section */}
         <div>
-          <p className="text-caption text-muted-foreground uppercase tracking-wider mb-2.5">Me</p>
           <p className="text-body-lg text-foreground text-balance">{card.meThought}</p>
         </div>
 

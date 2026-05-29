@@ -44,7 +44,7 @@ export function BottomNav() {
         !isVisible && 'translate-y-full',
       )}
     >
-      <div className="flex items-center justify-around h-14 max-w-lg mx-auto">
+      <div className="flex items-center justify-around h-14 max-w-2xl mx-auto">
         {navItems.map(({ href, icon: Icon }) => {
           const isActive = pathname === href
           return (

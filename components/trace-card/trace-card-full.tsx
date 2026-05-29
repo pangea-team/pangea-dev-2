@@ -42,7 +42,7 @@ export function TraceCardFull({ card, onClose }: TraceCardFullProps) {
       <div className="fixed inset-x-0 bottom-0 z-50 h-[90vh] rounded-t-xl border-t bg-background shadow-lg animate-in slide-in-from-bottom duration-300 overflow-hidden flex flex-col md:inset-4 md:bottom-4 md:h-auto md:max-h-[90vh] md:max-w-2xl md:mx-auto md:rounded-xl md:border">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b shrink-0">
-          <h2 className="text-heading-sm">Trace Card</h2>
+          <h2 className="text-heading-sm">Trace</h2>
           <Button variant="ghost" size="icon-sm" onClick={onClose}>
             <X className="size-5" />
           </Button>

@@ -43,7 +43,7 @@ export default function TracePage({ params }: TracePageProps) {
   if (!card) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-muted-foreground">Trace Card를 찾을 수 없습니다.</p>
+        <p className="text-muted-foreground">Trace를 찾을 수 없습니다.</p>
       </div>
     )
   }
@@ -111,18 +111,23 @@ export default function TracePage({ params }: TracePageProps) {
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
-        <div className="flex items-center gap-3 py-3">
-          <Button variant="ghost" size="icon-sm" onClick={() => router.push(fromPage)}>
-            <ArrowLeft className="size-5" />
-          </Button>
-          <h1 className="text-heading-sm">TRACE CARD</h1>
+        <div className="max-w-2xl mx-auto">
+          <div className="flex items-center h-12">
+            <button
+              className="flex items-center gap-2 px-4 py-1.5 rounded-lg hover:bg-muted transition-colors"
+              onClick={() => router.push(fromPage)}
+            >
+              <ArrowLeft className="size-5" />
+              <span className="text-heading-sm">TRACE</span>
+            </button>
+          </div>
         </div>
       </header>
 
       {/* Content */}
-      <main className="max-w-lg mx-auto py-4">
-        {/* Trace Card */}
-        <article className="bg-card rounded-2xl border border-border px-6 py-6 mb-4">
+      <main className="max-w-2xl mx-auto py-4">
+        {/* Trace Content */}
+        <article className="px-4 py-6">
           {/* User Info */}
           <div className="flex items-center gap-3 mb-8">
             <div
@@ -152,12 +157,11 @@ export default function TracePage({ params }: TracePageProps) {
 
           {/* Me Section */}
           <section className="mb-10">
-            <p className="text-caption uppercase tracking-wider text-muted-foreground mb-4">Me</p>
             <p className="text-heading-sm text-foreground">{card.meThought}</p>
           </section>
 
           {/* Divider */}
-          <div className="border-t border-border my-8" />
+          <div className="-mx-4 border-t border-border my-6" />
 
           {/* From the Book Section */}
           <section className="mb-10">
@@ -184,9 +188,6 @@ export default function TracePage({ params }: TracePageProps) {
               <div className="flex flex-col justify-center">
                 <p className="text-heading-sm text-foreground">{card.book.title}</p>
                 <p className="text-body-sm text-muted-foreground">{card.book.author}</p>
-                {card.book.publisher && (
-                  <p className="text-caption text-muted-foreground mt-1">{card.book.publisher}</p>
-                )}
               </div>
             </div>
 
@@ -196,7 +197,7 @@ export default function TracePage({ params }: TracePageProps) {
           </section>
 
           {/* Divider */}
-          <div className="border-t border-border my-8" />
+          <div className="-mx-4 border-t border-border my-6" />
 
           {/* Trace Expanded Section */}
           <section className="mb-8">
@@ -209,7 +210,7 @@ export default function TracePage({ params }: TracePageProps) {
           </section>
 
           {/* Actions */}
-          <div className="flex items-center gap-2 pt-4 border-t border-border">
+          <div className="-mx-4 px-4 flex items-center gap-2 pt-4 border-t border-border">
             <Button
               variant="ghost"
               size="sm"
@@ -228,7 +229,7 @@ export default function TracePage({ params }: TracePageProps) {
         </article>
 
         {/* Comments Section */}
-        <section className="mt-8">
+        <section className="px-4 border-t border-border pt-6">
           <p className="text-caption uppercase tracking-wider text-muted-foreground mb-4">
             댓글 {comments.length}개
           </p>

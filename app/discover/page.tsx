@@ -2,6 +2,7 @@
 
 import { BottomNav } from '@/components/layout/bottom-nav'
 import { Header } from '@/components/layout/header'
+import { RequireAuth } from '@/components/require-auth'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { mockNotifications } from '@/lib/mock-data'
 import type { Notification, NotificationType } from '@/lib/types'
@@ -95,10 +96,11 @@ export default function DiscoverPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-16">
-      <Header title="발견" align="left" />
+    <RequireAuth redirectTo="/discover">
+      <div className="min-h-screen bg-background pb-16">
+        <Header title="발견" align="left" />
 
-      <main className="max-w-lg mx-auto">
+      <main className="max-w-2xl mx-auto">
         {notifications.length > 0 ? (
           <div className="divide-y divide-border">
             {notifications.map((notification) => (
@@ -116,13 +118,14 @@ export default function DiscoverPage() {
             </div>
             <h3 className="text-heading-sm mb-1">아직 알림이 없습니다</h3>
             <p className="text-body-sm text-muted-foreground">
-              다른 사용자가 회원님의 Trace Card에 반응하면 여기에 표시됩니다.
+              다른 사용자가 회원님의 Trace에 반응하면 여기에 표시됩니다.
             </p>
           </div>
         )}
       </main>
 
       <BottomNav />
-    </div>
+      </div>
+    </RequireAuth>
   )
 }

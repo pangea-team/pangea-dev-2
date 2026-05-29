@@ -5,8 +5,8 @@ import { WorldFeed } from '@/components/world-feed'
 export default function WorldPage() {
   return (
     <div className="min-h-screen bg-background pb-16">
-      <Header title="PANGEA" />
-      <main className="max-w-lg mx-auto">
+      <Header title="PANGEA" align="center" showLoginButton />
+      <main className="max-w-2xl mx-auto">
         <WorldFeed />
       </main>
       <BottomNav />
