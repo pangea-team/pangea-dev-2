@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
+import { PATH } from '@/constants/path'
 import type { TraceCard as TraceCardType } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { ArrowLeftRight, Heart, MessageCircle } from 'lucide-react'
@@ -46,7 +47,7 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
 
   const handleAvatarClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    router.push(`/profile/${card.user.id}?from=${window.location.pathname}`)
+    router.push(PATH.PROFILE_WITH_FROM(card.user.id, window.location.pathname))
   }
 
   const handleExchangeRequest = (e: React.MouseEvent) => {

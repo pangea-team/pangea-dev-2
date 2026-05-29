@@ -4,6 +4,7 @@ import { BottomNav } from '@/components/layout/bottom-nav'
 import { Header } from '@/components/layout/header'
 import { RequireAuth } from '@/components/require-auth'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { PATH } from '@/constants/path'
 import { mockNotifications } from '@/lib/mock-data'
 import type { Notification, NotificationType } from '@/lib/types'
 import { cn } from '@/lib/utils'
@@ -92,39 +93,39 @@ export default function DiscoverPage() {
   const notifications = mockNotifications
 
   const handleCardClick = (traceCardId: string) => {
-    router.push(`/trace/${traceCardId}?from=/discover`)
+    router.push(PATH.TRACE_WITH_FROM(traceCardId, PATH.DISCOVER))
   }
 
   return (
-    <RequireAuth redirectTo="/discover">
+    <RequireAuth redirectTo={PATH.DISCOVER}>
       <div className="min-h-screen bg-background pb-16">
         <Header title="발견" align="left" />
 
-      <main className="max-w-2xl mx-auto">
-        {notifications.length > 0 ? (
-          <div className="divide-y divide-border">
-            {notifications.map((notification) => (
-              <NotificationItem
-                key={notification.id}
-                notification={notification}
-                onCardClick={handleCardClick}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="px-4 py-12 text-center">
-            <div className="inline-flex items-center justify-center size-16 rounded-full bg-muted mb-4">
-              <Heart className="size-8 text-muted-foreground" />
+        <main className="max-w-2xl mx-auto">
+          {notifications.length > 0 ? (
+            <div className="divide-y divide-border">
+              {notifications.map((notification) => (
+                <NotificationItem
+                  key={notification.id}
+                  notification={notification}
+                  onCardClick={handleCardClick}
+                />
+              ))}
             </div>
-            <h3 className="text-heading-sm mb-1">아직 알림이 없습니다</h3>
-            <p className="text-body-sm text-muted-foreground">
-              다른 사용자가 회원님의 Trace에 반응하면 여기에 표시됩니다.
-            </p>
-          </div>
-        )}
-      </main>
+          ) : (
+            <div className="px-4 py-12 text-center">
+              <div className="inline-flex items-center justify-center size-16 rounded-full bg-muted mb-4">
+                <Heart className="size-8 text-muted-foreground" />
+              </div>
+              <h3 className="text-heading-sm mb-1">아직 알림이 없습니다</h3>
+              <p className="text-body-sm text-muted-foreground">
+                다른 사용자가 회원님의 Trace에 반응하면 여기에 표시됩니다.
+              </p>
+            </div>
+          )}
+        </main>
 
-      <BottomNav />
+        <BottomNav />
       </div>
     </RequireAuth>
   )

@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
+import { PATH } from '@/constants/path'
 import type { CreateTraceCardForm, TraceLayer } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { ArrowLeft, ArrowRight, Globe, Lock, Plus, Trash2 } from 'lucide-react'
@@ -97,11 +98,11 @@ export default function CreatePage() {
   const handleSubmit = () => {
     // In a real app, this would save to Supabase
     // For now, just redirect to the feed
-    router.push('/')
+    router.push(PATH.HOME)
   }
 
   return (
-    <RequireAuth redirectTo="/create">
+    <RequireAuth redirectTo={PATH.CREATE}>
       <div className="min-h-screen bg-background pb-16">
         <Header title="Trace 만들기" />
 

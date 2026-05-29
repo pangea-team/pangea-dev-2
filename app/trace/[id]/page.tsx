@@ -13,10 +13,12 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { PATH } from '@/constants/path'
 import { getCommentsByTraceCardId, mockTraceCards } from '@/lib/mock-data'
 import type { Comment } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { ArrowLeft, ArrowLeftRight, Heart, MessageCircle, Send } from 'lucide-react'
+import type { Route } from 'next'
 import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { use, useState } from 'react'
@@ -29,7 +31,7 @@ export default function TracePage({ params }: TracePageProps) {
   const { id } = use(params)
   const router = useRouter()
   const searchParams = useSearchParams()
-  const fromPage = searchParams.get('from') || '/'
+  const fromPage = (searchParams.get('from') || PATH.HOME) as Route
 
   const card = mockTraceCards.find((c) => c.id === id)
   const initialComments = card ? getCommentsByTraceCardId(card.id) : []
@@ -49,11 +51,11 @@ export default function TracePage({ params }: TracePageProps) {
   }
 
   const handleUserClick = () => {
-    router.push(`/profile/${card.user.id}?from=/trace/${id}`)
+    router.push(PATH.PROFILE_WITH_FROM(card.user.id, PATH.TRACE(id)))
   }
 
   const handleCommentUserClick = (userId: string) => {
-    router.push(`/profile/${userId}?from=/trace/${id}`)
+    router.push(PATH.PROFILE_WITH_FROM(userId, PATH.TRACE(id)))
   }
 
   const handleExchangeRequest = () => {
@@ -114,6 +116,7 @@ export default function TracePage({ params }: TracePageProps) {
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center h-12">
             <button
+              type="button"
               className="flex items-center gap-2 px-4 py-1.5 rounded-lg hover:bg-muted transition-colors"
               onClick={() => router.push(fromPage)}
             >

@@ -1,5 +1,6 @@
 'use client'
 
+import { PATH } from '@/constants/path'
 import { cn } from '@/lib/utils'
 import { Globe, Lightbulb, PlusCircle, User } from 'lucide-react'
 import Link from 'next/link'
@@ -7,10 +8,10 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
 const navItems = [
-  { href: '/', icon: Globe },
-  { href: '/create', icon: PlusCircle },
-  { href: '/discover', icon: Lightbulb },
-  { href: '/profile', icon: User },
+  { href: PATH.HOME, icon: Globe },
+  { href: PATH.CREATE, icon: PlusCircle },
+  { href: PATH.DISCOVER, icon: Lightbulb },
+  { href: PATH.PROFILE, icon: User },
 ]
 
 export function BottomNav() {
