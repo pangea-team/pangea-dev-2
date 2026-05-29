@@ -116,7 +116,7 @@ export default function ActivityPage() {
             </div>
             <h3 className="text-heading-sm mb-1">아직 알림이 없습니다</h3>
             <p className="text-body-sm text-muted-foreground">
-              다른 사용자가 회원님의 Trace Card에 반응하면 여기에 표시됩니다.
+              다른 사용자가 회원님의 Trace에 반응하면 여기에 표시됩니다.
             </p>
           </div>
         )}

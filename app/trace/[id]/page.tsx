@@ -161,7 +161,7 @@ export default function TracePage({ params }: TracePageProps) {
           </section>
 
           {/* Divider */}
-          <div className="border-t border-border my-6" />
+          <div className="-mx-4 border-t border-border my-6" />
 
           {/* From the Book Section */}
           <section className="mb-10">
@@ -197,7 +197,7 @@ export default function TracePage({ params }: TracePageProps) {
           </section>
 
           {/* Divider */}
-          <div className="border-t border-border my-6" />
+          <div className="-mx-4 border-t border-border my-6" />
 
           {/* Trace Expanded Section */}
           <section className="mb-8">
@@ -210,7 +210,7 @@ export default function TracePage({ params }: TracePageProps) {
           </section>
 
           {/* Actions */}
-          <div className="flex items-center gap-2 pt-4 border-t border-border">
+          <div className="-mx-4 px-4 flex items-center gap-2 pt-4 border-t border-border">
             <Button
               variant="ghost"
               size="sm"

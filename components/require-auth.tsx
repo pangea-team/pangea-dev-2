@@ -5,19 +5,24 @@ import { useRouter } from 'next/navigation'
 import { useEffect, type ReactNode } from 'react'
 
 export function RequireAuth({ children, redirectTo }: { children: ReactNode; redirectTo: string }) {
-  const { isLoggedIn } = useAuth()
+  const { isLoggedIn, hasCompletedProfile, isHydrated } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
+    if (!isHydrated) return
     if (!isLoggedIn) {
       router.push(`/login?redirect=${encodeURIComponent(redirectTo)}`)
+      return
     }
-  }, [isLoggedIn, router, redirectTo])
+    if (!hasCompletedProfile) {
+      router.push('/onboarding')
+    }
+  }, [isHydrated, isLoggedIn, hasCompletedProfile, router, redirectTo])
 
-  if (!isLoggedIn) {
+  if (!isHydrated || !isLoggedIn || !hasCompletedProfile) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-muted-foreground">로그인 페이지로 이동중...</p>
+        <p className="text-body-sm text-muted-foreground">로딩중...</p>
       </div>
     )
   }

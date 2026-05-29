@@ -47,7 +47,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${pretendard.variable} ${notoSerifKR.variable}`}
     >
-      <body className="font-sans antialiased bg-background px-4">
+      <body className="font-sans antialiased bg-background">
         <Providers>{children}</Providers>
         <Toaster richColors position="top-center" />
         {process.env.NODE_ENV === 'production' && <Analytics />}

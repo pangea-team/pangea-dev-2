@@ -5,15 +5,19 @@ import { Header } from '@/components/layout/header'
 import { RequireAuth } from '@/components/require-auth'
 import { TraceCard } from '@/components/trace-card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { currentUser, mockTraceCards } from '@/lib/mock-data'
+import { useAuth } from '@/lib/auth-context'
+import { mockTraceCards } from '@/lib/mock-data'
 import { BookOpen } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 export default function ProfilePage() {
   const router = useRouter()
+  const { user } = useAuth()
+
+  if (!user) return null
 
   // For demo: show all cards for current user (in real app, filter by userId)
-  const userCards = mockTraceCards.filter((card) => card.userId === currentUser.id)
+  const userCards = mockTraceCards.filter((card) => card.userId === user.id)
 
   return (
     <RequireAuth redirectTo="/profile">
@@ -26,27 +30,26 @@ export default function ProfilePage() {
           <div className="flex items-start justify-between">
             {/* Left: Name, ID, Bio */}
             <div className="flex-1">
-              <h2 className="text-heading-lg">{currentUser.displayName}</h2>
-              <p className="text-body-sm text-muted-foreground">@{currentUser.username}</p>
-              {currentUser.bio && (
-                <p className="text-body-sm mt-3 text-foreground/90">{currentUser.bio}</p>
+              <h2 className="text-heading-lg">{user.displayName}</h2>
+              {user.bio && (
+                <p className="text-body-sm mt-3 text-foreground/90">{user.bio}</p>
               )}
             </div>
 
             {/* Right: Avatar */}
             <Avatar className="size-20 shrink-0">
-              <AvatarImage src={currentUser.avatarUrl} alt={currentUser.displayName} />
-              <AvatarFallback className="text-2xl font-medium">
-                {currentUser.displayName[0]}
+              <AvatarImage src={user.avatarUrl} alt={user.displayName} />
+              <AvatarFallback className="text-(--text-2xl) font-medium">
+                {user.displayName[0]}
               </AvatarFallback>
             </Avatar>
           </div>
 
           {/* Stats */}
-          <div className="flex items-center gap-6 mt-4 pt-4 border-t border-border">
+          <div className="-mx-4 px-4 flex items-center gap-6 mt-4 pt-6 border-t border-border">
             <div className="text-center">
               <p className="text-heading-sm">{userCards.length}</p>
-              <p className="text-caption text-muted-foreground">Trace Cards</p>
+              <p className="text-caption text-muted-foreground">Traces</p>
             </div>
             <div className="text-center">
               <p className="text-heading-sm">{new Set(userCards.map((c) => c.book.id)).size}</p>
@@ -55,7 +58,7 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Trace Cards */}
+        {/* Traces */}
         <div className="divide-y divide-border">
           {userCards.length > 0 ? (
             userCards.map((card) => (
@@ -70,7 +73,7 @@ export default function ProfilePage() {
               <div className="inline-flex items-center justify-center size-16 rounded-full bg-muted mb-4">
                 <BookOpen className="size-8 text-muted-foreground" />
               </div>
-              <h3 className="text-heading-sm mb-1">아직 Trace Card가 없습니다</h3>
+              <h3 className="text-heading-sm mb-1">아직 Trace가 없습니다</h3>
               <p className="text-body-sm text-muted-foreground">독서의 흔적을 남겨보세요</p>
             </div>
           )}

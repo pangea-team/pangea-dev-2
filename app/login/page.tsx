@@ -1,21 +1,25 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { useAuth } from '@/lib/auth-context'
+import { isProfileComplete, loadProfileFromStorage, useAuth } from '@/lib/auth-context'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 
 function LoginContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { login } = useAuth()
+  const { login, hasCompletedProfile, isHydrated } = useAuth()
 
   const redirectTo = searchParams.get('redirect') || '/'
 
   const handleKakaoLogin = () => {
     // UI만 구현 - 실제 API 연결 없음
     login()
-    router.push(redirectTo)
+    const profileComplete =
+      isHydrated && hasCompletedProfile
+        ? true
+        : isProfileComplete(loadProfileFromStorage())
+    router.push(profileComplete ? redirectTo : '/onboarding')
   }
 
   return (

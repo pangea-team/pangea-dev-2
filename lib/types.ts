@@ -21,7 +21,7 @@ export interface Book {
   publishedDate?: string
 }
 
-// Trace Card 계층 (다층 구조)
+// Trace 계층 (다층 구조)
 export interface TraceLayer {
   id: string
   type: 'me' | 'from-book' | 'context'
@@ -29,7 +29,7 @@ export interface TraceLayer {
   order: number
 }
 
-// Trace Card
+// Trace
 export interface TraceCard {
   id: string
   userId: string
@@ -55,7 +55,7 @@ export interface TraceCard {
   }
 }
 
-// Trace Card 생성 폼 데이터
+// Trace 생성 폼 데이터
 export interface CreateTraceCardForm {
   book: {
     title: string

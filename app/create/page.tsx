@@ -20,7 +20,7 @@ const steps: { id: Step; title: string; subtitle: string }[] = [
   { id: 'book', title: '어떤 책인가요?', subtitle: '제목과 작가를 입력해주세요' },
   { id: 'quote', title: '밑줄 친 문장', subtitle: '마음에 남은 문장을 입력해주세요' },
   { id: 'layers', title: '나의 흔적', subtitle: '이 문장에 대한 생각을 남겨주세요' },
-  { id: 'preview', title: '미리보기', subtitle: '작성한 Trace Card를 확인해주세요' },
+  { id: 'preview', title: '미리보기', subtitle: '작성한 Trace를 확인해주세요' },
 ]
 
 const layerTypeOptions: { type: TraceLayer['type']; label: string; description: string }[] = [
@@ -103,9 +103,9 @@ export default function CreatePage() {
   return (
     <RequireAuth redirectTo="/create">
       <div className="min-h-screen bg-background pb-16">
-        <Header title="새 Trace Card" />
+        <Header title="Trace 만들기" />
 
-        <main className="max-w-2xl mx-auto">
+        <main className="max-w-2xl mx-auto px-4">
           {/* Progress */}
           <div className="py-3 border-b">
             <div className="flex items-center gap-1">
@@ -223,7 +223,7 @@ export default function CreatePage() {
 
             {currentStep === 'preview' && (
               <div className="space-y-6">
-                {/* Preview Card */}
+                {/* Preview Trace */}
                 <div className="border rounded-xl p-4 space-y-4">
                   {/* Book Info */}
                   <div className="bg-muted/50 rounded-lg p-3">

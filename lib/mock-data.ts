@@ -67,7 +67,7 @@ export const mockBooks: Book[] = [
   },
 ]
 
-// 목업 Trace Cards
+// 목업 Traces
 export const mockTraceCards: TraceCard[] = [
   {
     id: 'trace-1',
@@ -241,10 +241,10 @@ export const mockTraceCards: TraceCard[] = [
   },
 ]
 
-// 내 Trace Cards (현재 사용자)
+// 내 Traces (현재 사용자)
 export const myTraceCards = mockTraceCards.filter((card) => card.userId === currentUser.id)
 
-// 피드용 Trace Cards (공개된 것만)
+// 피드용 Traces (공개된 것만)
 export const feedTraceCards = mockTraceCards.filter((card) => card.isPublic)
 
 // 목업 댓글
@@ -319,7 +319,7 @@ export const mockNotifications: Notification[] = [
     type: 'like',
     fromUser: mockUsers[1],
     traceCard: mockTraceCards[2],
-    message: '님이 회원님의 Trace Card를 좋아합니다.',
+    message: '님이 회원님의 Trace를 좋아합니다.',
     isRead: false,
     createdAt: new Date('2024-05-20T14:30:00'),
   },
@@ -328,7 +328,7 @@ export const mockNotifications: Notification[] = [
     type: 'comment',
     fromUser: mockUsers[2],
     traceCard: mockTraceCards[2],
-    message: '님이 회원님의 Trace Card에 댓글을 남겼습니다.',
+    message: '님이 회원님의 Trace에 댓글을 남겼습니다.',
     isRead: false,
     createdAt: new Date('2024-05-20T12:15:00'),
   },
@@ -346,7 +346,7 @@ export const mockNotifications: Notification[] = [
     type: 'like',
     fromUser: mockUsers[2],
     traceCard: mockTraceCards[2],
-    message: '님이 회원님의 Trace Card를 좋아합니다.',
+    message: '님이 회원님의 Trace를 좋아합니다.',
     isRead: true,
     createdAt: new Date('2024-05-18T09:20:00'),
   },
