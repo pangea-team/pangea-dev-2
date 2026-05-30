@@ -103,8 +103,8 @@ export const mockTraceCards: TraceCard[] = [
     isPublic: true,
     createdAt: new Date('2024-05-20T10:30:00'),
     updatedAt: new Date('2024-05-20T10:30:00'),
-    reactions: { heart: 24, bookmark: 8, comment: 3 },
-    userReaction: { hearted: false, bookmarked: true },
+    reactions: { heart: 24, comment: 3 },
+    userReaction: { hearted: false },
   },
   {
     id: 'trace-2',
@@ -132,8 +132,8 @@ export const mockTraceCards: TraceCard[] = [
     isPublic: true,
     createdAt: new Date('2024-05-19T15:20:00'),
     updatedAt: new Date('2024-05-19T15:20:00'),
-    reactions: { heart: 42, bookmark: 15, comment: 7 },
-    userReaction: { hearted: true, bookmarked: false },
+    reactions: { heart: 42, comment: 7 },
+    userReaction: { hearted: true },
   },
   {
     id: 'trace-3',
@@ -166,8 +166,8 @@ export const mockTraceCards: TraceCard[] = [
     isPublic: true,
     createdAt: new Date('2024-05-18T09:15:00'),
     updatedAt: new Date('2024-05-18T09:15:00'),
-    reactions: { heart: 18, bookmark: 6, comment: 2 },
-    userReaction: { hearted: false, bookmarked: false },
+    reactions: { heart: 18, comment: 2 },
+    userReaction: { hearted: false },
   },
   {
     id: 'trace-4',
@@ -200,8 +200,8 @@ export const mockTraceCards: TraceCard[] = [
     isPublic: true,
     createdAt: new Date('2024-05-17T20:45:00'),
     updatedAt: new Date('2024-05-17T20:45:00'),
-    reactions: { heart: 31, bookmark: 12, comment: 5 },
-    userReaction: { hearted: true, bookmarked: true },
+    reactions: { heart: 31, comment: 5 },
+    userReaction: { hearted: true },
   },
   {
     id: 'trace-5',
@@ -236,8 +236,8 @@ export const mockTraceCards: TraceCard[] = [
     isPublic: true,
     createdAt: new Date('2024-05-21T11:00:00'),
     updatedAt: new Date('2024-05-21T11:00:00'),
-    reactions: { heart: 56, bookmark: 23, comment: 12 },
-    userReaction: { hearted: false, bookmarked: false },
+    reactions: { heart: 56, comment: 12 },
+    userReaction: { hearted: false },
   },
 ]
 
