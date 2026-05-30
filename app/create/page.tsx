@@ -4,305 +4,193 @@ import { BottomNav } from '@/components/layout/bottom-nav'
 import { Header } from '@/components/layout/header'
 import { RequireAuth } from '@/components/require-auth'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
-import { Textarea } from '@/components/ui/textarea'
+
 import { PATH } from '@/constants/path'
-import type { CreateTraceCardForm, TraceLayer } from '@/lib/types'
+import type { Book } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { ArrowLeft, ArrowRight, Globe, Lock, Plus, Trash2 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { Search, X } from 'lucide-react'
+import Image from 'next/image'
+import { useEffect, useRef, useState } from 'react'
 
-type Step = 'book' | 'quote' | 'layers' | 'preview'
+// TODO: 다음 이슈 - AI chat (useChat)
+function TraceChatPlaceholder() {
+  return (
+    <div className="flex flex-col items-center justify-center py-12 gap-2 rounded-xl border border-dashed border-border text-muted-foreground">
+      <p className="text-body-sm">AI 대화 준비 중</p>
+      <p className="text-caption">(다음 이슈에서 구현 예정)</p>
+    </div>
+  )
+}
 
-const steps: { id: Step; title: string; subtitle: string }[] = [
-  { id: 'book', title: '어떤 책인가요?', subtitle: '제목과 작가를 입력해주세요' },
-  { id: 'quote', title: '밑줄 친 문장', subtitle: '마음에 남은 문장을 입력해주세요' },
-  { id: 'layers', title: '나의 흔적', subtitle: '이 문장에 대한 생각을 남겨주세요' },
-  { id: 'preview', title: '미리보기', subtitle: '작성한 Trace를 확인해주세요' },
-]
-
-const layerTypeOptions: { type: TraceLayer['type']; label: string; description: string }[] = [
-  { type: 'me', label: '나의 생각', description: '이 문장을 읽고 든 나의 생각' },
-  { type: 'from-book', label: '책에서', description: '책의 맥락에서 이 문장의 의미' },
-  { type: 'context', label: '맥락', description: '작가나 시대적 배경' },
-]
+async function searchBooks(query: string): Promise<Book[]> {
+  const res = await fetch(`/api/books/search?q=${encodeURIComponent(query)}`)
+  if (!res.ok) return []
+  return res.json()
+}
 
 export default function CreatePage() {
-  const router = useRouter()
-  const [currentStep, setCurrentStep] = useState<Step>('book')
-  const [form, setForm] = useState<CreateTraceCardForm>({
-    book: { title: '', author: '' },
-    quote: '',
-    layers: [{ type: 'me', content: '', order: 0 }],
-    isPublic: true,
-  })
+  const [query, setQuery] = useState('')
+  const [results, setResults] = useState<Book[]>([])
+  const [loading, setLoading] = useState(false)
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null)
+  const [isGenerating, setIsGenerating] = useState(false)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const currentStepIndex = steps.findIndex((s) => s.id === currentStep)
-  const currentStepInfo = steps[currentStepIndex]
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current)
 
-  const canGoNext = () => {
-    switch (currentStep) {
-      case 'book':
-        return form.book.title.trim() && form.book.author.trim()
-      case 'quote':
-        return form.quote.trim()
-      case 'layers':
-        return form.layers.some((l) => l.content.trim())
-      case 'preview':
-        return true
-      default:
-        return false
+    if (!query.trim()) {
+      setResults([])
+      setLoading(false)
+      return
     }
-  }
 
-  const goNext = () => {
-    const nextIndex = currentStepIndex + 1
-    if (nextIndex < steps.length) {
-      setCurrentStep(steps[nextIndex].id)
+    setLoading(true)
+    debounceRef.current = setTimeout(async () => {
+      const books = await searchBooks(query)
+      setResults(books)
+      setLoading(false)
+    }, 300)
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
     }
-  }
-
-  const goPrev = () => {
-    const prevIndex = currentStepIndex - 1
-    if (prevIndex >= 0) {
-      setCurrentStep(steps[prevIndex].id)
-    }
-  }
-
-  const addLayer = () => {
-    setForm({
-      ...form,
-      layers: [...form.layers, { type: 'me', content: '', order: form.layers.length }],
-    })
-  }
-
-  const removeLayer = (index: number) => {
-    if (form.layers.length > 1) {
-      setForm({
-        ...form,
-        layers: form.layers.filter((_, i) => i !== index),
-      })
-    }
-  }
-
-  const updateLayer = (index: number, updates: Partial<Omit<TraceLayer, 'id'>>) => {
-    setForm({
-      ...form,
-      layers: form.layers.map((layer, i) => (i === index ? { ...layer, ...updates } : layer)),
-    })
-  }
-
-  const handleSubmit = () => {
-    // In a real app, this would save to Supabase
-    // For now, just redirect to the feed
-    router.push(PATH.HOME)
-  }
+  }, [query])
 
   return (
     <RequireAuth redirectTo={PATH.CREATE}>
       <div className="min-h-screen bg-background pb-16">
-        <Header title="Trace 만들기" />
+        <Header title="trace 만들기" />
 
-        <main className="max-w-2xl mx-auto px-4">
-          {/* Progress */}
-          <div className="py-3 border-b">
-            <div className="flex items-center gap-1">
-              {steps.map((step, index) => (
-                <div
-                  key={step.id}
-                  className={cn(
-                    'h-1 flex-1 rounded-full transition-colors',
-                    index <= currentStepIndex ? 'bg-foreground' : 'bg-muted',
-                  )}
-                />
-              ))}
+        <main className="max-w-2xl mx-auto px-4 py-6 space-y-8">
+          {/* Step 1: 책 검색 — 항상 노출 */}
+          <section className="space-y-3">
+            <div>
+              <h2 className="text-heading-lg text-foreground">어떤 책을 읽으셨나요?</h2>
+              <p className="text-body-sm text-muted-foreground mt-1">
+                trace를 남길 책을 먼저 찾아볼게요.
+              </p>
             </div>
-          </div>
 
-          {/* Step Header */}
-          <div className="py-6 border-b">
-            <h2 className="text-heading-lg text-foreground mb-1">{currentStepInfo.title}</h2>
-            <p className="text-body-sm text-muted-foreground">{currentStepInfo.subtitle}</p>
-          </div>
-
-          {/* Step Content */}
-          <div className="py-6">
-            {currentStep === 'book' && (
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="title">책 제목</Label>
-                  <Input
-                    id="title"
-                    placeholder="예: 데미안"
-                    value={form.book.title}
-                    onChange={(e) =>
-                      setForm({ ...form, book: { ...form.book, title: e.target.value } })
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="author">작가</Label>
-                  <Input
-                    id="author"
-                    placeholder="예: 헤르만 헤세"
-                    value={form.book.author}
-                    onChange={(e) =>
-                      setForm({ ...form, book: { ...form.book, author: e.target.value } })
-                    }
-                  />
-                </div>
-              </div>
-            )}
-
-            {currentStep === 'quote' && (
-              <div className="space-y-2">
-                <Label htmlFor="quote">밑줄 친 문장</Label>
-                <Textarea
-                  id="quote"
-                  placeholder="책에서 마음에 남은 문장을 입력해주세요..."
-                  value={form.quote}
-                  onChange={(e) => setForm({ ...form, quote: e.target.value })}
-                  className="min-h-32"
+            <div className="relative">
+              <div className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-border bg-background">
+                <Search className="size-4 shrink-0 text-muted-foreground" />
+                <input
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="책 제목이나 저자를 검색하세요"
+                  className="flex-1 bg-transparent text-body-sm text-foreground placeholder:text-muted-foreground outline-none"
                 />
               </div>
-            )}
 
-            {currentStep === 'layers' && (
-              <div className="space-y-6">
-                {form.layers.map((layer, index) => (
-                  <div key={index} className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <Label>레이어 {index + 1}</Label>
-                      {form.layers.length > 1 && (
-                        <Button
-                          variant="ghost"
-                          size="icon-sm"
-                          className="text-muted-foreground hover:text-destructive"
-                          onClick={() => removeLayer(index)}
-                        >
-                          <Trash2 className="size-4" />
-                        </Button>
-                      )}
+              {query.trim() && (
+                <div className="mt-1 rounded-lg border border-border bg-background overflow-hidden">
+                  {loading && (
+                    <div className="py-6 text-center text-body-sm text-muted-foreground">
+                      검색 중...
                     </div>
-
-                    <div className="flex gap-2">
-                      {layerTypeOptions.map((option) => (
-                        <button
-                          key={option.type}
-                          type="button"
-                          onClick={() => updateLayer(index, { type: option.type })}
-                          className={cn(
-                            'flex-1 py-2 px-3 text-body-sm rounded-lg border transition-colors',
-                            layer.type === option.type
-                              ? 'border-foreground bg-foreground text-background'
-                              : 'border-border hover:bg-muted',
-                          )}
-                        >
-                          {option.label}
-                        </button>
+                  )}
+                  {!loading && results.length === 0 && (
+                    <div className="py-6 text-center text-body-sm text-muted-foreground">
+                      찾는 책이 없네요. 다른 제목으로 검색해 볼까요?
+                    </div>
+                  )}
+                  {!loading && results.length > 0 && (
+                    <ul>
+                      {results.map((book) => (
+                        <li key={book.id}>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              // TODO: 다음 패스 - books upsert
+                              setSelectedBook(book)
+                              setIsGenerating(false)
+                              setQuery('')
+                              setResults([])
+                            }}
+                            className={cn(
+                              'w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-muted transition-colors',
+                            )}
+                          >
+                            {book.coverUrl ? (
+                              <div className="w-8 h-11 shrink-0 overflow-hidden rounded-sm bg-muted">
+                                <Image
+                                  src={book.coverUrl}
+                                  alt={book.title}
+                                  width={32}
+                                  height={44}
+                                  className="object-cover w-full h-full"
+                                />
+                              </div>
+                            ) : (
+                              <div className="w-8 h-11 shrink-0 rounded-sm bg-muted" />
+                            )}
+                            <div className="flex flex-col min-w-0">
+                              <span className="text-body-sm text-foreground truncate">
+                                {book.title}
+                              </span>
+                              <span className="text-caption text-muted-foreground">
+                                {book.author}
+                              </span>
+                            </div>
+                          </button>
+                        </li>
                       ))}
-                    </div>
+                    </ul>
+                  )}
+                </div>
+              )}
+            </div>
+          </section>
 
-                    <Textarea
-                      placeholder={layerTypeOptions.find((o) => o.type === layer.type)?.description}
-                      value={layer.content}
-                      onChange={(e) => updateLayer(index, { content: e.target.value })}
-                      className="min-h-24"
+          {/* Step 2: 선택된 책 카드 + trace 생성 */}
+          {selectedBook && (
+            <section className="space-y-4">
+              <div className="flex gap-4 p-4 rounded-xl border border-border bg-card">
+                {selectedBook.coverUrl ? (
+                  <div className="w-14 h-20 shrink-0 overflow-hidden rounded-md bg-muted">
+                    <Image
+                      src={selectedBook.coverUrl}
+                      alt={selectedBook.title}
+                      width={56}
+                      height={80}
+                      className="object-cover w-full h-full"
                     />
                   </div>
-                ))}
-
-                <Button variant="outline" className="w-full" onClick={addLayer}>
-                  <Plus className="size-4 mr-2" />
-                  레이어 추가
-                </Button>
-              </div>
-            )}
-
-            {currentStep === 'preview' && (
-              <div className="space-y-6">
-                {/* Preview Trace */}
-                <div className="border rounded-xl p-4 space-y-4">
-                  {/* Book Info */}
-                  <div className="bg-muted/50 rounded-lg p-3">
-                    <p className="text-heading-sm">{form.book.title}</p>
-                    <p className="text-body-sm text-muted-foreground">{form.book.author}</p>
-                  </div>
-
-                  {/* Quote */}
-                  <blockquote className="border-l-2 border-primary pl-4">
-                    <p className="text-foreground">{`"${form.quote}"`}</p>
-                  </blockquote>
-
-                  {/* Layers */}
-                  <div className="space-y-3">
-                    {form.layers
-                      .filter((l) => l.content.trim())
-                      .map((layer, index) => (
-                        <div
-                          key={index}
-                          className={cn(
-                            'rounded-lg p-3',
-                            layer.type === 'me' && 'bg-primary/5',
-                            layer.type === 'from-book' && 'bg-muted/50',
-                            layer.type === 'context' && 'bg-accent/50',
-                          )}
-                        >
-                          <p className="text-caption text-muted-foreground uppercase tracking-wider mb-1">
-                            {layerTypeOptions.find((o) => o.type === layer.type)?.label}
-                          </p>
-                          <p className="text-body-sm">{layer.content}</p>
-                        </div>
-                      ))}
-                  </div>
+                ) : (
+                  <div className="w-14 h-20 shrink-0 rounded-md bg-muted" />
+                )}
+                <div className="flex flex-col justify-center min-w-0 gap-1">
+                  <p className="text-heading-sm text-foreground truncate">{selectedBook.title}</p>
+                  <p className="text-body-sm text-muted-foreground">{selectedBook.author}</p>
                 </div>
-
-                {/* Visibility Toggle */}
-                <div className="flex items-center justify-between py-3 border-t border-b">
-                  <div className="flex items-center gap-2">
-                    {form.isPublic ? (
-                      <Globe className="size-4 text-muted-foreground" />
-                    ) : (
-                      <Lock className="size-4 text-muted-foreground" />
-                    )}
-                    <span className="text-body-sm">
-                      {form.isPublic ? 'World에 공개' : '나만 보기'}
-                    </span>
-                  </div>
-                  <Switch
-                    checked={form.isPublic}
-                    onCheckedChange={(checked) => setForm({ ...form, isPublic: checked })}
-                  />
-                </div>
+                <button
+                  type="button"
+                  aria-label="선택 해제"
+                  onClick={() => {
+                    setSelectedBook(null)
+                    setIsGenerating(false)
+                  }}
+                  className="ml-auto shrink-0 self-start text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <X className="size-4" />
+                </button>
               </div>
-            )}
-          </div>
 
-          {/* Navigation */}
-          <div className="fixed bottom-14 left-0 right-0 border-t bg-background p-4">
-            <div className="flex gap-3 max-w-2xl mx-auto">
-              {currentStepIndex > 0 && (
-                <Button variant="outline" onClick={goPrev} className="flex-1">
-                  <ArrowLeft className="size-4 mr-2" />
-                  이전
-                </Button>
+              {!isGenerating && (
+                <div className="space-y-3">
+                  <p className="text-body-sm text-foreground">이제 trace를 생성해 볼게요</p>
+                  <Button className="w-full" onClick={() => setIsGenerating(true)}>
+                    trace 생성하기
+                  </Button>
+                </div>
               )}
 
-              {currentStep === 'preview' ? (
-                <Button onClick={handleSubmit} className="flex-1" disabled={!canGoNext()}>
-                  저장하기
-                </Button>
-              ) : (
-                <Button onClick={goNext} className="flex-1" disabled={!canGoNext()}>
-                  다음
-                  <ArrowRight className="size-4 ml-2" />
-                </Button>
-              )}
-            </div>
-          </div>
+              {/* Step 3 placeholder — 다음 이슈에서 AI chat 구현 */}
+              {isGenerating && <TraceChatPlaceholder />}
+            </section>
+          )}
         </main>
 
         <BottomNav />
