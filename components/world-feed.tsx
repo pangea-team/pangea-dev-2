@@ -2,15 +2,15 @@
 
 import { TraceCard } from '@/components/trace-card'
 import { PATH } from '@/constants/path'
-import { feedTraceCards } from '@/lib/mock-data'
+import type { TraceCard as TraceCardType } from '@/lib/types'
 import { useRouter } from 'next/navigation'
 
-export function WorldFeed() {
+export function WorldFeed({ cards }: { cards: TraceCardType[] }) {
   const router = useRouter()
 
   return (
     <div className="divide-y divide-border">
-      {feedTraceCards.map((card) => (
+      {cards.map((card) => (
         <TraceCard
           key={card.id}
           card={card}
