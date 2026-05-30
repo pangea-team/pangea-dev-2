@@ -1,7 +1,9 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { PATH } from '@/constants/path'
 import { isProfileComplete, loadProfileFromStorage, useAuth } from '@/lib/auth-context'
+import type { Route } from 'next'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 
@@ -10,16 +12,14 @@ function LoginContent() {
   const searchParams = useSearchParams()
   const { login, hasCompletedProfile, isHydrated } = useAuth()
 
-  const redirectTo = searchParams.get('redirect') || '/'
+  const redirectTo = (searchParams.get('redirect') || PATH.HOME) as Route
 
   const handleKakaoLogin = () => {
     // UI만 구현 - 실제 API 연결 없음
     login()
     const profileComplete =
-      isHydrated && hasCompletedProfile
-        ? true
-        : isProfileComplete(loadProfileFromStorage())
-    router.push(profileComplete ? redirectTo : '/onboarding')
+      isHydrated && hasCompletedProfile ? true : isProfileComplete(loadProfileFromStorage())
+    router.push(profileComplete ? redirectTo : PATH.ONBOARDING)
   }
 
   return (
@@ -35,9 +35,7 @@ function LoginContent() {
           {/* Logo & Welcome */}
           <div className="text-center space-y-2">
             <h2 className="text-heading-lg">환영합니다</h2>
-            <p className="text-body-sm text-muted-foreground">
-              독서의 흔적을 남기고 공유해보세요
-            </p>
+            <p className="text-body-sm text-muted-foreground">독서의 흔적을 남기고 공유해보세요</p>
           </div>
 
           {/* Kakao Login Button */}
@@ -46,6 +44,7 @@ function LoginContent() {
             className="w-full h-12 bg-[#FEE500] hover:bg-[#FEE500]/90 text-[#191919] font-medium"
           >
             <svg
+              aria-hidden="true"
               className="size-5 mr-2"
               viewBox="0 0 24 24"
               fill="currentColor"
@@ -68,11 +67,13 @@ function LoginContent() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-muted-foreground">로딩중...</p>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <p className="text-muted-foreground">로딩중...</p>
+        </div>
+      }
+    >
       <LoginContent />
     </Suspense>
   )

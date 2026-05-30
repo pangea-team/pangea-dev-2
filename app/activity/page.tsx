@@ -3,6 +3,7 @@
 import { BottomNav } from '@/components/layout/bottom-nav'
 import { Header } from '@/components/layout/header'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { PATH } from '@/constants/path'
 import { mockNotifications } from '@/lib/mock-data'
 import type { Notification, NotificationType } from '@/lib/types'
 import { cn } from '@/lib/utils'
@@ -91,7 +92,7 @@ export default function ActivityPage() {
   const notifications = mockNotifications
 
   const handleCardClick = (traceCardId: string) => {
-    router.push(`/trace/${traceCardId}`)
+    router.push(PATH.TRACE(traceCardId))
   }
 
   return (

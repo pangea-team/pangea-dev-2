@@ -1,14 +1,7 @@
 'use client'
 
 import type { User } from '@/lib/types'
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode,
-} from 'react'
+import { type ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react'
 
 const STORAGE_KEY_LOGGED_IN = 'pangea_auth_logged_in'
 const STORAGE_KEY_PROFILE = 'pangea_user_profile'

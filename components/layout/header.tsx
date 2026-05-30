@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { PATH } from '@/constants/path'
 import { useAuth } from '@/lib/auth-context'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
@@ -34,7 +35,7 @@ export function Header({
         </h1>
         {showLoginButton && !isLoggedIn && (
           <Button variant="ghost" size="sm" asChild className="absolute right-4">
-            <Link href="/login">로그인</Link>
+            <Link href={PATH.LOGIN}>로그인</Link>
           </Button>
         )}
       </div>

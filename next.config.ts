@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
+  typedRoutes: true,
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -13,6 +14,10 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'image.aladin.co.kr',
       },
     ],
   },

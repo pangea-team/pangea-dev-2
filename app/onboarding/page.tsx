@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { PATH } from '@/constants/path'
 import { useAuth } from '@/lib/auth-context'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -19,11 +20,11 @@ export default function OnboardingPage() {
   useEffect(() => {
     if (!isHydrated) return
     if (!isLoggedIn) {
-      router.replace('/login?redirect=/onboarding')
+      router.replace(PATH.LOGIN_WITH_REDIRECT(PATH.ONBOARDING))
       return
     }
     if (hasCompletedProfile) {
-      router.replace('/')
+      router.replace(PATH.HOME)
     }
   }, [isHydrated, isLoggedIn, hasCompletedProfile, router])
 
@@ -34,7 +35,7 @@ export default function OnboardingPage() {
     e.preventDefault()
     if (!canSubmit) return
     completeProfile(displayName, bio)
-    router.replace('/')
+    router.replace(PATH.HOME)
   }
 
   if (!isHydrated || !isLoggedIn || hasCompletedProfile) {
@@ -72,9 +73,7 @@ export default function OnboardingPage() {
                 autoComplete="nickname"
                 className="h-11"
               />
-              <p className="text-caption text-muted-foreground">
-                다른 사람에게 보이는 이름이에요
-              </p>
+              <p className="text-caption text-muted-foreground">다른 사람에게 보이는 이름이에요</p>
             </div>
 
             <div className="space-y-2">
