@@ -70,5 +70,15 @@
       "enabled": true,
       "indentWidth": 2
     }
-  }
+  },
+  "overrides": [
+    {
+      "include": ["lib/supabase/**"],
+      "linter": {
+        "rules": {
+          "style": { "noNonNullAssertion": "off" }
+        }
+      }
+    }
+  ]
 }
