@@ -14,8 +14,10 @@ const BIO_MAX_LENGTH = 80
 export default function OnboardingPage() {
   const router = useRouter()
   const { isLoggedIn, hasCompletedProfile, isHydrated, completeProfile } = useAuth()
-  const [displayName, setDisplayName] = useState('')
+  const [nickname, setNickname] = useState('')
   const [bio, setBio] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!isHydrated) return
@@ -29,13 +31,21 @@ export default function OnboardingPage() {
   }, [isHydrated, isLoggedIn, hasCompletedProfile, router])
 
   const canSubmit =
-    displayName.trim().length > 0 && bio.trim().length > 0 && bio.length <= BIO_MAX_LENGTH
+    nickname.trim().length > 0 && bio.trim().length > 0 && bio.length <= BIO_MAX_LENGTH
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!canSubmit) return
-    completeProfile(displayName, bio)
-    router.replace(PATH.HOME)
+    if (!canSubmit || isSubmitting) return
+    setSubmitError(null)
+    setIsSubmitting(true)
+    try {
+      await completeProfile(nickname, bio)
+      router.replace(PATH.HOME)
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : '저장에 실패했습니다. 다시 시도해주세요.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   if (!isHydrated || !isLoggedIn || hasCompletedProfile) {
@@ -63,11 +73,11 @@ export default function OnboardingPage() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="displayName">닉네임</Label>
+              <Label htmlFor="nickname">닉네임</Label>
               <Input
-                id="displayName"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
+                id="nickname"
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
                 placeholder="예: 김독서"
                 maxLength={20}
                 autoComplete="nickname"
@@ -92,8 +102,10 @@ export default function OnboardingPage() {
               </p>
             </div>
 
-            <Button type="submit" className="w-full h-12" disabled={!canSubmit}>
-              시작하기
+            {submitError && <p className="text-caption text-destructive">{submitError}</p>}
+
+            <Button type="submit" className="w-full h-12" disabled={!canSubmit || isSubmitting}>
+              {isSubmitting ? '저장 중...' : '시작하기'}
             </Button>
           </form>
         </div>
