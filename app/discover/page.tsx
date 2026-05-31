@@ -55,12 +55,9 @@ function NotificationItem({
     >
       <div className="relative">
         <Avatar className="size-10">
-          <AvatarImage
-            src={notification.fromUser.avatarUrl}
-            alt={notification.fromUser.displayName}
-          />
+          <AvatarImage src={notification.fromUser.avatarUrl} alt={notification.fromUser.nickname} />
           <AvatarFallback className="text-label-sm">
-            {notification.fromUser.displayName[0]}
+            {notification.fromUser.nickname?.[0] ?? '?'}
           </AvatarFallback>
         </Avatar>
         <div className="absolute -bottom-1 -right-1 size-5 rounded-full bg-background flex items-center justify-center">
@@ -70,7 +67,7 @@ function NotificationItem({
 
       <div className="flex-1 min-w-0">
         <p className="text-body-sm">
-          <span className="font-semibold">{notification.fromUser.displayName}</span>
+          <span className="font-semibold">{notification.fromUser.nickname}</span>
           <span className="text-muted-foreground">{notification.message}</span>
         </p>
         {notification.traceCard && (

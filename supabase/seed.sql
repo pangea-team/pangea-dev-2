@@ -5,7 +5,7 @@
 -- ──────────────────────────────────────────────
 -- 1. 테스트 유저 (auth.users)
 --    가입 트리거(handle_new_user)가 profiles를 자동 생성한다.
---    raw_user_meta_data.name → profiles.display_name 으로 매핑됨.
+--    raw_user_meta_data.name → profiles.full_name 으로 매핑됨.
 --    비밀번호 없음(로그인용 아님) — 피드에 보일 "다른 유저" 데이터일 뿐.
 -- ──────────────────────────────────────────────
 insert into auth.users
@@ -26,12 +26,12 @@ values
    '{"provider":"email","providers":["email"]}'::jsonb, '{"name":"박페이지"}'::jsonb,
    now(), now(), '', '', '', '');
 
--- 트리거가 만든 profiles에 username/bio 보충 (display_name은 트리거가 이미 채움)
-update public.profiles set username = 'bookworm_kim', bio = '책과 함께 성장하는 중'
+-- 트리거가 만든 profiles에 nickname/bio 보충 (full_name은 트리거가 이미 채움)
+update public.profiles set nickname = 'bookworm_kim', bio = '책과 함께 성장하는 중'
   where id = '11111111-1111-1111-1111-111111111111';
-update public.profiles set username = 'reader_lee',  bio = '문학을 사랑하는 독자'
+update public.profiles set nickname = 'reader_lee',  bio = '문학을 사랑하는 독자'
   where id = '22222222-2222-2222-2222-222222222222';
-update public.profiles set username = 'page_turner', bio = '하루 한 권 도전 중'
+update public.profiles set nickname = 'page_turner', bio = '하루 한 권 도전 중'
   where id = '33333333-3333-3333-3333-333333333333';
 
 -- ──────────────────────────────────────────────
@@ -48,7 +48,7 @@ insert into public.books (id, title, author, publisher, published_date, cover_ur
 -- 3. 트레이스
 -- ──────────────────────────────────────────────
 insert into public.trace_cards
-  (id, user_id, book_id, quote, me_thought, trace_expanded, layers, is_public, created_at, updated_at) values
+  (id, user_id, book_id, quote, representative_sentence, trace_expanded, layers, is_public, created_at, updated_at) values
   ('c0000000-0000-0000-0000-000000000001',
    '22222222-2222-2222-2222-222222222222', 'a0000000-0000-0000-0000-000000000001',
    '새는 알에서 나오려고 투쟁한다. 알은 세계이다. 태어나려는 자는 하나의 세계를 깨뜨려야 한다.',

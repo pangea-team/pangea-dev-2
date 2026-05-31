@@ -68,8 +68,7 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
       userId: 'user-1',
       user: {
         id: 'user-1',
-        username: 'bookworm_kim',
-        displayName: '김독서',
+        nickname: 'bookworm_kim',
         avatarUrl: undefined,
         bio: '책과 함께 성장하는 중',
         createdAt: new Date('2024-01-15'),
@@ -126,14 +125,13 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
               onClick={handleUserClick}
             >
               <Avatar className="size-10">
-                <AvatarImage src={card.user.avatarUrl} alt={card.user.displayName} />
+                <AvatarImage src={card.user.avatarUrl} alt={card.user.nickname} />
                 <AvatarFallback className="text-label-sm">
-                  {card.user.displayName[0]}
+                  {card.user.nickname?.[0] ?? '?'}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <p className="text-heading-sm text-foreground">{card.user.displayName}</p>
-                <p className="text-body-sm text-muted-foreground">@{card.user.username}</p>
+                <p className="text-heading-sm text-foreground">{card.user.nickname}</p>
               </div>
             </div>
             <Button
@@ -238,9 +236,9 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
                     className="size-8 flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
                     onClick={() => handleCommentUserClick(comment.user.id)}
                   >
-                    <AvatarImage src={comment.user.avatarUrl} alt={comment.user.displayName} />
+                    <AvatarImage src={comment.user.avatarUrl} alt={comment.user.nickname} />
                     <AvatarFallback className="text-caption">
-                      {comment.user.displayName[0]}
+                      {comment.user.nickname?.[0] ?? '?'}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
@@ -249,7 +247,7 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
                         className="text-label-sm text-foreground cursor-pointer hover:underline"
                         onClick={() => handleCommentUserClick(comment.user.id)}
                       >
-                        {comment.user.displayName}
+                        {comment.user.nickname}
                       </span>
                       <span className="text-caption text-muted-foreground">
                         {formatDate(comment.createdAt)}
@@ -289,7 +287,7 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
           <AlertDialogHeader>
             <AlertDialogTitle>교환 요청</AlertDialogTitle>
             <AlertDialogDescription>
-              {card.user.displayName}님에게 《{card.book.title}》 교환을 요청하시겠습니까?
+              {card.user.nickname}님에게 《{card.book.title}》 교환을 요청하시겠습니까?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

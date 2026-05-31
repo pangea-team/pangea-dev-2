@@ -15,10 +15,8 @@ export default function ProfilePage() {
   const router = useRouter()
   const { user } = useAuth()
 
-  if (!user) return null
-
   // For demo: show all cards for current user (in real app, filter by userId)
-  const userCards = mockTraceCards.filter((card) => card.userId === user.id)
+  const userCards = mockTraceCards.filter((card) => card.userId === user?.id)
 
   return (
     <RequireAuth redirectTo={PATH.PROFILE}>
@@ -31,15 +29,15 @@ export default function ProfilePage() {
             <div className="flex items-start justify-between">
               {/* Left: Name, ID, Bio */}
               <div className="flex-1">
-                <h2 className="text-heading-lg">{user.displayName}</h2>
-                {user.bio && <p className="text-body-sm mt-3 text-foreground/90">{user.bio}</p>}
+                <h2 className="text-heading-lg">{user?.nickname}</h2>
+                {user?.bio && <p className="text-body-sm mt-3 text-foreground/90">{user.bio}</p>}
               </div>
 
               {/* Right: Avatar */}
               <Avatar className="size-20 shrink-0">
-                <AvatarImage src={user.avatarUrl} alt={user.displayName} />
+                <AvatarImage src={user?.avatarUrl} alt={user?.nickname} />
                 <AvatarFallback className="text-(--text-2xl) font-medium">
-                  {user.displayName[0]}
+                  {user?.nickname?.[0] ?? '?'}
                 </AvatarFallback>
               </Avatar>
             </div>

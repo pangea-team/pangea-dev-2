@@ -121,25 +121,25 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           created_at: string
-          display_name: string
+          full_name: string
           id: string
-          username: string | null
+          nickname: string | null
         }
         Insert: {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
-          display_name?: string
+          full_name?: string
           id: string
-          username?: string | null
+          nickname?: string | null
         }
         Update: {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
-          display_name?: string
+          full_name?: string
           id?: string
-          username?: string | null
+          nickname?: string | null
         }
         Relationships: []
       }
@@ -196,8 +196,8 @@ export type Database = {
           id: string
           is_public: boolean
           layers: Json
-          me_thought: string | null
           quote: string | null
+          representative_sentence: string | null
           trace_expanded: string | null
           updated_at: string
           user_id: string
@@ -208,8 +208,8 @@ export type Database = {
           id?: string
           is_public?: boolean
           layers?: Json
-          me_thought?: string | null
           quote?: string | null
+          representative_sentence?: string | null
           trace_expanded?: string | null
           updated_at?: string
           user_id: string
@@ -220,8 +220,8 @@ export type Database = {
           id?: string
           is_public?: boolean
           layers?: Json
-          me_thought?: string | null
           quote?: string | null
+          representative_sentence?: string | null
           trace_expanded?: string | null
           updated_at?: string
           user_id?: string
@@ -254,8 +254,8 @@ export type Database = {
           id: string | null
           is_public: boolean | null
           layers: Json | null
-          me_thought: string | null
           quote: string | null
+          representative_sentence: string | null
           trace_expanded: string | null
           updated_at: string | null
           user_id: string | null
@@ -268,8 +268,8 @@ export type Database = {
           id?: string | null
           is_public?: boolean | null
           layers?: Json | null
-          me_thought?: string | null
           quote?: string | null
+          representative_sentence?: string | null
           trace_expanded?: string | null
           updated_at?: string | null
           user_id?: string | null
@@ -282,8 +282,8 @@ export type Database = {
           id?: string | null
           is_public?: boolean | null
           layers?: Json | null
-          me_thought?: string | null
           quote?: string | null
+          representative_sentence?: string | null
           trace_expanded?: string | null
           updated_at?: string | null
           user_id?: string | null

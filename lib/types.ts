@@ -3,8 +3,7 @@
 // 사용자 프로필
 export interface User {
   id: string
-  username: string
-  displayName: string
+  nickname: string
   avatarUrl?: string
   bio?: string
   createdAt: Date

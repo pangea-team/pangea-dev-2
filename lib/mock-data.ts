@@ -4,24 +4,21 @@ import type { Book, Comment, Notification, TraceCard, User } from './types'
 export const mockUsers: User[] = [
   {
     id: 'user-1',
-    username: 'bookworm_kim',
-    displayName: '김독서',
+    nickname: 'bookworm_kim',
     avatarUrl: undefined,
     bio: '책과 함께 성장하는 중',
     createdAt: new Date('2024-01-15'),
   },
   {
     id: 'user-2',
-    username: 'reader_lee',
-    displayName: '이문학',
+    nickname: 'reader_lee',
     avatarUrl: undefined,
     bio: '문학을 사랑하는 독자',
     createdAt: new Date('2024-02-20'),
   },
   {
     id: 'user-3',
-    username: 'page_turner',
-    displayName: '박페이지',
+    nickname: 'page_turner',
     avatarUrl: undefined,
     bio: '하루 한 권 도전 중',
     createdAt: new Date('2024-03-10'),

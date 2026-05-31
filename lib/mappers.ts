@@ -2,8 +2,7 @@ import type { Comment, TraceCard, TraceLayer } from './types'
 
 type ProfileRow = {
   id: string
-  username: string | null
-  display_name: string
+  nickname: string | null
   avatar_url: string | null
   bio: string | null
   created_at: string
@@ -14,7 +13,7 @@ export type TraceCardRow = {
   user_id: string
   book_id: string
   quote: string | null
-  me_thought: string | null
+  representative_sentence: string | null
   trace_expanded: string | null
   layers: unknown
   is_public: boolean
@@ -49,8 +48,7 @@ export function mapTraceCard(row: TraceCardRow): TraceCard {
     userId: row.user_id,
     user: {
       id: row.profiles?.id ?? row.user_id,
-      username: row.profiles?.username ?? '',
-      displayName: row.profiles?.display_name ?? 'Unknown',
+      nickname: row.profiles?.nickname ?? '',
       avatarUrl: row.profiles?.avatar_url ?? undefined,
       bio: row.profiles?.bio ?? undefined,
       createdAt: new Date(row.profiles?.created_at ?? row.created_at),
@@ -65,7 +63,7 @@ export function mapTraceCard(row: TraceCardRow): TraceCard {
       publishedDate: row.books?.published_date ?? undefined,
     },
     quote: row.quote ?? '',
-    meThought: row.me_thought ?? '',
+    meThought: row.representative_sentence ?? '',
     traceExpanded: row.trace_expanded ?? '',
     layers: Array.isArray(row.layers) ? (row.layers as TraceLayer[]) : [],
     isPublic: row.is_public,
@@ -86,8 +84,7 @@ export function mapComment(row: CommentRow): Comment {
     userId: row.user_id,
     user: {
       id: row.profiles?.id ?? row.user_id,
-      username: row.profiles?.username ?? '',
-      displayName: row.profiles?.display_name ?? 'Unknown',
+      nickname: row.profiles?.nickname ?? '',
       avatarUrl: row.profiles?.avatar_url ?? undefined,
       bio: row.profiles?.bio ?? undefined,
       createdAt: new Date(row.profiles?.created_at ?? row.created_at),

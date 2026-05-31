@@ -13,7 +13,9 @@ export default async function TracePage({ params }: TracePageProps) {
 
   const { data: traceData } = await supabase
     .from('trace_cards')
-    .select('*, profiles(*), books(*), reactions(count), comments(count)')
+    .select(
+      '*, profiles(id, nickname, avatar_url, bio, created_at), books(*), reactions(count), comments(count)',
+    )
     .eq('id', id)
     .single()
 
