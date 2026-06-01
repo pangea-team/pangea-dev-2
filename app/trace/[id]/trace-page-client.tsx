@@ -14,6 +14,9 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { PATH } from '@/constants/path'
+import { useAuth } from '@/lib/auth-context'
+import { addComment } from '@/lib/supabase/actions/comments'
+import { toggleHeart } from '@/lib/supabase/actions/reactions'
 import type { Comment, TraceCard } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { ArrowLeft, ArrowLeftRight, Heart, ImageIcon, MessageCircle, Send, X } from 'lucide-react'
@@ -22,16 +25,24 @@ import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useRef, useState } from 'react'
 
+interface CurrentProfile {
+  id: string
+  nickname: string | null
+  avatar_url: string | null
+}
+
 interface TracePageClientProps {
   card: TraceCard
   initialComments: Comment[]
+  currentProfile: CurrentProfile | null
 }
 
-export function TracePageClient({ card, initialComments }: TracePageClientProps) {
+export function TracePageClient({ card, initialComments, currentProfile }: TracePageClientProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const fromPage = (searchParams.get('from') || PATH.HOME) as Route
 
+  const { user: currentUser } = useAuth()
   const [hearted, setHearted] = useState(card.userReaction?.hearted ?? false)
   const [heartCount, setHeartCount] = useState(card.reactions.heart)
   const [comments, setComments] = useState<Comment[]>(initialComments)
@@ -59,9 +70,19 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
     setShowExchangeDialog(false)
   }
 
-  const handleHeart = () => {
-    setHearted(!hearted)
-    setHeartCount(hearted ? heartCount - 1 : heartCount + 1)
+  const handleHeart = async () => {
+    const wasHearted = hearted
+    setHearted(!wasHearted)
+    setHeartCount((prev) => (wasHearted ? prev - 1 : prev + 1))
+
+    try {
+      const result = await toggleHeart(card.id)
+      setHearted(result.hearted)
+    } catch (err) {
+      console.error('좋아요 실패:', err)
+      setHearted(wasHearted)
+      setHeartCount((prev) => (wasHearted ? prev + 1 : prev - 1))
+    }
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,12 +114,20 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
     const comment: Comment = {
       id: `comment-new-${Date.now()}`,
       userId: 'user-1',
+  const handleSubmitComment = async () => {
+    if (!newComment.trim()) return
+
+    const tempId = `temp-${Date.now()}`
+    const content = newComment.trim()
+
+    const optimistic: Comment = {
+      id: tempId,
+      userId: currentUser?.id ?? '',
       user: {
-        id: 'user-1',
-        nickname: 'bookworm_kim',
-        avatarUrl: undefined,
-        bio: '책과 함께 성장하는 중',
-        createdAt: new Date('2024-01-15'),
+        id: currentUser?.id ?? '',
+        nickname: currentUser?.nickname ?? '',
+        avatarUrl: currentUser?.avatarUrl,
+        createdAt: currentUser?.createdAt ?? new Date(),
       },
       traceCardId: card.id,
       content: newComment.trim(),
@@ -106,11 +135,20 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
       createdAt: new Date(),
     }
 
-    setComments([...comments, comment])
+    setComments((prev) => [...prev, optimistic])
     setNewComment('')
     // 미리보기 object URL은 목록 표시에 계속 쓰이므로 revoke하지 않고 상태만 초기화
     setPendingFile(null)
     setPreviewUrl(null)
+
+    try {
+      const saved = await addComment(card.id, content)
+      setComments((prev) => prev.map((c) => (c.id === tempId ? saved : c)))
+    } catch (err) {
+      console.error('댓글 저장 실패:', err)
+      setComments((prev) => prev.filter((c) => c.id !== tempId))
+      setNewComment(content)
+    }
   }
 
   const formatDate = (date: Date) => {

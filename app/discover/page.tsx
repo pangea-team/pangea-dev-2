@@ -2,13 +2,12 @@
 
 import { BottomNav } from '@/components/layout/bottom-nav'
 import { Header } from '@/components/layout/header'
+import { NotificationItem, type NotificationItemData } from '@/components/notification-item'
 import { RequireAuth } from '@/components/require-auth'
 import { StoneAvatar } from '@/components/stone-avatar'
 import { PATH } from '@/constants/path'
-import { mockNotifications } from '@/lib/mock-data'
-import type { Notification, NotificationType } from '@/lib/types'
-import { cn } from '@/lib/utils'
-import { ArrowLeftRight, Check, Heart, MessageCircle } from 'lucide-react'
+import { getMyNotifications } from '@/lib/supabase/actions/notifications'
+import { Heart } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 function getNotificationIcon(type: NotificationType) {
@@ -83,10 +82,19 @@ function NotificationItem({
     </button>
   )
 }
+import { useEffect, useState } from 'react'
 
 export default function DiscoverPage() {
   const router = useRouter()
-  const notifications = mockNotifications
+  const [notifications, setNotifications] = useState<NotificationItemData[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    getMyNotifications()
+      .then(setNotifications)
+      .catch(console.error)
+      .finally(() => setLoading(false))
+  }, [])
 
   const handleCardClick = (traceCardId: string) => {
     router.push(PATH.TRACE_WITH_FROM(traceCardId, PATH.DISCOVER))
@@ -98,7 +106,11 @@ export default function DiscoverPage() {
         <Header title="발견" align="left" />
 
         <main className="max-w-2xl mx-auto">
-          {notifications.length > 0 ? (
+          {loading ? (
+            <div className="px-4 py-8 text-center">
+              <p className="text-body-sm text-muted-foreground">불러오는 중...</p>
+            </div>
+          ) : notifications.length > 0 ? (
             <div className="divide-y divide-border">
               {notifications.map((notification) => (
                 <NotificationItem

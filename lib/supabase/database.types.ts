@@ -100,6 +100,13 @@ export type Database = {
             foreignKeyName: "comments_trace_card_id_fkey"
             columns: ["trace_card_id"]
             isOneToOne: false
+            referencedRelation: "admin_conversation_logs"
+            referencedColumns: ["trace_id"]
+          },
+          {
+            foreignKeyName: "comments_trace_card_id_fkey"
+            columns: ["trace_card_id"]
+            isOneToOne: false
             referencedRelation: "trace_cards"
             referencedColumns: ["id"]
           },
@@ -200,7 +207,83 @@ export type Database = {
             foreignKeyName: "messages_conversation_id_fkey"
             columns: ["conversation_id"]
             isOneToOne: false
+            referencedRelation: "admin_conversation_logs"
+            referencedColumns: ["conversation_id"]
+          },
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
             referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          from_user_id: string | null
+          id: string
+          is_read: boolean
+          message: string
+          trace_card_id: string | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          from_user_id?: string | null
+          id?: string
+          is_read?: boolean
+          message?: string
+          trace_card_id?: string | null
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          from_user_id?: string | null
+          id?: string
+          is_read?: boolean
+          message?: string
+          trace_card_id?: string | null
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_from_user_id_fkey"
+            columns: ["from_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_trace_card_id_fkey"
+            columns: ["trace_card_id"]
+            isOneToOne: false
+            referencedRelation: "admin_conversation_logs"
+            referencedColumns: ["trace_id"]
+          },
+          {
+            foreignKeyName: "notifications_trace_card_id_fkey"
+            columns: ["trace_card_id"]
+            isOneToOne: false
+            referencedRelation: "trace_cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_trace_card_id_fkey"
+            columns: ["trace_card_id"]
+            isOneToOne: false
+            referencedRelation: "trace_cards_with_counts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -259,6 +342,13 @@ export type Database = {
             foreignKeyName: "reactions_trace_card_id_fkey"
             columns: ["trace_card_id"]
             isOneToOne: false
+            referencedRelation: "admin_conversation_logs"
+            referencedColumns: ["trace_id"]
+          },
+          {
+            foreignKeyName: "reactions_trace_card_id_fkey"
+            columns: ["trace_card_id"]
+            isOneToOne: false
             referencedRelation: "trace_cards"
             referencedColumns: ["id"]
           },
@@ -274,6 +364,61 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      share_requests: {
+        Row: {
+          created_at: string
+          id: string
+          message: string | null
+          owner_id: string
+          requester_id: string
+          status: string
+          trace_card_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          owner_id: string
+          requester_id: string
+          status?: string
+          trace_card_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          owner_id?: string
+          requester_id?: string
+          status?: string
+          trace_card_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "share_requests_trace_card_id_fkey"
+            columns: ["trace_card_id"]
+            isOneToOne: false
+            referencedRelation: "admin_conversation_logs"
+            referencedColumns: ["trace_id"]
+          },
+          {
+            foreignKeyName: "share_requests_trace_card_id_fkey"
+            columns: ["trace_card_id"]
+            isOneToOne: false
+            referencedRelation: "trace_cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "share_requests_trace_card_id_fkey"
+            columns: ["trace_card_id"]
+            isOneToOne: false
+            referencedRelation: "trace_cards_with_counts"
             referencedColumns: ["id"]
           },
         ]
@@ -333,6 +478,13 @@ export type Database = {
             foreignKeyName: "trace_cards_conversation_id_fkey"
             columns: ["conversation_id"]
             isOneToOne: false
+            referencedRelation: "admin_conversation_logs"
+            referencedColumns: ["conversation_id"]
+          },
+          {
+            foreignKeyName: "trace_cards_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
             referencedRelation: "conversations"
             referencedColumns: ["id"]
           },
@@ -366,13 +518,22 @@ export type Database = {
           trace_updated_at: string | null
           user_id: string | null
         }
-        Insert: {
-          [_ in never]: never
-        }
-        Update: {
-          [_ in never]: never
-        }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "conversations_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       trace_cards_with_counts: {
         Row: {
