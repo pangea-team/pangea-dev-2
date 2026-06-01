@@ -1,6 +1,4 @@
 'use client'
-
-import { submitComment } from '@/app/actions/comments'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,6 +13,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { PATH } from '@/constants/path'
+import { useAuth } from '@/lib/auth-context'
+import { addComment } from '@/lib/supabase/actions/comments'
+import { toggleHeart } from '@/lib/supabase/actions/reactions'
 import type { Comment, TraceCard } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { ArrowLeft, ArrowLeftRight, Heart, MessageCircle, Send } from 'lucide-react'
@@ -40,6 +41,7 @@ export function TracePageClient({ card, initialComments, currentProfile }: Trace
   const searchParams = useSearchParams()
   const fromPage = (searchParams.get('from') || PATH.HOME) as Route
 
+  const { user: currentUser } = useAuth()
   const [hearted, setHearted] = useState(card.userReaction?.hearted ?? false)
   const [heartCount, setHeartCount] = useState(card.reactions.heart)
   const [comments, setComments] = useState<Comment[]>(initialComments)
@@ -63,26 +65,38 @@ export function TracePageClient({ card, initialComments, currentProfile }: Trace
     setShowExchangeDialog(false)
   }
 
-  const handleHeart = () => {
-    setHearted(!hearted)
-    setHeartCount(hearted ? heartCount - 1 : heartCount + 1)
+  const handleHeart = async () => {
+    const wasHearted = hearted
+    setHearted(!wasHearted)
+    setHeartCount((prev) => (wasHearted ? prev - 1 : prev + 1))
+
+    try {
+      const result = await toggleHeart(card.id)
+      setHearted(result.hearted)
+    } catch (err) {
+      console.error('좋아요 실패:', err)
+      setHearted(wasHearted)
+      setHeartCount((prev) => (wasHearted ? prev + 1 : prev - 1))
+    }
   }
 
   const handleSubmitComment = async () => {
-    if (!newComment.trim() || !currentProfile) return
+    if (!newComment.trim()) return
 
-    const tempId = `comment-new-${Date.now()}`
+    const tempId = `temp-${Date.now()}`
+    const content = newComment.trim()
+
     const optimistic: Comment = {
       id: tempId,
-      userId: currentProfile.id,
+      userId: currentUser?.id ?? '',
       user: {
-        id: currentProfile.id,
-        nickname: currentProfile.nickname ?? '',
-        avatarUrl: currentProfile.avatar_url ?? undefined,
-        createdAt: new Date(),
+        id: currentUser?.id ?? '',
+        nickname: currentUser?.nickname ?? '',
+        avatarUrl: currentUser?.avatarUrl,
+        createdAt: currentUser?.createdAt ?? new Date(),
       },
       traceCardId: card.id,
-      content: newComment,
+      content,
       createdAt: new Date(),
     }
 
@@ -90,10 +104,12 @@ export function TracePageClient({ card, initialComments, currentProfile }: Trace
     setNewComment('')
 
     try {
-      const saved = await submitComment(card.id, optimistic.content)
+      const saved = await addComment(card.id, content)
       setComments((prev) => prev.map((c) => (c.id === tempId ? saved : c)))
-    } catch {
+    } catch (err) {
+      console.error('댓글 저장 실패:', err)
       setComments((prev) => prev.filter((c) => c.id !== tempId))
+      setNewComment(content)
     }
   }
 

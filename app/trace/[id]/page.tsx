@@ -29,7 +29,22 @@ export default async function TracePage({ params }: TracePageProps) {
 
   if (!traceData) notFound()
 
-  const card = mapTraceCard(traceData as unknown as TraceCardRow)
+  let userHearted = false
+  if (authData.user) {
+    const { data: reaction } = await supabase
+      .from('reactions')
+      .select('id')
+      .eq('trace_card_id', id)
+      .eq('user_id', authData.user.id)
+      .eq('type', 'heart')
+      .maybeSingle()
+    userHearted = !!reaction
+  }
+
+  const card = {
+    ...mapTraceCard(traceData as unknown as TraceCardRow),
+    userReaction: { hearted: userHearted },
+  }
   const comments = (commentsData ?? []).map((c) => mapComment(c as unknown as CommentRow))
 
   const currentUserId = authData?.user?.id ?? null

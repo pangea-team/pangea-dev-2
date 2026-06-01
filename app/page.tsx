@@ -6,13 +6,33 @@ import { createClient } from '@/lib/supabase/server'
 
 export default async function WorldPage() {
   const supabase = await createClient()
-  const { data } = await supabase
-    .from('trace_cards')
-    .select('*, profiles(*), books(*), reactions(count), comments(count)')
-    .eq('is_public', true)
-    .order('created_at', { ascending: false })
 
-  const cards = (data ?? []).map((row) => mapTraceCard(row as unknown as TraceCardRow))
+  const [{ data }, { data: authData }] = await Promise.all([
+    supabase
+      .from('trace_cards')
+      .select('*, profiles(*), books(*), reactions(count), comments(count)')
+      .eq('is_public', true)
+      .order('created_at', { ascending: false }),
+    supabase.auth.getUser(),
+  ])
+
+  const rows = data ?? []
+  const cards = rows.map((row) => mapTraceCard(row as unknown as TraceCardRow))
+
+  if (authData.user && rows.length > 0) {
+    const cardIds = rows.map((r) => r.id as string)
+    const { data: reactions } = await supabase
+      .from('reactions')
+      .select('trace_card_id')
+      .eq('user_id', authData.user.id)
+      .eq('type', 'heart')
+      .in('trace_card_id', cardIds)
+
+    const heartedSet = new Set(reactions?.map((r) => r.trace_card_id) ?? [])
+    for (const card of cards) {
+      card.userReaction = { hearted: heartedSet.has(card.id) }
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background pb-16">

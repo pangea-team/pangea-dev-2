@@ -7,16 +7,24 @@ import { TraceCard } from '@/components/trace-card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { PATH } from '@/constants/path'
 import { useAuth } from '@/lib/auth-context'
-import { mockTraceCards } from '@/lib/mock-data'
+import { getMyTraceCards } from '@/lib/supabase/actions/profile'
+import type { TraceCard as TraceCardType } from '@/lib/types'
 import { BookOpen } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 export default function ProfilePage() {
   const router = useRouter()
   const { user } = useAuth()
+  const [userCards, setUserCards] = useState<TraceCardType[]>([])
+  const [loading, setLoading] = useState(true)
 
-  // For demo: show all cards for current user (in real app, filter by userId)
-  const userCards = mockTraceCards.filter((card) => card.userId === user?.id)
+  useEffect(() => {
+    getMyTraceCards()
+      .then(setUserCards)
+      .catch(console.error)
+      .finally(() => setLoading(false))
+  }, [])
 
   return (
     <RequireAuth redirectTo={PATH.PROFILE}>
@@ -57,7 +65,11 @@ export default function ProfilePage() {
 
           {/* Traces */}
           <div className="divide-y divide-border">
-            {userCards.length > 0 ? (
+            {loading ? (
+              <div className="px-4 py-8 text-center">
+                <p className="text-body-sm text-muted-foreground">불러오는 중...</p>
+              </div>
+            ) : userCards.length > 0 ? (
               userCards.map((card) => (
                 <TraceCard
                   key={card.id}

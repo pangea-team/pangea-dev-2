@@ -3,15 +3,18 @@
 import { TraceCard } from '@/components/trace-card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { PATH } from '@/constants/path'
-import { mockTraceCards, mockUsers } from '@/lib/mock-data'
+import { getUserProfile, getUserTraceCards } from '@/lib/supabase/actions/profile'
+import type { TraceCard as TraceCardType } from '@/lib/types'
 import { ArrowLeft, BookOpen } from 'lucide-react'
 import type { Route } from 'next'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { use } from 'react'
+import { use, useEffect, useState } from 'react'
 
 interface UserProfilePageProps {
   params: Promise<{ id: string }>
 }
+
+type UserProfile = NonNullable<Awaited<ReturnType<typeof getUserProfile>>>
 
 export default function UserProfilePage({ params }: UserProfilePageProps) {
   const { id } = use(params)
@@ -19,10 +22,21 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
   const searchParams = useSearchParams()
   const fromPage = (searchParams.get('from') || PATH.HOME) as Route
 
-  const user = mockUsers.find((u) => u.id === id)
-  const userCards = mockTraceCards.filter((card) => card.userId === id)
+  const [profile, setProfile] = useState<UserProfile | null | undefined>(undefined)
+  const [userCards, setUserCards] = useState<TraceCardType[]>([])
+  const [loading, setLoading] = useState(true)
 
-  if (!user) {
+  useEffect(() => {
+    Promise.all([getUserProfile(id), getUserTraceCards(id)])
+      .then(([p, cards]) => {
+        setProfile(p)
+        setUserCards(cards)
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false))
+  }, [id])
+
+  if (!loading && profile === null) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <p className="text-muted-foreground">사용자를 찾을 수 없습니다.</p>
@@ -54,15 +68,17 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
           <div className="flex items-start justify-between">
             {/* Left: Name, Bio */}
             <div className="flex-1">
-              <h2 className="text-heading-lg">{user.nickname}</h2>
-              {user.bio && <p className="text-body-sm mt-3 text-foreground/90">{user.bio}</p>}
+              <h2 className="text-heading-lg">{profile?.nickname}</h2>
+              {profile?.bio && (
+                <p className="text-body-sm mt-3 text-foreground/90">{profile.bio}</p>
+              )}
             </div>
 
             {/* Right: Avatar */}
             <Avatar className="size-20 shrink-0">
-              <AvatarImage src={user.avatarUrl} alt={user.nickname} />
+              <AvatarImage src={profile?.avatarUrl} alt={profile?.nickname} />
               <AvatarFallback className="text-(--text-2xl) font-medium">
-                {user.nickname?.[0] ?? '?'}
+                {profile?.nickname?.[0] ?? '?'}
               </AvatarFallback>
             </Avatar>
           </div>
@@ -82,7 +98,11 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
 
         {/* Traces */}
         <div className="divide-y divide-border">
-          {userCards.length > 0 ? (
+          {loading ? (
+            <div className="px-4 py-8 text-center">
+              <p className="text-body-sm text-muted-foreground">불러오는 중...</p>
+            </div>
+          ) : userCards.length > 0 ? (
             userCards.map((card) => (
               <TraceCard
                 key={card.id}
