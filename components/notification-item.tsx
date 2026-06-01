@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { StoneAvatar } from '@/components/stone-avatar'
 import type { NotificationType } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { ArrowLeftRight, Check, Heart, MessageCircle } from 'lucide-react'
@@ -63,12 +63,11 @@ export function NotificationItem({
       onClick={() => notification.traceCard && onCardClick(notification.traceCard.id)}
     >
       <div className="relative">
-        <Avatar className="size-10">
-          <AvatarImage src={notification.fromUser.avatarUrl} alt={notification.fromUser.nickname} />
-          <AvatarFallback className="text-label-sm">
-            {notification.fromUser.nickname?.[0] ?? '?'}
-          </AvatarFallback>
-        </Avatar>
+        <StoneAvatar
+          seed={notification.fromUser.id}
+          alt={notification.fromUser.nickname}
+          className="size-10"
+        />
         <div className="absolute -bottom-1 -right-1 size-5 rounded-full bg-background flex items-center justify-center">
           {getNotificationIcon(notification.type)}
         </div>

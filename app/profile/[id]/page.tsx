@@ -75,7 +75,11 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
             </div>
 
             {/* Right: Avatar */}
-            <StoneAvatar seed={user.id} alt={user.nickname} className="size-20 shrink-0" />
+            <StoneAvatar
+              seed={profile?.id ?? id}
+              alt={profile?.nickname ?? ''}
+              className="size-20 shrink-0"
+            />
           </div>
 
           {/* Stats */}

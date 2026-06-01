@@ -25,19 +25,12 @@ import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useRef, useState } from 'react'
 
-interface CurrentProfile {
-  id: string
-  nickname: string | null
-  avatar_url: string | null
-}
-
 interface TracePageClientProps {
   card: TraceCard
   initialComments: Comment[]
-  currentProfile: CurrentProfile | null
 }
 
-export function TracePageClient({ card, initialComments, currentProfile }: TracePageClientProps) {
+export function TracePageClient({ card, initialComments }: TracePageClientProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const fromPage = (searchParams.get('from') || PATH.HOME) as Route
@@ -107,13 +100,6 @@ export function TracePageClient({ card, initialComments, currentProfile }: Trace
 
   const canSubmitComment = Boolean(newComment.trim() || pendingFile)
 
-  const handleSubmitComment = () => {
-    if (!canSubmitComment) return
-
-    // TODO: Supabase 연동 (comment-images 업로드 + image_url INSERT). 현재는 목업 확인용.
-    const comment: Comment = {
-      id: `comment-new-${Date.now()}`,
-      userId: 'user-1',
   const handleSubmitComment = async () => {
     if (!newComment.trim()) return
 
