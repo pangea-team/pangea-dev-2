@@ -116,6 +116,92 @@ export type Database = {
           },
         ]
       }
+      conversations: {
+        Row: {
+          book_id: string
+          created_at: string
+          id: string
+          last_message_at: string | null
+          message_count: number
+          status: string
+          summary: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          book_id: string
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          message_count?: number
+          status?: string
+          summary?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          book_id?: string
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          message_count?: number
+          status?: string
+          summary?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          attachments: Json
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          role: string
+        }
+        Insert: {
+          attachments?: Json
+          content?: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          role: string
+        }
+        Update: {
+          attachments?: Json
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -192,10 +278,12 @@ export type Database = {
       trace_cards: {
         Row: {
           book_id: string
+          conversation_id: string | null
           created_at: string
           id: string
           is_public: boolean
           layers: Json
+          nickname: string
           quote: string | null
           representative_sentence: string | null
           trace_expanded: string | null
@@ -204,10 +292,12 @@ export type Database = {
         }
         Insert: {
           book_id: string
+          conversation_id?: string | null
           created_at?: string
           id?: string
           is_public?: boolean
           layers?: Json
+          nickname?: string
           quote?: string | null
           representative_sentence?: string | null
           trace_expanded?: string | null
@@ -216,10 +306,12 @@ export type Database = {
         }
         Update: {
           book_id?: string
+          conversation_id?: string | null
           created_at?: string
           id?: string
           is_public?: boolean
           layers?: Json
+          nickname?: string
           quote?: string | null
           representative_sentence?: string | null
           trace_expanded?: string | null
@@ -235,6 +327,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "trace_cards_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "trace_cards_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -245,6 +344,33 @@ export type Database = {
       }
     }
     Views: {
+      admin_conversation_logs: {
+        Row: {
+          book_id: string | null
+          book_title: string | null
+          conversation_created_at: string | null
+          conversation_id: string | null
+          conversation_text: string | null
+          first_message_at: string | null
+          last_message_at: string | null
+          message_count: number | null
+          nickname: string | null
+          status: string | null
+          summary: string | null
+          trace_id: string | null
+          trace_quote: string | null
+          trace_representative_sentence: string | null
+          trace_updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          [_ in never]: never
+        }
+        Update: {
+          [_ in never]: never
+        }
+        Relationships: []
+      }
       trace_cards_with_counts: {
         Row: {
           book_id: string | null
