@@ -1,5 +1,6 @@
 'use client'
 
+import { StoneAvatar } from '@/components/stone-avatar'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,17 +11,16 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { PATH } from '@/constants/path'
 import type { Comment, TraceCard } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { ArrowLeft, ArrowLeftRight, Heart, MessageCircle, Send } from 'lucide-react'
+import { ArrowLeft, ArrowLeftRight, Heart, ImageIcon, MessageCircle, Send, X } from 'lucide-react'
 import type { Route } from 'next'
 import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 interface TracePageClientProps {
   card: TraceCard
@@ -36,6 +36,10 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
   const [heartCount, setHeartCount] = useState(card.reactions.heart)
   const [comments, setComments] = useState<Comment[]>(initialComments)
   const [newComment, setNewComment] = useState('')
+  const [pendingFile, setPendingFile] = useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [commentError, setCommentError] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [showExchangeDialog, setShowExchangeDialog] = useState(false)
 
   const handleUserClick = () => {
@@ -60,9 +64,32 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
     setHeartCount(hearted ? heartCount - 1 : heartCount + 1)
   }
 
-  const handleSubmitComment = () => {
-    if (!newComment.trim()) return
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (!file.type.startsWith('image/')) {
+      setCommentError('이미지 파일만 첨부할 수 있어요.')
+      return
+    }
+    if (previewUrl) URL.revokeObjectURL(previewUrl)
+    setPendingFile(file)
+    setPreviewUrl(URL.createObjectURL(file))
+    setCommentError(null)
+    e.target.value = ''
+  }
 
+  const clearPendingFile = () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl)
+    setPendingFile(null)
+    setPreviewUrl(null)
+  }
+
+  const canSubmitComment = Boolean(newComment.trim() || pendingFile)
+
+  const handleSubmitComment = () => {
+    if (!canSubmitComment) return
+
+    // TODO: Supabase 연동 (comment-images 업로드 + image_url INSERT). 현재는 목업 확인용.
     const comment: Comment = {
       id: `comment-new-${Date.now()}`,
       userId: 'user-1',
@@ -74,12 +101,16 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
         createdAt: new Date('2024-01-15'),
       },
       traceCardId: card.id,
-      content: newComment,
+      content: newComment.trim(),
+      imageUrl: previewUrl ?? undefined,
       createdAt: new Date(),
     }
 
     setComments([...comments, comment])
     setNewComment('')
+    // 미리보기 object URL은 목록 표시에 계속 쓰이므로 revoke하지 않고 상태만 초기화
+    setPendingFile(null)
+    setPreviewUrl(null)
   }
 
   const formatDate = (date: Date) => {
@@ -124,12 +155,7 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
               className="flex items-center gap-3 flex-1 cursor-pointer hover:opacity-80 transition-opacity"
               onClick={handleUserClick}
             >
-              <Avatar className="size-10">
-                <AvatarImage src={card.user.avatarUrl} alt={card.user.nickname} />
-                <AvatarFallback className="text-label-sm">
-                  {card.user.nickname?.[0] ?? '?'}
-                </AvatarFallback>
-              </Avatar>
+              <StoneAvatar seed={card.user.id} alt={card.user.nickname} className="size-10" />
               <div>
                 <p className="text-heading-sm text-foreground">{card.user.nickname}</p>
               </div>
@@ -232,15 +258,12 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
             ) : (
               comments.map((comment) => (
                 <div key={comment.id} className="flex gap-3">
-                  <Avatar
+                  <StoneAvatar
+                    seed={comment.user.id}
+                    alt={comment.user.nickname}
                     className="size-8 flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
                     onClick={() => handleCommentUserClick(comment.user.id)}
-                  >
-                    <AvatarImage src={comment.user.avatarUrl} alt={comment.user.nickname} />
-                    <AvatarFallback className="text-caption">
-                      {comment.user.nickname?.[0] ?? '?'}
-                    </AvatarFallback>
-                  </Avatar>
+                  />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <span
@@ -253,7 +276,20 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
                         {formatDate(comment.createdAt)}
                       </span>
                     </div>
-                    <p className="text-body-sm text-foreground">{comment.content}</p>
+                    {comment.content && (
+                      <p className="text-body-sm text-foreground">{comment.content}</p>
+                    )}
+                    {comment.imageUrl && (
+                      <div className="mt-2 relative w-40 h-40 rounded-lg overflow-hidden bg-muted">
+                        <Image
+                          src={comment.imageUrl}
+                          alt="댓글 이미지"
+                          fill
+                          className="object-cover"
+                          unoptimized
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               ))
@@ -261,22 +297,61 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
           </div>
 
           {/* Comment Input */}
-          <div className="flex gap-2">
-            <Input
-              placeholder="댓글을 입력하세요..."
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault()
-                  handleSubmitComment()
-                }
-              }}
-              className="flex-1"
-            />
-            <Button size="icon" onClick={handleSubmitComment} disabled={!newComment.trim()}>
-              <Send className="size-4" />
-            </Button>
+          <div className="space-y-2">
+            {previewUrl && (
+              <div className="relative w-20 h-20">
+                <Image
+                  src={previewUrl}
+                  alt="첨부 미리보기"
+                  fill
+                  className="object-cover rounded-lg"
+                  unoptimized
+                />
+                <button
+                  type="button"
+                  onClick={clearPendingFile}
+                  className="absolute -top-1.5 -right-1.5 size-5 rounded-full bg-foreground text-background flex items-center justify-center"
+                >
+                  <X className="size-3" />
+                </button>
+              </div>
+            )}
+
+            {commentError && <p className="text-caption text-destructive">{commentError}</p>}
+
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                size="icon"
+                variant="outline"
+                aria-label="사진 첨부"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <ImageIcon className="size-4" />
+              </Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+              <Input
+                placeholder="댓글을 입력하세요..."
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault()
+                    handleSubmitComment()
+                  }
+                }}
+                className="flex-1"
+              />
+              <Button size="icon" onClick={handleSubmitComment} disabled={!canSubmitComment}>
+                <Send className="size-4" />
+              </Button>
+            </div>
           </div>
         </section>
       </main>

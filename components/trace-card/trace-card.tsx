@@ -1,5 +1,6 @@
 'use client'
 
+import { StoneAvatar } from '@/components/stone-avatar'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,7 +11,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { PATH } from '@/constants/path'
 import type { TraceCard as TraceCardType } from '@/lib/types'
@@ -73,13 +73,12 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
     >
       {/* Header with Avatar */}
       <div className="flex items-center gap-3 mb-5">
-        <Avatar
+        <StoneAvatar
+          seed={card.user.id}
+          alt={card.user.nickname}
           className="size-9 shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
           onClick={handleAvatarClick}
-        >
-          <AvatarImage src={card.user.avatarUrl} alt={card.user.nickname} />
-          <AvatarFallback className="text-caption">{card.user.nickname?.[0] ?? '?'}</AvatarFallback>
-        </Avatar>
+        />
         <div className="flex items-center gap-2 flex-1 min-w-0">
           <span
             className="text-label-sm text-foreground truncate cursor-pointer hover:underline"

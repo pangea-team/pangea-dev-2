@@ -3,8 +3,8 @@
 import { BottomNav } from '@/components/layout/bottom-nav'
 import { Header } from '@/components/layout/header'
 import { RequireAuth } from '@/components/require-auth'
+import { StoneAvatar } from '@/components/stone-avatar'
 import { TraceCard } from '@/components/trace-card'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { PATH } from '@/constants/path'
 import { useAuth } from '@/lib/auth-context'
 import { mockTraceCards } from '@/lib/mock-data'
@@ -34,12 +34,11 @@ export default function ProfilePage() {
               </div>
 
               {/* Right: Avatar */}
-              <Avatar className="size-20 shrink-0">
-                <AvatarImage src={user?.avatarUrl} alt={user?.nickname} />
-                <AvatarFallback className="text-(--text-2xl) font-medium">
-                  {user?.nickname?.[0] ?? '?'}
-                </AvatarFallback>
-              </Avatar>
+              <StoneAvatar
+                seed={user?.id ?? ''}
+                alt={user?.nickname}
+                className="size-20 shrink-0"
+              />
             </div>
 
             {/* Stats */}

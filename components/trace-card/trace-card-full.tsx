@@ -1,6 +1,6 @@
 'use client'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { StoneAvatar } from '@/components/stone-avatar'
 import { Button } from '@/components/ui/button'
 import type { TraceCard as TraceCardType } from '@/lib/types'
 import { cn } from '@/lib/utils'
@@ -52,12 +52,7 @@ export function TraceCardFull({ card, onClose }: TraceCardFullProps) {
         <div className="flex-1 overflow-y-auto p-4">
           {/* User Info */}
           <div className="flex items-start gap-3 mb-4">
-            <Avatar className="size-12">
-              <AvatarImage src={card.user.avatarUrl} alt={card.user.nickname} />
-              <AvatarFallback className="text-body-md">
-                {card.user.nickname?.[0] ?? '?'}
-              </AvatarFallback>
-            </Avatar>
+            <StoneAvatar seed={card.user.id} alt={card.user.nickname} className="size-12" />
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <span className="text-heading-sm text-foreground">{card.user.nickname}</span>

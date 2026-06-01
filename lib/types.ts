@@ -70,6 +70,7 @@ export interface Comment {
   user: User
   traceCardId: string
   content: string
+  imageUrl?: string
   createdAt: Date
 }
 
