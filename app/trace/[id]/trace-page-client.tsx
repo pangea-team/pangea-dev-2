@@ -1,5 +1,6 @@
 'use client'
 
+import { submitComment } from '@/app/actions/comments'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,12 +23,19 @@ import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 
+interface CurrentProfile {
+  id: string
+  nickname: string | null
+  avatar_url: string | null
+}
+
 interface TracePageClientProps {
   card: TraceCard
   initialComments: Comment[]
+  currentProfile: CurrentProfile | null
 }
 
-export function TracePageClient({ card, initialComments }: TracePageClientProps) {
+export function TracePageClient({ card, initialComments, currentProfile }: TracePageClientProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const fromPage = (searchParams.get('from') || PATH.HOME) as Route
@@ -60,26 +68,33 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
     setHeartCount(hearted ? heartCount - 1 : heartCount + 1)
   }
 
-  const handleSubmitComment = () => {
-    if (!newComment.trim()) return
+  const handleSubmitComment = async () => {
+    if (!newComment.trim() || !currentProfile) return
 
-    const comment: Comment = {
-      id: `comment-new-${Date.now()}`,
-      userId: 'user-1',
+    const tempId = `comment-new-${Date.now()}`
+    const optimistic: Comment = {
+      id: tempId,
+      userId: currentProfile.id,
       user: {
-        id: 'user-1',
-        nickname: 'bookworm_kim',
-        avatarUrl: undefined,
-        bio: '책과 함께 성장하는 중',
-        createdAt: new Date('2024-01-15'),
+        id: currentProfile.id,
+        nickname: currentProfile.nickname ?? '',
+        avatarUrl: currentProfile.avatar_url ?? undefined,
+        createdAt: new Date(),
       },
       traceCardId: card.id,
       content: newComment,
       createdAt: new Date(),
     }
 
-    setComments([...comments, comment])
+    setComments((prev) => [...prev, optimistic])
     setNewComment('')
+
+    try {
+      const saved = await submitComment(card.id, optimistic.content)
+      setComments((prev) => prev.map((c) => (c.id === tempId ? saved : c)))
+    } catch {
+      setComments((prev) => prev.filter((c) => c.id !== tempId))
+    }
   }
 
   const formatDate = (date: Date) => {
