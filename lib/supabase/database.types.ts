@@ -365,6 +365,61 @@ export type Database = {
           },
         ]
       }
+      share_requests: {
+        Row: {
+          created_at: string
+          id: string
+          message: string | null
+          owner_id: string
+          requester_id: string
+          status: string
+          trace_card_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          owner_id: string
+          requester_id: string
+          status?: string
+          trace_card_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          owner_id?: string
+          requester_id?: string
+          status?: string
+          trace_card_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "share_requests_trace_card_id_fkey"
+            columns: ["trace_card_id"]
+            isOneToOne: false
+            referencedRelation: "admin_conversation_logs"
+            referencedColumns: ["trace_id"]
+          },
+          {
+            foreignKeyName: "share_requests_trace_card_id_fkey"
+            columns: ["trace_card_id"]
+            isOneToOne: false
+            referencedRelation: "trace_cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "share_requests_trace_card_id_fkey"
+            columns: ["trace_card_id"]
+            isOneToOne: false
+            referencedRelation: "trace_cards_with_counts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trace_cards: {
         Row: {
           book_id: string
