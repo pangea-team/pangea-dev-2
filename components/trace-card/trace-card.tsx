@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
+import { PATH } from '@/constants/path'
 import type { TraceCard as TraceCardType } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { ArrowLeftRight, Heart, MessageCircle } from 'lucide-react'
@@ -46,7 +47,7 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
 
   const handleAvatarClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    router.push(`/profile/${card.user.id}?from=${window.location.pathname}`)
+    router.push(PATH.PROFILE_WITH_FROM(card.user.id, window.location.pathname))
   }
 
   const handleExchangeRequest = (e: React.MouseEvent) => {
@@ -76,15 +77,15 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
           className="size-9 shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
           onClick={handleAvatarClick}
         >
-          <AvatarImage src={card.user.avatarUrl} alt={card.user.displayName} />
-          <AvatarFallback className="text-caption">{card.user.displayName[0]}</AvatarFallback>
+          <AvatarImage src={card.user.avatarUrl} alt={card.user.nickname} />
+          <AvatarFallback className="text-caption">{card.user.nickname?.[0] ?? '?'}</AvatarFallback>
         </Avatar>
         <div className="flex items-center gap-2 flex-1 min-w-0">
           <span
             className="text-label-sm text-foreground truncate cursor-pointer hover:underline"
             onClick={handleAvatarClick}
           >
-            {card.user.displayName}
+            {card.user.nickname}
           </span>
           <span className="text-body-sm text-muted-foreground">{formatDate(card.createdAt)}</span>
         </div>
@@ -149,7 +150,7 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>교환 요청</AlertDialogTitle>
             <AlertDialogDescription>
-              {card.user.displayName}님에게 《{card.book.title}》 교환을 요청하시겠습니까?
+              {card.user.nickname}님에게 《{card.book.title}》 교환을 요청하시겠습니까?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

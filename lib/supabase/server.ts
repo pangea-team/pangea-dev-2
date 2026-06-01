@@ -1,18 +1,12 @@
+import type { Database } from '@/lib/supabase/database.types'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
-import type { Database } from './database.types'
 
 export async function createClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
+  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
+
   const cookieStore = await cookies()
-
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-
-  if (!url || !key) {
-    throw new Error(
-      'Missing Supabase environment variables: NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY',
-    )
-  }
 
   return createServerClient<Database>(url, key, {
     cookies: {
@@ -25,8 +19,7 @@ export async function createClient() {
             cookieStore.set(name, value, options)
           }
         } catch {
-          // The `setAll` method was called from a Server Component.
-          // Safe to ignore when middleware refreshes the session.
+          // Server Component에서 호출됨 — 프록시가 세션 갱신하면 무시 OK
         }
       },
     },

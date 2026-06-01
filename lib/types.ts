@@ -3,8 +3,7 @@
 // 사용자 프로필
 export interface User {
   id: string
-  username: string
-  displayName: string
+  nickname: string
   avatarUrl?: string
   bio?: string
   createdAt: Date
@@ -45,13 +44,11 @@ export interface TraceCard {
   // 상호작용
   reactions: {
     heart: number
-    bookmark: number
     comment: number
   }
   // 현재 사용자의 반응 상태
   userReaction?: {
     hearted: boolean
-    bookmarked: boolean
   }
 }
 

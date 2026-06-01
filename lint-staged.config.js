@@ -1,6 +1,11 @@
 // biome check --write passes files explicitly, bypassing biome.json's files.ignore.
-// Filter shadcn/ui library files here so they aren't reformatted.
-const SHADCN = ['components/ui/', 'hooks/use-toast.ts', 'components/theme-provider.tsx']
+// Filter auto-generated and library files here so they aren't reformatted.
+const SHADCN = [
+  'components/ui/',
+  'hooks/use-toast.ts',
+  'components/theme-provider.tsx',
+  'lib/supabase/database.types.ts',
+]
 
 /** @type {import('lint-staged').Config} */
 module.exports = {

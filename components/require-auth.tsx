@@ -1,23 +1,30 @@
 'use client'
 
+import { PATH } from '@/constants/path'
 import { useAuth } from '@/lib/auth-context'
 import { useRouter } from 'next/navigation'
-import { useEffect, type ReactNode } from 'react'
+import { type ReactNode, useEffect } from 'react'
 
-export function RequireAuth({ children, redirectTo }: { children: ReactNode; redirectTo: string }) {
-  const { isLoggedIn, hasCompletedProfile, isHydrated } = useAuth()
+export function RequireAuth({
+  children,
+  redirectTo,
+}: {
+  children: ReactNode
+  redirectTo?: string
+}) {
+  const { isHydrated, isLoggedIn, hasCompletedProfile } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
     if (!isHydrated) return
     if (!isLoggedIn) {
-      router.push(`/login?redirect=${encodeURIComponent(redirectTo)}`)
+      router.replace(redirectTo ? PATH.LOGIN_WITH_REDIRECT(redirectTo) : PATH.LOGIN)
       return
     }
     if (!hasCompletedProfile) {
-      router.push('/onboarding')
+      router.replace(PATH.ONBOARDING)
     }
-  }, [isHydrated, isLoggedIn, hasCompletedProfile, router, redirectTo])
+  }, [isHydrated, isLoggedIn, hasCompletedProfile, redirectTo, router])
 
   if (!isHydrated || !isLoggedIn || !hasCompletedProfile) {
     return (

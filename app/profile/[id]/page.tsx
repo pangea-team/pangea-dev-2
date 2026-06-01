@@ -2,8 +2,10 @@
 
 import { TraceCard } from '@/components/trace-card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { PATH } from '@/constants/path'
 import { mockTraceCards, mockUsers } from '@/lib/mock-data'
 import { ArrowLeft, BookOpen } from 'lucide-react'
+import type { Route } from 'next'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { use } from 'react'
 
@@ -15,7 +17,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
   const { id } = use(params)
   const router = useRouter()
   const searchParams = useSearchParams()
-  const fromPage = searchParams.get('from') || '/'
+  const fromPage = (searchParams.get('from') || PATH.HOME) as Route
 
   const user = mockUsers.find((u) => u.id === id)
   const userCards = mockTraceCards.filter((card) => card.userId === id)
@@ -52,15 +54,15 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
           <div className="flex items-start justify-between">
             {/* Left: Name, Bio */}
             <div className="flex-1">
-              <h2 className="text-heading-lg">{user.displayName}</h2>
+              <h2 className="text-heading-lg">{user.nickname}</h2>
               {user.bio && <p className="text-body-sm mt-3 text-foreground/90">{user.bio}</p>}
             </div>
 
             {/* Right: Avatar */}
             <Avatar className="size-20 shrink-0">
-              <AvatarImage src={user.avatarUrl} alt={user.displayName} />
+              <AvatarImage src={user.avatarUrl} alt={user.nickname} />
               <AvatarFallback className="text-(--text-2xl) font-medium">
-                {user.displayName[0]}
+                {user.nickname?.[0] ?? '?'}
               </AvatarFallback>
             </Avatar>
           </div>
@@ -85,7 +87,9 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
               <TraceCard
                 key={card.id}
                 card={card}
-                onCardClick={() => router.push(`/trace/${card.id}?from=/profile/${id}`)}
+                onCardClick={() =>
+                  router.push(PATH.TRACE_WITH_FROM(card.id, PATH.PROFILE_DETAIL(id)))
+                }
               />
             ))
           ) : (

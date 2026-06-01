@@ -53,13 +53,14 @@ export function TraceCardFull({ card, onClose }: TraceCardFullProps) {
           {/* User Info */}
           <div className="flex items-start gap-3 mb-4">
             <Avatar className="size-12">
-              <AvatarImage src={card.user.avatarUrl} alt={card.user.displayName} />
-              <AvatarFallback className="text-body-md">{card.user.displayName[0]}</AvatarFallback>
+              <AvatarImage src={card.user.avatarUrl} alt={card.user.nickname} />
+              <AvatarFallback className="text-body-md">
+                {card.user.nickname?.[0] ?? '?'}
+              </AvatarFallback>
             </Avatar>
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <span className="text-heading-sm text-foreground">{card.user.displayName}</span>
-                <span className="text-body-sm text-muted-foreground">@{card.user.username}</span>
+                <span className="text-heading-sm text-foreground">{card.user.nickname}</span>
               </div>
               <p className="text-body-sm text-muted-foreground">{formatDate(card.createdAt)}</p>
             </div>
