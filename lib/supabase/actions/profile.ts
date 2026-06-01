@@ -11,7 +11,7 @@ export async function getMyTraceCards(): Promise<TraceCard[]> {
   } = await supabase.auth.getUser()
   if (!user) return []
 
-  const [{ data: rows, error }, { data: reactions }] = await Promise.all([
+  const [{ data: rows, error }, { data: reactions }, { data: shareReqs }] = await Promise.all([
     supabase
       .from('trace_cards_with_counts')
       .select(
@@ -20,11 +20,26 @@ export async function getMyTraceCards(): Promise<TraceCard[]> {
       .eq('user_id', user.id)
       .order('created_at', { ascending: false }),
     supabase.from('reactions').select('trace_card_id').eq('user_id', user.id).eq('type', 'heart'),
+    supabase
+      .from('share_requests')
+      .select('trace_card_id, status')
+      .or(`requester_id.eq.${user.id},owner_id.eq.${user.id}`)
+      .in('status', ['accepted', 'pending']),
   ])
 
   if (error || !rows) return []
 
   const heartedSet = new Set(reactions?.map((r) => r.trace_card_id) ?? [])
+  const shareStatusMap = new Map<string, 'pending' | 'accepted'>()
+  for (const req of shareReqs ?? []) {
+    if (!req.trace_card_id) continue
+    const existing = shareStatusMap.get(req.trace_card_id)
+    if (req.status === 'accepted') {
+      shareStatusMap.set(req.trace_card_id, 'accepted')
+    } else if (req.status === 'pending' && existing !== 'accepted') {
+      shareStatusMap.set(req.trace_card_id, 'pending')
+    }
+  }
 
   return rows
     .filter((r): r is typeof r & { id: string } => r.id !== null)
@@ -78,6 +93,7 @@ export async function getMyTraceCards(): Promise<TraceCard[]> {
           comment: Number(r.comment_count ?? 0),
         },
         userReaction: { hearted: heartedSet.has(r.id) },
+        shareStatus: shareStatusMap.get(r.id) ?? 'none',
       } satisfies TraceCard
     })
 }
@@ -89,7 +105,7 @@ export async function getUserTraceCards(userId: string): Promise<TraceCard[]> {
     data: { user: currentUser },
   } = await supabase.auth.getUser()
 
-  const [{ data: rows, error }, { data: reactions }] = await Promise.all([
+  const [{ data: rows, error }, { data: reactions }, { data: shareReqs }] = await Promise.all([
     supabase
       .from('trace_cards_with_counts')
       .select(
@@ -105,6 +121,13 @@ export async function getUserTraceCards(userId: string): Promise<TraceCard[]> {
           .eq('user_id', currentUser.id)
           .eq('type', 'heart')
       : Promise.resolve({ data: [] }),
+    currentUser
+      ? supabase
+          .from('share_requests')
+          .select('trace_card_id, status')
+          .or(`requester_id.eq.${currentUser.id},owner_id.eq.${currentUser.id}`)
+          .in('status', ['accepted', 'pending'])
+      : Promise.resolve({ data: [] }),
   ])
 
   if (error || !rows) return []
@@ -112,6 +135,17 @@ export async function getUserTraceCards(userId: string): Promise<TraceCard[]> {
   const heartedSet = new Set(
     (reactions as { trace_card_id: string }[] | null)?.map((r) => r.trace_card_id) ?? [],
   )
+  const shareStatusMap = new Map<string, 'pending' | 'accepted'>()
+  for (const req of (shareReqs as { trace_card_id: string | null; status: string }[] | null) ??
+    []) {
+    if (!req.trace_card_id) continue
+    const existing = shareStatusMap.get(req.trace_card_id)
+    if (req.status === 'accepted') {
+      shareStatusMap.set(req.trace_card_id, 'accepted')
+    } else if (req.status === 'pending' && existing !== 'accepted') {
+      shareStatusMap.set(req.trace_card_id, 'pending')
+    }
+  }
 
   return rows
     .filter((r): r is typeof r & { id: string } => r.id !== null)
@@ -165,6 +199,7 @@ export async function getUserTraceCards(userId: string): Promise<TraceCard[]> {
           comment: Number(r.comment_count ?? 0),
         },
         userReaction: { hearted: heartedSet.has(r.id) },
+        shareStatus: shareStatusMap.get(r.id) ?? 'none',
       } satisfies TraceCard
     })
 }

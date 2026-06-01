@@ -18,22 +18,42 @@ export default async function WorldPage() {
 
   const rows = data ?? []
   let heartedSet = new Set<string>()
+  const shareStatusMap = new Map<string, 'pending' | 'accepted'>()
 
   if (authData.user && rows.length > 0) {
-    const { data: reactions } = await supabase
-      .from('reactions')
-      .select('trace_card_id')
-      .eq('user_id', authData.user.id)
-      .eq('type', 'heart')
-      .in(
-        'trace_card_id',
-        rows.map((r) => r.id as string),
-      )
+    const cardIds = rows.map((r) => r.id as string)
+    const [{ data: reactions }, { data: shareReqs }] = await Promise.all([
+      supabase
+        .from('reactions')
+        .select('trace_card_id')
+        .eq('user_id', authData.user.id)
+        .eq('type', 'heart')
+        .in('trace_card_id', cardIds),
+      supabase
+        .from('share_requests')
+        .select('trace_card_id, status')
+        .or(`requester_id.eq.${authData.user.id},owner_id.eq.${authData.user.id}`)
+        .in('trace_card_id', cardIds)
+        .in('status', ['accepted', 'pending']),
+    ])
     heartedSet = new Set(reactions?.map((r) => r.trace_card_id) ?? [])
+    for (const req of shareReqs ?? []) {
+      if (!req.trace_card_id) continue
+      const existing = shareStatusMap.get(req.trace_card_id)
+      if (req.status === 'accepted') {
+        shareStatusMap.set(req.trace_card_id, 'accepted')
+      } else if (req.status === 'pending' && existing !== 'accepted') {
+        shareStatusMap.set(req.trace_card_id, 'pending')
+      }
+    }
   }
 
   const cards = rows.map((row) =>
-    mapTraceCard(row as unknown as TraceCardRow, heartedSet.has(row.id as string)),
+    mapTraceCard(
+      row as unknown as TraceCardRow,
+      heartedSet.has(row.id as string),
+      shareStatusMap.get(row.id as string) ?? 'none',
+    ),
   )
 
   return (
