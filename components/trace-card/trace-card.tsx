@@ -13,6 +13,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { PATH } from '@/constants/path'
+import { toggleHeart } from '@/lib/supabase/actions/reactions'
 import type { TraceCard as TraceCardType } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { ArrowLeftRight, Heart, MessageCircle } from 'lucide-react'
@@ -60,10 +61,20 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
     setShowExchangeDialog(false)
   }
 
-  const handleHeart = (e: React.MouseEvent) => {
+  const handleHeart = async (e: React.MouseEvent) => {
     e.stopPropagation()
-    setHearted(!hearted)
-    setHeartCount(hearted ? heartCount - 1 : heartCount + 1)
+    const wasHearted = hearted
+    setHearted(!wasHearted)
+    setHeartCount((prev) => (wasHearted ? prev - 1 : prev + 1))
+
+    try {
+      const result = await toggleHeart(card.id)
+      setHearted(result.hearted)
+    } catch (err) {
+      console.error('좋아요 실패:', err)
+      setHearted(wasHearted)
+      setHeartCount((prev) => (wasHearted ? prev + 1 : prev - 1))
+    }
   }
 
   return (

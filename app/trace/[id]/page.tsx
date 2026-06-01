@@ -11,24 +11,52 @@ export default async function TracePage({ params }: TracePageProps) {
   const { id } = await params
   const supabase = await createClient()
 
-  const { data: traceData } = await supabase
-    .from('trace_cards')
-    .select(
-      '*, profiles(id, nickname, avatar_url, bio, created_at), books(*), reactions(count), comments(count)',
-    )
-    .eq('id', id)
-    .single()
+  const [{ data: traceData }, { data: commentsData }, { data: authData }] = await Promise.all([
+    supabase
+      .from('trace_cards')
+      .select(
+        '*, profiles(id, nickname, avatar_url, bio, created_at), books(*), reactions(count), comments(count)',
+      )
+      .eq('id', id)
+      .single(),
+    supabase
+      .from('comments')
+      .select('*, profiles(*)')
+      .eq('trace_card_id', id)
+      .order('created_at', { ascending: true }),
+    supabase.auth.getUser(),
+  ])
 
   if (!traceData) notFound()
 
-  const { data: commentsData } = await supabase
-    .from('comments')
-    .select('*, profiles(*)')
-    .eq('trace_card_id', id)
-    .order('created_at', { ascending: true })
+  let userHearted = false
+  if (authData.user) {
+    const { data: reaction } = await supabase
+      .from('reactions')
+      .select('id')
+      .eq('trace_card_id', id)
+      .eq('user_id', authData.user.id)
+      .eq('type', 'heart')
+      .maybeSingle()
+    userHearted = !!reaction
+  }
 
-  const card = mapTraceCard(traceData as unknown as TraceCardRow)
+  const card = {
+    ...mapTraceCard(traceData as unknown as TraceCardRow),
+    userReaction: { hearted: userHearted },
+  }
   const comments = (commentsData ?? []).map((c) => mapComment(c as unknown as CommentRow))
 
-  return <TracePageClient card={card} initialComments={comments} />
+  const currentUserId = authData?.user?.id ?? null
+  let currentProfile: { id: string; nickname: string; avatar_url: string | null } | null = null
+  if (currentUserId) {
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('id, nickname, avatar_url')
+      .eq('id', currentUserId)
+      .single()
+    currentProfile = profileData ?? null
+  }
+
+  return <TracePageClient card={card} initialComments={comments} currentProfile={currentProfile} />
 }
