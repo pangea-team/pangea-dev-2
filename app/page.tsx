@@ -17,22 +17,24 @@ export default async function WorldPage() {
   ])
 
   const rows = data ?? []
-  const cards = rows.map((row) => mapTraceCard(row as unknown as TraceCardRow))
+  let heartedSet = new Set<string>()
 
   if (authData.user && rows.length > 0) {
-    const cardIds = rows.map((r) => r.id as string)
     const { data: reactions } = await supabase
       .from('reactions')
       .select('trace_card_id')
       .eq('user_id', authData.user.id)
       .eq('type', 'heart')
-      .in('trace_card_id', cardIds)
-
-    const heartedSet = new Set(reactions?.map((r) => r.trace_card_id) ?? [])
-    for (const card of cards) {
-      card.userReaction = { hearted: heartedSet.has(card.id) }
-    }
+      .in(
+        'trace_card_id',
+        rows.map((r) => r.id as string),
+      )
+    heartedSet = new Set(reactions?.map((r) => r.trace_card_id) ?? [])
   }
+
+  const cards = rows.map((row) =>
+    mapTraceCard(row as unknown as TraceCardRow, heartedSet.has(row.id as string)),
+  )
 
   return (
     <div className="min-h-screen bg-background pb-16">

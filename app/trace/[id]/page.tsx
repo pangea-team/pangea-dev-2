@@ -49,10 +49,7 @@ export default async function TracePage({ params }: TracePageProps) {
     userHearted = !!reaction
   }
 
-  const card = {
-    ...mapTraceCard(traceData as unknown as TraceCardRow),
-    userReaction: { hearted: userHearted },
-  }
+  const card = mapTraceCard(traceData as unknown as TraceCardRow, userHearted)
   const comments = (commentsData ?? []).map((c) => mapComment(c as unknown as CommentRow))
 
   return <TracePageClient card={card} initialComments={comments} />

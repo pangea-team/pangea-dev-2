@@ -43,7 +43,7 @@ export type CommentRow = {
   profiles: ProfileRow | null
 }
 
-export function mapTraceCard(row: TraceCardRow): TraceCard {
+export function mapTraceCard(row: TraceCardRow, userHearted = false): TraceCard {
   return {
     id: row.id,
     userId: row.user_id,
@@ -74,8 +74,7 @@ export function mapTraceCard(row: TraceCardRow): TraceCard {
       heart: row.reactions[0]?.count ?? 0,
       comment: row.comments[0]?.count ?? 0,
     },
-    // TODO: auth 연동 후 현재 유저 반응 조회로 교체
-    userReaction: { hearted: false },
+    userReaction: { hearted: userHearted },
   }
 }
 
