@@ -27,17 +27,20 @@ export function createTraceTool({
     execute: async ({ representative_sentence, book_quote, trace_expanded }) => {
       const { data, error } = await supabase
         .from('trace_cards')
-        .insert({
-          user_id: userId,
-          book_id: bookId,
-          conversation_id: conversationId,
-          nickname,
-          representative_sentence,
-          quote: book_quote,
-          trace_expanded,
-          is_public: false,
-          layers: [],
-        })
+        .upsert(
+          {
+            user_id: userId,
+            book_id: bookId,
+            conversation_id: conversationId,
+            nickname,
+            representative_sentence,
+            quote: book_quote,
+            trace_expanded,
+            is_public: false,
+            layers: [],
+          },
+          { onConflict: 'conversation_id' },
+        )
         .select('id')
         .single()
 

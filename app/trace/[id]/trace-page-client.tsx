@@ -18,6 +18,7 @@ import { useAuth } from '@/lib/auth-context'
 import { addComment } from '@/lib/supabase/actions/comments'
 import { toggleHeart } from '@/lib/supabase/actions/reactions'
 import { requestShare } from '@/lib/supabase/actions/share'
+import { createClient } from '@/lib/supabase/client'
 import type { Comment, TraceCard } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { ArrowLeft, ArrowLeftRight, Heart, ImageIcon, MessageCircle, Send, X } from 'lucide-react'
@@ -44,6 +45,7 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
   const [pendingFile, setPendingFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [commentError, setCommentError] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [showExchangeDialog, setShowExchangeDialog] = useState(false)
 
@@ -92,6 +94,10 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
       setCommentError('이미지 파일만 첨부할 수 있어요.')
       return
     }
+    if (file.size > 5 * 1024 * 1024) {
+      setCommentError('이미지 크기는 5MB 이하여야 해요.')
+      return
+    }
     if (previewUrl) URL.revokeObjectURL(previewUrl)
     setPendingFile(file)
     setPreviewUrl(URL.createObjectURL(file))
@@ -105,10 +111,51 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
     setPreviewUrl(null)
   }
 
-  const canSubmitComment = Boolean(newComment.trim() || pendingFile)
+  const canSubmitComment = Boolean((newComment.trim() || pendingFile) && !isSubmitting)
 
   const handleSubmitComment = async () => {
-    if (!newComment.trim()) return
+    if (!newComment.trim() && !pendingFile) return
+
+    setIsSubmitting(true)
+    setCommentError(null)
+
+    let uploadedImageUrl: string | undefined
+
+    if (pendingFile) {
+      try {
+        const supabase = createClient()
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
+        if (!user) {
+          setCommentError('로그인이 필요합니다.')
+          setIsSubmitting(false)
+          return
+        }
+
+        const ext = pendingFile.name.split('.').pop() ?? 'jpg'
+        const path = `${user.id}/${Date.now()}.${ext}`
+
+        const { error: uploadErr } = await supabase.storage
+          .from('comment-images')
+          .upload(path, pendingFile, { contentType: pendingFile.type })
+        if (uploadErr) {
+          setCommentError('이미지 업로드에 실패했어요. 다시 시도해 주세요.')
+          setIsSubmitting(false)
+          return
+        }
+
+        const { data: urlData } = supabase.storage.from('comment-images').getPublicUrl(path)
+        uploadedImageUrl = urlData.publicUrl
+      } catch {
+        setCommentError('이미지 업로드 중 오류가 발생했어요.')
+        setIsSubmitting(false)
+        return
+      }
+    }
+
+    // 업로드 성공 후 blob URL 해제 (실제 public URL로 대체되므로 안전)
+    if (previewUrl) URL.revokeObjectURL(previewUrl)
 
     const tempId = `temp-${Date.now()}`
     const content = newComment.trim()
@@ -123,24 +170,26 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
         createdAt: currentUser?.createdAt ?? new Date(),
       },
       traceCardId: card.id,
-      content: newComment.trim(),
-      imageUrl: previewUrl ?? undefined,
+      content,
+      imageUrl: uploadedImageUrl,
       createdAt: new Date(),
     }
 
     setComments((prev) => [...prev, optimistic])
     setNewComment('')
-    // 미리보기 object URL은 목록 표시에 계속 쓰이므로 revoke하지 않고 상태만 초기화
     setPendingFile(null)
     setPreviewUrl(null)
 
     try {
-      const saved = await addComment(card.id, content)
+      const saved = await addComment(card.id, content, uploadedImageUrl)
       setComments((prev) => prev.map((c) => (c.id === tempId ? saved : c)))
     } catch (err) {
       console.error('댓글 저장 실패:', err)
       setComments((prev) => prev.filter((c) => c.id !== tempId))
       setNewComment(content)
+      // orphan: uploadedImageUrl이 있다면 Storage 파일은 남음 (추후 cron으로 정리)
+    } finally {
+      setIsSubmitting(false)
     }
   }
 

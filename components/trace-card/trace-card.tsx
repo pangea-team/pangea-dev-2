@@ -130,9 +130,7 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
             From the Book
           </p>
           <p className="text-foreground/80  mb-2.5 text-quote">{`"${card.quote}"`}</p>
-          <p className="text-body-sm text-muted-foreground">
-            《{card.book.title}》, {card.book.author}
-          </p>
+          <p className="text-body-sm text-muted-foreground">《{card.book.title}》</p>
         </div>
       </div>
 
