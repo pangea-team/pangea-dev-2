@@ -17,6 +17,7 @@ import { PATH } from '@/constants/path'
 import { useAuth } from '@/lib/auth-context'
 import { addComment } from '@/lib/supabase/actions/comments'
 import { toggleHeart } from '@/lib/supabase/actions/reactions'
+import { requestShare } from '@/lib/supabase/actions/share'
 import type { Comment, TraceCard } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { ArrowLeft, ArrowLeftRight, Heart, ImageIcon, MessageCircle, Send, X } from 'lucide-react'
@@ -58,9 +59,15 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
     setShowExchangeDialog(true)
   }
 
-  const handleConfirmExchange = () => {
-    // TODO: 교환 요청 API 호출
-    setShowExchangeDialog(false)
+  const handleConfirmExchange = async () => {
+    try {
+      await requestShare(card.id, card.user.id)
+      setShowExchangeDialog(false)
+      // toast.success('거래를 신청했습니다')
+    } catch (err) {
+      console.error('거래 신청 실패:', err)
+      // toast.error(err.message)
+    }
   }
 
   const handleHeart = async () => {
@@ -186,10 +193,11 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
             </div>
             <Button
               variant="ghost"
-              size="icon-sm"
-              className="text-muted-foreground hover:text-primary"
+              size="sm"
+              className="text-muted-foreground hover:text-primary gap-1.5"
               onClick={handleExchangeRequest}
             >
+              <span className="text-body-sm">Share</span>
               <ArrowLeftRight className="size-4" />
             </Button>
           </div>
@@ -384,9 +392,9 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
       <AlertDialog open={showExchangeDialog} onOpenChange={setShowExchangeDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>교환 요청</AlertDialogTitle>
+            <AlertDialogTitle>Share 요청</AlertDialogTitle>
             <AlertDialogDescription>
-              {card.user.nickname}님에게 《{card.book.title}》 교환을 요청하시겠습니까?
+              {card.user.nickname}님의 흔적이 담긴 책 《{card.book.title}》을 함께 읽어보시겠습니까?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
