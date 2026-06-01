@@ -164,7 +164,7 @@ TRACE
 ⸻
 From the Book
 "[책 속 문장]"
-— 《{{book_title}}》, {{book_author}}, {{book_publisher}}
+— 《{{book_title}}》
 
 # Trace Expanded 원칙
 

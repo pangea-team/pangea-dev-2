@@ -2,101 +2,44 @@
 
 import { BottomNav } from '@/components/layout/bottom-nav'
 import { Header } from '@/components/layout/header'
-import { StoneAvatar } from '@/components/stone-avatar'
 import { NotificationItem, type NotificationItemData } from '@/components/notification-item'
 import { PATH } from '@/constants/path'
 import { getMyNotifications } from '@/lib/supabase/actions/notifications'
+import { acceptShare, getShareRequest, rejectShare } from '@/lib/supabase/actions/share'
 import { Heart } from 'lucide-react'
+import type { Route } from 'next'
 import { useRouter } from 'next/navigation'
+import { useCallback, useEffect, useState } from 'react'
 
-function getNotificationIcon(type: NotificationType) {
-  switch (type) {
-    case 'like':
-      return <Heart className="size-4 text-foreground fill-current" />
-    case 'comment':
-      return <MessageCircle className="size-4 text-foreground" />
-    case 'exchange_request':
-      return <ArrowLeftRight className="size-4 text-foreground" />
-    case 'exchange_accepted':
-      return <Check className="size-4 text-(--color-success)" />
-    default:
-      return null
-  }
-}
-
-function formatRelativeTime(date: Date): string {
-  const now = new Date()
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
-
-  if (diffInSeconds < 60) return '방금 전'
-  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}분 전`
-  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}시간 전`
-  if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}일 전`
-  return date.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })
-}
-
-function NotificationItem({
-  notification,
-  onCardClick,
-}: {
-  notification: Notification
-  onCardClick: (traceCardId: string) => void
-}) {
-  return (
-    <button
-      type="button"
-      className={cn(
-        'w-full flex items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/50',
-        !notification.isRead && 'bg-primary/5',
-      )}
-      onClick={() => notification.traceCard && onCardClick(notification.traceCard.id)}
-    >
-      <div className="relative">
-        <StoneAvatar
-          seed={notification.fromUser.id}
-          alt={notification.fromUser.nickname}
-          className="size-10"
-        />
-        <div className="absolute -bottom-1 -right-1 size-5 rounded-full bg-background flex items-center justify-center">
-          {getNotificationIcon(notification.type)}
-        </div>
-      </div>
-
-      <div className="flex-1 min-w-0">
-        <p className="text-body-sm">
-          <span className="font-semibold">{notification.fromUser.nickname}</span>
-          <span className="text-muted-foreground">{notification.message}</span>
-        </p>
-        {notification.traceCard && (
-          <p className="text-caption text-muted-foreground mt-1 truncate">
-            &quot;{notification.traceCard.quote.slice(0, 40)}...&quot;
-          </p>
-        )}
-        <p className="text-caption text-muted-foreground mt-1">
-          {formatRelativeTime(notification.createdAt)}
-        </p>
-      </div>
-
-      {!notification.isRead && <div className="size-2 rounded-full bg-primary mt-2 shrink-0" />}
-    </button>
-  )
-}
-import { useEffect, useState } from 'react'
+type ShareRequestDetail = Awaited<ReturnType<typeof getShareRequest>>
 
 export default function ActivityPage() {
   const router = useRouter()
   const [notifications, setNotifications] = useState<NotificationItemData[]>([])
   const [loading, setLoading] = useState(true)
+  const [shareRequestDetail, setShareRequestDetail] = useState<ShareRequestDetail | null>(null)
+  const [sheetOpen, setSheetOpen] = useState(false)
 
-  useEffect(() => {
+  const loadNotifications = useCallback(() => {
     getMyNotifications()
       .then(setNotifications)
       .catch(console.error)
       .finally(() => setLoading(false))
   }, [])
 
-  const handleCardClick = (traceCardId: string) => {
-    router.push(PATH.TRACE(traceCardId))
+  useEffect(() => {
+    loadNotifications()
+  }, [loadNotifications])
+
+  const handleNotificationClick = async (notification: NotificationItemData) => {
+    if (notification.type === 'exchange_request') {
+      if (!notification.traceCard) return
+      const detail = await getShareRequest(notification.traceCard.id, notification.fromUser.id)
+      setShareRequestDetail(detail)
+      setSheetOpen(true)
+    } else if (notification.traceCard) {
+      router.push(PATH.TRACE(notification.traceCard.id) as Route)
+    }
   }
 
   return (
@@ -114,7 +57,7 @@ export default function ActivityPage() {
               <NotificationItem
                 key={notification.id}
                 notification={notification}
-                onCardClick={handleCardClick}
+                onCardClick={() => handleNotificationClick(notification)}
               />
             ))}
           </div>
@@ -132,6 +75,48 @@ export default function ActivityPage() {
       </main>
 
       <BottomNav />
+
+      {sheetOpen && shareRequestDetail && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-background p-6 rounded-lg max-w-sm w-full mx-4">
+            <h2 className="text-heading-md mb-2">Share 신청</h2>
+            <p className="text-body-sm">
+              <span className="font-semibold">
+                {shareRequestDetail.trace_cards?.representative_sentence ?? ''}
+              </span>
+            </p>
+            <p className="text-body-sm text-muted-foreground mt-2">
+              《{(shareRequestDetail.trace_cards?.books as { title?: string } | null)?.title ?? ''}
+              》
+            </p>
+
+            <div className="flex gap-2 mt-4">
+              <button
+                type="button"
+                className="flex-1 px-4 py-2 rounded-lg border border-border text-body-sm"
+                onClick={async () => {
+                  await rejectShare(shareRequestDetail.id)
+                  setSheetOpen(false)
+                  loadNotifications()
+                }}
+              >
+                거절
+              </button>
+              <button
+                type="button"
+                className="flex-1 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-body-sm"
+                onClick={async () => {
+                  await acceptShare(shareRequestDetail.id)
+                  setSheetOpen(false)
+                  loadNotifications()
+                }}
+              >
+                수락
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

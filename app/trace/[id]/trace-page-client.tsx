@@ -17,6 +17,7 @@ import { PATH } from '@/constants/path'
 import { useAuth } from '@/lib/auth-context'
 import { addComment } from '@/lib/supabase/actions/comments'
 import { toggleHeart } from '@/lib/supabase/actions/reactions'
+import { requestShare } from '@/lib/supabase/actions/share'
 import type { Comment, TraceCard } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { ArrowLeft, ArrowLeftRight, Heart, ImageIcon, MessageCircle, Send, X } from 'lucide-react'
@@ -25,19 +26,12 @@ import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useRef, useState } from 'react'
 
-interface CurrentProfile {
-  id: string
-  nickname: string | null
-  avatar_url: string | null
-}
-
 interface TracePageClientProps {
   card: TraceCard
   initialComments: Comment[]
-  currentProfile: CurrentProfile | null
 }
 
-export function TracePageClient({ card, initialComments, currentProfile }: TracePageClientProps) {
+export function TracePageClient({ card, initialComments }: TracePageClientProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const fromPage = (searchParams.get('from') || PATH.HOME) as Route
@@ -65,9 +59,15 @@ export function TracePageClient({ card, initialComments, currentProfile }: Trace
     setShowExchangeDialog(true)
   }
 
-  const handleConfirmExchange = () => {
-    // TODO: 교환 요청 API 호출
-    setShowExchangeDialog(false)
+  const handleConfirmExchange = async () => {
+    try {
+      await requestShare(card.id, card.user.id)
+      setShowExchangeDialog(false)
+      // toast.success('거래를 신청했습니다')
+    } catch (err) {
+      console.error('거래 신청 실패:', err)
+      // toast.error(err.message)
+    }
   }
 
   const handleHeart = async () => {
@@ -107,13 +107,6 @@ export function TracePageClient({ card, initialComments, currentProfile }: Trace
 
   const canSubmitComment = Boolean(newComment.trim() || pendingFile)
 
-  const handleSubmitComment = () => {
-    if (!canSubmitComment) return
-
-    // TODO: Supabase 연동 (comment-images 업로드 + image_url INSERT). 현재는 목업 확인용.
-    const comment: Comment = {
-      id: `comment-new-${Date.now()}`,
-      userId: 'user-1',
   const handleSubmitComment = async () => {
     if (!newComment.trim()) return
 
@@ -200,10 +193,11 @@ export function TracePageClient({ card, initialComments, currentProfile }: Trace
             </div>
             <Button
               variant="ghost"
-              size="icon-sm"
-              className="text-muted-foreground hover:text-primary"
+              size="sm"
+              className="text-muted-foreground hover:text-primary gap-1.5"
               onClick={handleExchangeRequest}
             >
+              <span className="text-body-sm">Share</span>
               <ArrowLeftRight className="size-4" />
             </Button>
           </div>
@@ -398,9 +392,9 @@ export function TracePageClient({ card, initialComments, currentProfile }: Trace
       <AlertDialog open={showExchangeDialog} onOpenChange={setShowExchangeDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>교환 요청</AlertDialogTitle>
+            <AlertDialogTitle>Share 요청</AlertDialogTitle>
             <AlertDialogDescription>
-              {card.user.nickname}님에게 《{card.book.title}》 교환을 요청하시겠습니까?
+              {card.user.nickname}님의 흔적이 담긴 책 《{card.book.title}》을 함께 읽어보시겠습니까?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

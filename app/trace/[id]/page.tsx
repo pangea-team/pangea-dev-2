@@ -49,22 +49,8 @@ export default async function TracePage({ params }: TracePageProps) {
     userHearted = !!reaction
   }
 
-  const card = {
-    ...mapTraceCard(traceData as unknown as TraceCardRow),
-    userReaction: { hearted: userHearted },
-  }
+  const card = mapTraceCard(traceData as unknown as TraceCardRow, userHearted)
   const comments = (commentsData ?? []).map((c) => mapComment(c as unknown as CommentRow))
 
-  const currentUserId = authData?.user?.id ?? null
-  let currentProfile: { id: string; nickname: string; avatar_url: string | null } | null = null
-  if (currentUserId) {
-    const { data: profileData } = await supabase
-      .from('profiles')
-      .select('id, nickname, avatar_url')
-      .eq('id', currentUserId)
-      .single()
-    currentProfile = profileData ?? null
-  }
-
-  return <TracePageClient card={card} initialComments={comments} currentProfile={currentProfile} />
+  return <TracePageClient card={card} initialComments={comments} />
 }
