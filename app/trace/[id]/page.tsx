@@ -1,4 +1,5 @@
 import { type CommentRow, type TraceCardRow, mapComment, mapTraceCard } from '@/lib/mappers'
+import { getCommentsByTraceCardId, mockTraceCards } from '@/lib/mock-data'
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import { TracePageClient } from './trace-page-client'
@@ -9,6 +10,13 @@ interface TracePageProps {
 
 export default async function TracePage({ params }: TracePageProps) {
   const { id } = await params
+
+  if (process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true') {
+    const card = mockTraceCards.find((c) => c.id === id)
+    if (!card) notFound()
+    return <TracePageClient card={card} initialComments={getCommentsByTraceCardId(id)} />
+  }
+
   const supabase = await createClient()
 
   const [{ data: traceData }, { data: commentsData }, { data: authData }] = await Promise.all([

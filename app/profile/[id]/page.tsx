@@ -1,7 +1,7 @@
 'use client'
 
+import { StoneAvatar } from '@/components/stone-avatar'
 import { TraceCard } from '@/components/trace-card'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { PATH } from '@/constants/path'
 import { getUserProfile, getUserTraceCards } from '@/lib/supabase/actions/profile'
 import type { TraceCard as TraceCardType } from '@/lib/types'
@@ -75,12 +75,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
             </div>
 
             {/* Right: Avatar */}
-            <Avatar className="size-20 shrink-0">
-              <AvatarImage src={profile?.avatarUrl} alt={profile?.nickname} />
-              <AvatarFallback className="text-(--text-2xl) font-medium">
-                {profile?.nickname?.[0] ?? '?'}
-              </AvatarFallback>
-            </Avatar>
+            <StoneAvatar seed={user.id} alt={user.nickname} className="size-20 shrink-0" />
           </div>
 
           {/* Stats */}

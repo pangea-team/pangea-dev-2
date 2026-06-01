@@ -38,6 +38,7 @@ export type CommentRow = {
   user_id: string
   trace_card_id: string
   content: string
+  image_url: string | null
   created_at: string
   profiles: ProfileRow | null
 }
@@ -91,6 +92,7 @@ export function mapComment(row: CommentRow): Comment {
     },
     traceCardId: row.trace_card_id,
     content: row.content,
+    imageUrl: row.image_url ?? undefined,
     createdAt: new Date(row.created_at),
   }
 }
