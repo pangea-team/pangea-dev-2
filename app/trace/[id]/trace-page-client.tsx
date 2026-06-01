@@ -14,6 +14,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { PATH } from '@/constants/path'
+import { useAuth } from '@/lib/auth-context'
+import { addComment } from '@/lib/supabase/actions/comments'
+import { toggleHeart } from '@/lib/supabase/actions/reactions'
 import type { Comment, TraceCard } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { ArrowLeft, ArrowLeftRight, Heart, MessageCircle, Send } from 'lucide-react'
@@ -32,6 +35,7 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
   const searchParams = useSearchParams()
   const fromPage = (searchParams.get('from') || PATH.HOME) as Route
 
+  const { user: currentUser } = useAuth()
   const [hearted, setHearted] = useState(card.userReaction?.hearted ?? false)
   const [heartCount, setHeartCount] = useState(card.reactions.heart)
   const [comments, setComments] = useState<Comment[]>(initialComments)
@@ -55,31 +59,52 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
     setShowExchangeDialog(false)
   }
 
-  const handleHeart = () => {
-    setHearted(!hearted)
-    setHeartCount(hearted ? heartCount - 1 : heartCount + 1)
+  const handleHeart = async () => {
+    const wasHearted = hearted
+    setHearted(!wasHearted)
+    setHeartCount((prev) => (wasHearted ? prev - 1 : prev + 1))
+
+    try {
+      const result = await toggleHeart(card.id)
+      setHearted(result.hearted)
+    } catch (err) {
+      console.error('좋아요 실패:', err)
+      setHearted(wasHearted)
+      setHeartCount((prev) => (wasHearted ? prev + 1 : prev - 1))
+    }
   }
 
-  const handleSubmitComment = () => {
+  const handleSubmitComment = async () => {
     if (!newComment.trim()) return
 
-    const comment: Comment = {
-      id: `comment-new-${Date.now()}`,
-      userId: 'user-1',
+    const tempId = `temp-${Date.now()}`
+    const content = newComment.trim()
+
+    const optimistic: Comment = {
+      id: tempId,
+      userId: currentUser?.id ?? '',
       user: {
-        id: 'user-1',
-        nickname: 'bookworm_kim',
-        avatarUrl: undefined,
-        bio: '책과 함께 성장하는 중',
-        createdAt: new Date('2024-01-15'),
+        id: currentUser?.id ?? '',
+        nickname: currentUser?.nickname ?? '',
+        avatarUrl: currentUser?.avatarUrl,
+        createdAt: currentUser?.createdAt ?? new Date(),
       },
       traceCardId: card.id,
-      content: newComment,
+      content,
       createdAt: new Date(),
     }
 
-    setComments([...comments, comment])
+    setComments((prev) => [...prev, optimistic])
     setNewComment('')
+
+    try {
+      const saved = await addComment(card.id, content)
+      setComments((prev) => prev.map((c) => (c.id === tempId ? saved : c)))
+    } catch (err) {
+      console.error('댓글 저장 실패:', err)
+      setComments((prev) => prev.filter((c) => c.id !== tempId))
+      setNewComment(content)
+    }
   }
 
   const formatDate = (date: Date) => {
