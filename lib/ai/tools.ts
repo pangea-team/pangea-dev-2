@@ -36,7 +36,7 @@ export function createTraceTool({
             representative_sentence,
             quote: book_quote,
             trace_expanded,
-            is_public: false,
+            is_public: true,
             layers: [],
           },
           { onConflict: 'conversation_id' },
