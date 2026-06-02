@@ -2,39 +2,25 @@
 
 import { BottomNav } from '@/components/layout/bottom-nav'
 import { Header } from '@/components/layout/header'
-import { NotificationItem, type NotificationItemData } from '@/components/notification-item'
+import { NotificationItem } from '@/components/notification-item'
 import { RequireAuth } from '@/components/require-auth'
 import { PATH } from '@/constants/path'
 import { getMyNotifications } from '@/lib/supabase/actions/notifications'
-import { acceptShare, getShareRequest, rejectShare } from '@/lib/supabase/actions/share'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { Heart } from 'lucide-react'
 import type { Route } from 'next'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-
-type ShareRequestDetail = Awaited<ReturnType<typeof getShareRequest>>
 
 export default function DiscoverPage() {
   const router = useRouter()
-  const queryClient = useQueryClient()
-  const [shareRequestDetail, setShareRequestDetail] = useState<ShareRequestDetail | null>(null)
-  const [sheetOpen, setSheetOpen] = useState(false)
 
   const { data: notifications = [], isPending } = useQuery({
     queryKey: ['notifications'],
     queryFn: getMyNotifications,
   })
 
-  const handleNotificationClick = async (notification: NotificationItemData) => {
-    if (notification.type === 'exchange_request') {
-      if (!notification.traceCard) return
-      const detail = await getShareRequest(notification.traceCard.id, notification.fromUser.id)
-      setShareRequestDetail(detail)
-      setSheetOpen(true)
-    } else if (notification.traceCard) {
-      router.push(PATH.TRACE_WITH_FROM(notification.traceCard.id, PATH.DISCOVER) as Route)
-    }
+  const handleCardClick = (traceCardId: string) => {
+    router.push(PATH.TRACE_WITH_FROM(traceCardId, PATH.DISCOVER) as Route)
   }
 
   return (
@@ -53,7 +39,7 @@ export default function DiscoverPage() {
                 <NotificationItem
                   key={notification.id}
                   notification={notification}
-                  onCardClick={() => handleNotificationClick(notification)}
+                  onCardClick={handleCardClick}
                 />
               ))}
             </div>
@@ -71,49 +57,6 @@ export default function DiscoverPage() {
         </main>
 
         <BottomNav />
-
-        {sheetOpen && shareRequestDetail && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-background p-6 rounded-lg max-w-sm w-full mx-4">
-              <h2 className="text-heading-md mb-2">Share 신청</h2>
-              <p className="text-body-sm">
-                <span className="font-semibold">
-                  {shareRequestDetail.trace_cards?.representative_sentence ?? ''}
-                </span>
-              </p>
-              <p className="text-body-sm text-muted-foreground mt-2">
-                《
-                {(shareRequestDetail.trace_cards?.books as { title?: string } | null)?.title ?? ''}
-                》
-              </p>
-
-              <div className="flex gap-2 mt-4">
-                <button
-                  type="button"
-                  className="flex-1 px-4 py-2 rounded-lg border border-border text-body-sm"
-                  onClick={async () => {
-                    await rejectShare(shareRequestDetail.id)
-                    setSheetOpen(false)
-                    queryClient.invalidateQueries({ queryKey: ['notifications'] })
-                  }}
-                >
-                  거절
-                </button>
-                <button
-                  type="button"
-                  className="flex-1 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-body-sm"
-                  onClick={async () => {
-                    await acceptShare(shareRequestDetail.id)
-                    setSheetOpen(false)
-                    queryClient.invalidateQueries({ queryKey: ['notifications'] })
-                  }}
-                >
-                  수락
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </RequireAuth>
   )

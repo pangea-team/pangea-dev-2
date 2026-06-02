@@ -10,45 +10,23 @@ export async function requestShare(traceCardId: string, ownerId: string): Promis
   } = await supabase.auth.getUser()
   if (!user) throw new Error('Unauthorized')
 
-  if (user.id === ownerId) throw new Error('본인 글에는 거래를 신청할 수 없습니다')
+  if (user.id === ownerId) throw new Error('나의 글에는 Share를 신청할 수 없습니다')
 
-  const { error } = await supabase
-    .from('share_requests')
-    .insert({ trace_card_id: traceCardId, requester_id: user.id, owner_id: ownerId })
-  if (error) throw error
-}
+  const { data: eligible, error: eligibilityError } = await supabase.rpc(
+    'check_share_eligibility',
+    {
+      p_requester_id: user.id,
+      p_owner_id: ownerId,
+    },
+  )
+  if (eligibilityError) throw eligibilityError
+  if (!eligible) throw new Error('이미 매칭이 완료된 유저입니다')
 
-export async function getShareRequest(traceCardId: string, requesterId: string) {
-  const supabase = await createClient()
-
-  const { data, error } = await supabase
-    .from('share_requests')
-    .select(
-      'id, status, message, created_at, trace_cards(id, representative_sentence, books(title, cover_url))',
-    )
-    .eq('trace_card_id', traceCardId)
-    .eq('requester_id', requesterId)
-    .eq('status', 'pending')
-    .single()
-
-  if (error) throw error
-  return data
-}
-
-export async function acceptShare(shareRequestId: string): Promise<void> {
-  const supabase = await createClient()
-  const { error } = await supabase
-    .from('share_requests')
-    .update({ status: 'accepted' })
-    .eq('id', shareRequestId)
-  if (error) throw error
-}
-
-export async function rejectShare(shareRequestId: string): Promise<void> {
-  const supabase = await createClient()
-  const { error } = await supabase
-    .from('share_requests')
-    .update({ status: 'rejected' })
-    .eq('id', shareRequestId)
+  const { error } = await supabase.from('share_requests').insert({
+    trace_card_id: traceCardId,
+    requester_id: user.id,
+    owner_id: ownerId,
+    status: 'accepted',
+  })
   if (error) throw error
 }

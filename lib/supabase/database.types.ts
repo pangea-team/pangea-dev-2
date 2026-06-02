@@ -597,7 +597,10 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      check_share_eligibility: {
+        Args: { p_requester_id: string; p_owner_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

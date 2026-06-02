@@ -38,7 +38,7 @@ export default async function TracePage({ params }: TracePageProps) {
   if (!traceData) notFound()
 
   let userHearted = false
-  let shareStatus: 'none' | 'pending' | 'accepted' = 'none'
+  let shareStatus: 'none' | 'accepted' = 'none'
   if (authData.user) {
     const [{ data: reaction }, { data: shareReqs }] = await Promise.all([
       supabase
@@ -52,17 +52,11 @@ export default async function TracePage({ params }: TracePageProps) {
         .from('share_requests')
         .select('status')
         .eq('trace_card_id', id)
-        .or(`requester_id.eq.${authData.user.id},owner_id.eq.${authData.user.id}`)
-        .in('status', ['accepted', 'pending']),
+        .eq('status', 'accepted')
+        .limit(1),
     ])
     userHearted = !!reaction
-    for (const req of shareReqs ?? []) {
-      if (req.status === 'accepted') {
-        shareStatus = 'accepted'
-        break
-      }
-      if (req.status === 'pending') shareStatus = 'pending'
-    }
+    if (shareReqs && shareReqs.length > 0) shareStatus = 'accepted'
   }
 
   const card = mapTraceCard(traceData as unknown as TraceCardRow, userHearted, shareStatus)

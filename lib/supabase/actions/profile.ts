@@ -1,5 +1,6 @@
 'use server'
 
+import { deriveShareStatusMap } from '@/lib/share-status'
 import { createClient } from '@/lib/supabase/server'
 import type { TraceCard, TraceLayer } from '@/lib/types'
 
@@ -24,22 +25,13 @@ export async function getMyTraceCards(): Promise<TraceCard[]> {
       .from('share_requests')
       .select('trace_card_id, status')
       .or(`requester_id.eq.${user.id},owner_id.eq.${user.id}`)
-      .in('status', ['accepted', 'pending']),
+      .eq('status', 'accepted'),
   ])
 
   if (error || !rows) return []
 
   const heartedSet = new Set(reactions?.map((r) => r.trace_card_id) ?? [])
-  const shareStatusMap = new Map<string, 'pending' | 'accepted'>()
-  for (const req of shareReqs ?? []) {
-    if (!req.trace_card_id) continue
-    const existing = shareStatusMap.get(req.trace_card_id)
-    if (req.status === 'accepted') {
-      shareStatusMap.set(req.trace_card_id, 'accepted')
-    } else if (req.status === 'pending' && existing !== 'accepted') {
-      shareStatusMap.set(req.trace_card_id, 'pending')
-    }
-  }
+  const shareStatusMap = deriveShareStatusMap(shareReqs ?? [])
 
   return rows
     .filter((r): r is typeof r & { id: string } => r.id !== null)
@@ -128,7 +120,7 @@ export async function getUserTraceCards(
           .from('share_requests')
           .select('trace_card_id, status')
           .or(`requester_id.eq.${currentUser.id},owner_id.eq.${currentUser.id}`)
-          .in('status', ['accepted', 'pending'])
+          .eq('status', 'accepted')
       : Promise.resolve({ data: [] }),
   ])
 
@@ -137,17 +129,9 @@ export async function getUserTraceCards(
   const heartedSet = new Set(
     (reactions as { trace_card_id: string }[] | null)?.map((r) => r.trace_card_id) ?? [],
   )
-  const shareStatusMap = new Map<string, 'pending' | 'accepted'>()
-  for (const req of (shareReqs as { trace_card_id: string | null; status: string }[] | null) ??
-    []) {
-    if (!req.trace_card_id) continue
-    const existing = shareStatusMap.get(req.trace_card_id)
-    if (req.status === 'accepted') {
-      shareStatusMap.set(req.trace_card_id, 'accepted')
-    } else if (req.status === 'pending' && existing !== 'accepted') {
-      shareStatusMap.set(req.trace_card_id, 'pending')
-    }
-  }
+  const shareStatusMap = deriveShareStatusMap(
+    (shareReqs as { trace_card_id: string | null; status: string }[] | null) ?? [],
+  )
 
   const cards = rows
     .filter((r): r is typeof r & { id: string } => r.id !== null)
