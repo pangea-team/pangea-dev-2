@@ -52,8 +52,8 @@ export default async function TracePage({ params }: TracePageProps) {
         .from('share_requests')
         .select('status')
         .eq('trace_card_id', id)
-        .or(`requester_id.eq.${authData.user.id},owner_id.eq.${authData.user.id}`)
-        .eq('status', 'accepted'),
+        .eq('status', 'accepted')
+        .limit(1),
     ])
     userHearted = !!reaction
     if (shareReqs && shareReqs.length > 0) shareStatus = 'accepted'

@@ -10,7 +10,7 @@ export async function requestShare(traceCardId: string, ownerId: string): Promis
   } = await supabase.auth.getUser()
   if (!user) throw new Error('Unauthorized')
 
-  if (user.id === ownerId) throw new Error('본인 글에는 거래를 신청할 수 없습니다')
+  if (user.id === ownerId) throw new Error('나의 글에는 Share를 신청할 수 없습니다')
 
   const { data: eligible, error: eligibilityError } = await supabase.rpc(
     'check_share_eligibility',

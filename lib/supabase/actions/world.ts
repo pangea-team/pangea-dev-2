@@ -20,21 +20,27 @@ export async function getWorldFeed() {
   let heartedSet = new Set<string>()
   let shareStatusMap = new Map<string, 'accepted'>()
 
-  if (authData.user && rows.length > 0) {
+  if (rows.length > 0) {
     const cardIds = rows.map((r) => r.id as string)
+
+    const shareReqsPromise = supabase
+      .from('share_requests')
+      .select('trace_card_id, status')
+      .in('trace_card_id', cardIds)
+      .eq('status', 'accepted')
+
+    const reactionsPromise = authData.user
+      ? supabase
+          .from('reactions')
+          .select('trace_card_id')
+          .eq('user_id', authData.user.id)
+          .eq('type', 'heart')
+          .in('trace_card_id', cardIds)
+      : Promise.resolve({ data: [] })
+
     const [{ data: reactions }, { data: shareReqs }] = await Promise.all([
-      supabase
-        .from('reactions')
-        .select('trace_card_id')
-        .eq('user_id', authData.user.id)
-        .eq('type', 'heart')
-        .in('trace_card_id', cardIds),
-      supabase
-        .from('share_requests')
-        .select('trace_card_id, status')
-        .or(`requester_id.eq.${authData.user.id},owner_id.eq.${authData.user.id}`)
-        .in('trace_card_id', cardIds)
-        .eq('status', 'accepted'),
+      reactionsPromise,
+      shareReqsPromise,
     ])
     heartedSet = new Set(reactions?.map((r) => r.trace_card_id) ?? [])
     shareStatusMap = deriveShareStatusMap(shareReqs ?? [])
