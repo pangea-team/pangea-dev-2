@@ -1,7 +1,9 @@
 import { StoneAvatar } from '@/components/stone-avatar'
+import { PATH } from '@/constants/path'
 import type { NotificationType } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { ArrowLeftRight, Check, Heart, MessageCircle } from 'lucide-react'
+import Link from 'next/link'
 
 function getNotificationIcon(type: NotificationType) {
   switch (type) {
@@ -54,15 +56,16 @@ export function NotificationItem({
   onCardClick: (traceCardId: string) => void
 }) {
   return (
-    <button
-      type="button"
+    <div
       className={cn(
-        'w-full flex items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/50',
+        'w-full flex items-start gap-3 px-4 py-3 transition-colors hover:bg-muted/50',
         !notification.isRead && 'bg-primary/5',
       )}
-      onClick={() => notification.traceCard && onCardClick(notification.traceCard.id)}
     >
-      <div className="relative">
+      <Link
+        href={PATH.PROFILE_WITH_FROM(notification.fromUser.id, PATH.DISCOVER)}
+        className="relative shrink-0"
+      >
         <StoneAvatar
           seed={notification.fromUser.id}
           alt={notification.fromUser.nickname}
@@ -71,9 +74,13 @@ export function NotificationItem({
         <div className="absolute -bottom-1 -right-1 size-5 rounded-full bg-background flex items-center justify-center">
           {getNotificationIcon(notification.type)}
         </div>
-      </div>
+      </Link>
 
-      <div className="flex-1 min-w-0">
+      <button
+        type="button"
+        className="flex-1 min-w-0 text-left"
+        onClick={() => notification.traceCard && onCardClick(notification.traceCard.id)}
+      >
         <p className="text-body-sm">
           <span className="font-semibold">{notification.fromUser.nickname}</span>
           <span className="text-muted-foreground">{notification.message}</span>
@@ -86,9 +93,9 @@ export function NotificationItem({
         <p className="text-caption text-muted-foreground mt-1">
           {formatRelativeTime(notification.createdAt)}
         </p>
-      </div>
+      </button>
 
       {!notification.isRead && <div className="size-2 rounded-full bg-primary mt-2 shrink-0" />}
-    </button>
+    </div>
   )
 }
