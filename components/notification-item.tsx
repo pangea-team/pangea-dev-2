@@ -81,8 +81,9 @@ export function NotificationItem({
         <p className="text-body-sm">
           <span className="font-semibold">{notification.fromUser.nickname}</span>
           <span className="text-muted-foreground">
-            {' '}
-            님{notification.type === 'exchange_matched' ? '과' : '이'} {notification.message}
+            {notification.type === 'exchange_matched'
+              ? notification.message
+              : ` 님이 ${notification.message}`}
           </span>
         </p>
         {notification.traceCard && (
