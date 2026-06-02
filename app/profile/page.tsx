@@ -73,6 +73,7 @@ export default function ProfilePage() {
                 <TraceCard
                   key={card.id}
                   card={card}
+                  currentUserId={user?.id}
                   onCardClick={() => router.push(PATH.TRACE_WITH_FROM(card.id, PATH.PROFILE))}
                 />
               ))

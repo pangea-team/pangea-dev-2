@@ -5,7 +5,10 @@ import { PATH } from '@/constants/path'
 import type { TraceCard as TraceCardType } from '@/lib/types'
 import { useRouter } from 'next/navigation'
 
-export function WorldFeed({ cards }: { cards: TraceCardType[] }) {
+export function WorldFeed({
+  cards,
+  currentUserId,
+}: { cards: TraceCardType[]; currentUserId?: string }) {
   const router = useRouter()
 
   return (
@@ -14,6 +17,7 @@ export function WorldFeed({ cards }: { cards: TraceCardType[] }) {
         <TraceCard
           key={card.id}
           card={card}
+          currentUserId={currentUserId}
           onCardClick={() => router.push(PATH.TRACE_WITH_FROM(card.id, PATH.HOME))}
         />
       ))}
