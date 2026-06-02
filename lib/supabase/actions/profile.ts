@@ -98,7 +98,9 @@ export async function getMyTraceCards(): Promise<TraceCard[]> {
     })
 }
 
-export async function getUserTraceCards(userId: string): Promise<TraceCard[]> {
+export async function getUserTraceCards(
+  userId: string,
+): Promise<{ cards: TraceCard[]; currentUserId: string | undefined }> {
   const supabase = await createClient()
 
   const {
@@ -130,7 +132,7 @@ export async function getUserTraceCards(userId: string): Promise<TraceCard[]> {
       : Promise.resolve({ data: [] }),
   ])
 
-  if (error || !rows) return []
+  if (error || !rows) return { cards: [], currentUserId: currentUser?.id }
 
   const heartedSet = new Set(
     (reactions as { trace_card_id: string }[] | null)?.map((r) => r.trace_card_id) ?? [],
@@ -147,7 +149,7 @@ export async function getUserTraceCards(userId: string): Promise<TraceCard[]> {
     }
   }
 
-  return rows
+  const cards = rows
     .filter((r): r is typeof r & { id: string } => r.id !== null)
     .map((r) => {
       const book = (Array.isArray(r.books) ? r.books[0] : r.books) as {
@@ -202,6 +204,8 @@ export async function getUserTraceCards(userId: string): Promise<TraceCard[]> {
         shareStatus: shareStatusMap.get(r.id) ?? 'none',
       } satisfies TraceCard
     })
+
+  return { cards, currentUserId: currentUser?.id }
 }
 
 export async function getUserProfile(userId: string) {
