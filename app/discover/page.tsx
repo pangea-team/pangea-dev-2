@@ -7,30 +7,24 @@ import { RequireAuth } from '@/components/require-auth'
 import { PATH } from '@/constants/path'
 import { getMyNotifications } from '@/lib/supabase/actions/notifications'
 import { acceptShare, getShareRequest, rejectShare } from '@/lib/supabase/actions/share'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Heart } from 'lucide-react'
 import type { Route } from 'next'
 import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useState } from 'react'
+import { useState } from 'react'
 
 type ShareRequestDetail = Awaited<ReturnType<typeof getShareRequest>>
 
 export default function DiscoverPage() {
   const router = useRouter()
-  const [notifications, setNotifications] = useState<NotificationItemData[]>([])
-  const [loading, setLoading] = useState(true)
+  const queryClient = useQueryClient()
   const [shareRequestDetail, setShareRequestDetail] = useState<ShareRequestDetail | null>(null)
   const [sheetOpen, setSheetOpen] = useState(false)
 
-  const loadNotifications = useCallback(() => {
-    getMyNotifications()
-      .then(setNotifications)
-      .catch(console.error)
-      .finally(() => setLoading(false))
-  }, [])
-
-  useEffect(() => {
-    loadNotifications()
-  }, [loadNotifications])
+  const { data: notifications = [], isPending } = useQuery({
+    queryKey: ['notifications'],
+    queryFn: getMyNotifications,
+  })
 
   const handleNotificationClick = async (notification: NotificationItemData) => {
     if (notification.type === 'exchange_request') {
@@ -49,7 +43,7 @@ export default function DiscoverPage() {
         <Header title="발견" align="left" />
 
         <main className="max-w-2xl mx-auto">
-          {loading ? (
+          {isPending ? (
             <div className="px-4 py-8 text-center">
               <p className="text-body-sm text-muted-foreground">불러오는 중...</p>
             </div>
@@ -100,7 +94,7 @@ export default function DiscoverPage() {
                   onClick={async () => {
                     await rejectShare(shareRequestDetail.id)
                     setSheetOpen(false)
-                    loadNotifications()
+                    queryClient.invalidateQueries({ queryKey: ['notifications'] })
                   }}
                 >
                   거절
@@ -111,7 +105,7 @@ export default function DiscoverPage() {
                   onClick={async () => {
                     await acceptShare(shareRequestDetail.id)
                     setSheetOpen(false)
-                    loadNotifications()
+                    queryClient.invalidateQueries({ queryKey: ['notifications'] })
                   }}
                 >
                   수락

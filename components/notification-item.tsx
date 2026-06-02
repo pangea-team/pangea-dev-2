@@ -82,7 +82,7 @@ export function NotificationItem({
       >
         <p className="text-body-sm">
           <span className="font-semibold">{notification.fromUser.nickname}</span>
-          <span className="text-muted-foreground">{notification.message}</span>
+          <span className="text-muted-foreground"> 님이 {notification.message}</span>
         </p>
         {notification.traceCard && (
           <p className="text-caption text-muted-foreground mt-1 truncate">
