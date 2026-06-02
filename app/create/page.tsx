@@ -69,7 +69,7 @@ export default function CreatePage() {
   return (
     <RequireAuth redirectTo={PATH.CREATE}>
       <div className="min-h-screen bg-background pb-16">
-        <Header title="trace 만들기" />
+        <Header title="Trace 만들기" />
 
         <main className="max-w-2xl mx-auto px-4 py-6 space-y-8">
           {/* Step 1: 책 검색 — 채팅 시작 전만 노출 */}
@@ -78,7 +78,7 @@ export default function CreatePage() {
               <div>
                 <h2 className="text-heading-lg text-foreground">어떤 책을 읽으셨나요?</h2>
                 <p className="text-body-sm text-muted-foreground mt-1">
-                  trace를 남길 책을 먼저 찾아볼게요.
+                  Trace를 남길 책을 먼저 찾아볼게요.
                 </p>
               </div>
 

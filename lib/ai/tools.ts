@@ -18,7 +18,7 @@ export function createTraceTool({
 }) {
   return tool({
     description:
-      'trace를 생성합니다. 사용자의 생각이 충분히 정리되어 확인을 받은 뒤에만 호출합니다.',
+      'Trace를 생성합니다. 사용자의 생각이 충분히 정리되어 확인을 받은 뒤에만 호출합니다.',
     inputSchema: z.object({
       representative_sentence: z.string().describe('나의 한 줄 생각 (Me thought)'),
       book_quote: z.string().describe('책에서 밑줄 친 원문 문장'),

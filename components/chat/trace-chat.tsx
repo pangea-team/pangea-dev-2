@@ -113,7 +113,7 @@ export function TraceChat({ conversationId }: TraceChatProps) {
           <ImageIcon className="size-8 mx-auto text-muted-foreground" />
           <p className="text-body-sm text-foreground">책 페이지 사진을 첨부해 주세요</p>
           <p className="text-caption text-muted-foreground">
-            사진을 보내야 trace 대화를 시작할 수 있어요
+            사진을 보내야 Trace 대화를 시작할 수 있어요
           </p>
         </div>
       )}
@@ -165,7 +165,7 @@ export function TraceChat({ conversationId }: TraceChatProps) {
                       key={key}
                       className="rounded-2xl px-4 py-2.5 text-caption bg-muted text-muted-foreground max-w-[85%]"
                     >
-                      {isDone ? '✓ trace가 저장됐어요!' : 'trace 저장 중...'}
+                      {isDone ? '✓ Trace가 저장됐어요!' : 'Trace 저장 중...'}
                     </div>
                   )
                 }
