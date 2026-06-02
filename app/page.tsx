@@ -2,6 +2,7 @@ import { BottomNav } from '@/components/layout/bottom-nav'
 import { Header } from '@/components/layout/header'
 import { WorldFeed } from '@/components/world-feed'
 import { type TraceCardRow, mapTraceCard } from '@/lib/mappers'
+import { deriveShareStatusMap } from '@/lib/share-status'
 import { createClient } from '@/lib/supabase/server'
 
 export default async function WorldPage() {
@@ -18,7 +19,7 @@ export default async function WorldPage() {
 
   const rows = data ?? []
   let heartedSet = new Set<string>()
-  const shareStatusMap = new Map<string, 'pending' | 'accepted'>()
+  let shareStatusMap = new Map<string, 'pending' | 'accepted'>()
 
   if (authData.user && rows.length > 0) {
     const cardIds = rows.map((r) => r.id as string)
@@ -37,15 +38,7 @@ export default async function WorldPage() {
         .in('status', ['accepted', 'pending']),
     ])
     heartedSet = new Set(reactions?.map((r) => r.trace_card_id) ?? [])
-    for (const req of shareReqs ?? []) {
-      if (!req.trace_card_id) continue
-      const existing = shareStatusMap.get(req.trace_card_id)
-      if (req.status === 'accepted') {
-        shareStatusMap.set(req.trace_card_id, 'accepted')
-      } else if (req.status === 'pending' && existing !== 'accepted') {
-        shareStatusMap.set(req.trace_card_id, 'pending')
-      }
-    }
+    shareStatusMap = deriveShareStatusMap(shareReqs ?? [])
   }
 
   const cards = rows.map((row) =>
@@ -60,7 +53,7 @@ export default async function WorldPage() {
     <div className="min-h-screen bg-background pb-16">
       <Header title="PANGEA" align="center" showLoginButton />
       <main className="max-w-2xl mx-auto">
-        <WorldFeed cards={cards} />
+        <WorldFeed cards={cards} currentUserId={authData.user?.id} />
       </main>
       <BottomNav />
     </div>

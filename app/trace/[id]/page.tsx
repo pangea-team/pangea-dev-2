@@ -38,19 +38,37 @@ export default async function TracePage({ params }: TracePageProps) {
   if (!traceData) notFound()
 
   let userHearted = false
+  let shareStatus: 'none' | 'pending' | 'accepted' = 'none'
   if (authData.user) {
-    const { data: reaction } = await supabase
-      .from('reactions')
-      .select('id')
-      .eq('trace_card_id', id)
-      .eq('user_id', authData.user.id)
-      .eq('type', 'heart')
-      .maybeSingle()
+    const [{ data: reaction }, { data: shareReqs }] = await Promise.all([
+      supabase
+        .from('reactions')
+        .select('id')
+        .eq('trace_card_id', id)
+        .eq('user_id', authData.user.id)
+        .eq('type', 'heart')
+        .maybeSingle(),
+      supabase
+        .from('share_requests')
+        .select('status')
+        .eq('trace_card_id', id)
+        .or(`requester_id.eq.${authData.user.id},owner_id.eq.${authData.user.id}`)
+        .in('status', ['accepted', 'pending']),
+    ])
     userHearted = !!reaction
+    for (const req of shareReqs ?? []) {
+      if (req.status === 'accepted') {
+        shareStatus = 'accepted'
+        break
+      }
+      if (req.status === 'pending') shareStatus = 'pending'
+    }
   }
 
-  const card = mapTraceCard(traceData as unknown as TraceCardRow, userHearted)
+  const card = mapTraceCard(traceData as unknown as TraceCardRow, userHearted, shareStatus)
   const comments = (commentsData ?? []).map((c) => mapComment(c as unknown as CommentRow))
 
-  return <TracePageClient card={card} initialComments={comments} />
+  return (
+    <TracePageClient card={card} initialComments={comments} currentUserId={authData.user?.id} />
+  )
 }
