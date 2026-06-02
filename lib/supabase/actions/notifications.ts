@@ -26,7 +26,7 @@ export async function getMyNotifications() {
 
     return {
       id: n.id,
-      type: n.type as 'like' | 'comment' | 'exchange_request' | 'exchange_accepted',
+      type: n.type as 'like' | 'comment' | 'exchange_matched',
       fromUser: {
         id: fromUser?.id ?? '',
         nickname: fromUser?.nickname ?? '',

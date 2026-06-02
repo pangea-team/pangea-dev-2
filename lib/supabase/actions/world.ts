@@ -18,7 +18,7 @@ export async function getWorldFeed() {
 
   const rows = data ?? []
   let heartedSet = new Set<string>()
-  let shareStatusMap = new Map<string, 'pending' | 'accepted'>()
+  let shareStatusMap = new Map<string, 'accepted'>()
 
   if (authData.user && rows.length > 0) {
     const cardIds = rows.map((r) => r.id as string)
@@ -34,7 +34,7 @@ export async function getWorldFeed() {
         .select('trace_card_id, status')
         .or(`requester_id.eq.${authData.user.id},owner_id.eq.${authData.user.id}`)
         .in('trace_card_id', cardIds)
-        .in('status', ['accepted', 'pending']),
+        .eq('status', 'accepted'),
     ])
     heartedSet = new Set(reactions?.map((r) => r.trace_card_id) ?? [])
     shareStatusMap = deriveShareStatusMap(shareReqs ?? [])

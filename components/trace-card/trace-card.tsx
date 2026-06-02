@@ -60,14 +60,13 @@ export function TraceCard({ card, currentUserId, onCardClick }: TraceCardProps) 
   }
 
   const handleConfirmExchange = async () => {
-    const prevStatus = shareStatus
-    setShareStatus('pending')
+    setShareStatus('accepted')
     setShowExchangeDialog(false)
     try {
       await requestShare(card.id, card.user.id)
     } catch (err) {
       console.error('거래 신청 실패:', err)
-      setShareStatus(prevStatus)
+      setShareStatus('none')
     }
   }
 
@@ -125,8 +124,6 @@ export function TraceCard({ card, currentUserId, onCardClick }: TraceCardProps) 
                 <span className="text-body-sm">Shared</span>
                 <Users className="size-4" />
               </>
-            ) : shareStatus === 'pending' ? (
-              <span className="text-body-sm">요청중</span>
             ) : (
               <>
                 <span className="text-body-sm">Share</span>

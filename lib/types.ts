@@ -50,7 +50,7 @@ export interface TraceCard {
   userReaction?: {
     hearted: boolean
   }
-  shareStatus: 'none' | 'pending' | 'accepted'
+  shareStatus: 'none' | 'accepted'
 }
 
 // Trace 생성 폼 데이터
@@ -79,7 +79,7 @@ export interface Comment {
 export type FeedFilter = 'all' | 'following' | 'recent'
 
 // 알림 타입
-export type NotificationType = 'like' | 'comment' | 'exchange_request' | 'exchange_accepted'
+export type NotificationType = 'like' | 'comment' | 'exchange_matched'
 
 // 알림
 export interface Notification {
