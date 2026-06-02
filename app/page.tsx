@@ -1,61 +1,15 @@
-import { BottomNav } from '@/components/layout/bottom-nav'
-import { Header } from '@/components/layout/header'
-import { WorldFeed } from '@/components/world-feed'
-import { type TraceCardRow, mapTraceCard } from '@/lib/mappers'
-import { deriveShareStatusMap } from '@/lib/share-status'
-import { createClient } from '@/lib/supabase/server'
+import { HomeFeed } from '@/app/home-feed'
+import { getQueryClient } from '@/lib/query-client'
+import { getWorldFeed } from '@/lib/supabase/actions/world'
+import { HydrationBoundary, dehydrate } from '@tanstack/react-query'
 
 export default async function WorldPage() {
-  const supabase = await createClient()
-
-  const [{ data }, { data: authData }] = await Promise.all([
-    supabase
-      .from('trace_cards')
-      .select('*, profiles(*), books(*), reactions(count), comments(count)')
-      .eq('is_public', true)
-      .order('created_at', { ascending: false }),
-    supabase.auth.getUser(),
-  ])
-
-  const rows = data ?? []
-  let heartedSet = new Set<string>()
-  let shareStatusMap = new Map<string, 'pending' | 'accepted'>()
-
-  if (authData.user && rows.length > 0) {
-    const cardIds = rows.map((r) => r.id as string)
-    const [{ data: reactions }, { data: shareReqs }] = await Promise.all([
-      supabase
-        .from('reactions')
-        .select('trace_card_id')
-        .eq('user_id', authData.user.id)
-        .eq('type', 'heart')
-        .in('trace_card_id', cardIds),
-      supabase
-        .from('share_requests')
-        .select('trace_card_id, status')
-        .or(`requester_id.eq.${authData.user.id},owner_id.eq.${authData.user.id}`)
-        .in('trace_card_id', cardIds)
-        .in('status', ['accepted', 'pending']),
-    ])
-    heartedSet = new Set(reactions?.map((r) => r.trace_card_id) ?? [])
-    shareStatusMap = deriveShareStatusMap(shareReqs ?? [])
-  }
-
-  const cards = rows.map((row) =>
-    mapTraceCard(
-      row as unknown as TraceCardRow,
-      heartedSet.has(row.id as string),
-      shareStatusMap.get(row.id as string) ?? 'none',
-    ),
-  )
+  const qc = getQueryClient()
+  await qc.prefetchQuery({ queryKey: ['world-feed'], queryFn: getWorldFeed })
 
   return (
-    <div className="min-h-screen bg-background pb-16">
-      <Header title="PANGEA" align="center" showLoginButton />
-      <main className="max-w-2xl mx-auto">
-        <WorldFeed cards={cards} currentUserId={authData.user?.id} />
-      </main>
-      <BottomNav />
-    </div>
+    <HydrationBoundary state={dehydrate(qc)}>
+      <HomeFeed />
+    </HydrationBoundary>
   )
 }
