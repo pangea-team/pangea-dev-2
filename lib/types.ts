@@ -50,6 +50,7 @@ export interface TraceCard {
   userReaction?: {
     hearted: boolean
   }
+  shareStatus: 'none' | 'pending' | 'accepted'
 }
 
 // Trace 생성 폼 데이터

@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { PATH } from '@/constants/path'
 import { useAuth } from '@/lib/auth-context'
+import { sendGAEvent } from '@next/third-parties/google'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
@@ -40,6 +41,7 @@ export default function OnboardingPage() {
     setIsSubmitting(true)
     try {
       await completeProfile(nickname, bio)
+      sendGAEvent('event', 'sign_up', { method: 'kakao' })
       router.replace(PATH.HOME)
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : '저장에 실패했습니다. 다시 시도해주세요.')

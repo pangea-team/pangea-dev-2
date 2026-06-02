@@ -2,6 +2,7 @@ import { BottomNav } from '@/components/layout/bottom-nav'
 import { Header } from '@/components/layout/header'
 import { WorldFeed } from '@/components/world-feed'
 import { type TraceCardRow, mapTraceCard } from '@/lib/mappers'
+import { deriveShareStatusMap } from '@/lib/share-status'
 import { createClient } from '@/lib/supabase/server'
 
 export default async function WorldPage() {
@@ -18,29 +19,41 @@ export default async function WorldPage() {
 
   const rows = data ?? []
   let heartedSet = new Set<string>()
+  let shareStatusMap = new Map<string, 'pending' | 'accepted'>()
 
   if (authData.user && rows.length > 0) {
-    const { data: reactions } = await supabase
-      .from('reactions')
-      .select('trace_card_id')
-      .eq('user_id', authData.user.id)
-      .eq('type', 'heart')
-      .in(
-        'trace_card_id',
-        rows.map((r) => r.id as string),
-      )
+    const cardIds = rows.map((r) => r.id as string)
+    const [{ data: reactions }, { data: shareReqs }] = await Promise.all([
+      supabase
+        .from('reactions')
+        .select('trace_card_id')
+        .eq('user_id', authData.user.id)
+        .eq('type', 'heart')
+        .in('trace_card_id', cardIds),
+      supabase
+        .from('share_requests')
+        .select('trace_card_id, status')
+        .or(`requester_id.eq.${authData.user.id},owner_id.eq.${authData.user.id}`)
+        .in('trace_card_id', cardIds)
+        .in('status', ['accepted', 'pending']),
+    ])
     heartedSet = new Set(reactions?.map((r) => r.trace_card_id) ?? [])
+    shareStatusMap = deriveShareStatusMap(shareReqs ?? [])
   }
 
   const cards = rows.map((row) =>
-    mapTraceCard(row as unknown as TraceCardRow, heartedSet.has(row.id as string)),
+    mapTraceCard(
+      row as unknown as TraceCardRow,
+      heartedSet.has(row.id as string),
+      shareStatusMap.get(row.id as string) ?? 'none',
+    ),
   )
 
   return (
     <div className="min-h-screen bg-background pb-16">
       <Header title="PANGEA" align="center" showLoginButton />
       <main className="max-w-2xl mx-auto">
-        <WorldFeed cards={cards} />
+        <WorldFeed cards={cards} currentUserId={authData.user?.id} />
       </main>
       <BottomNav />
     </div>

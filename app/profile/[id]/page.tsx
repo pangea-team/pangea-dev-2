@@ -3,6 +3,7 @@
 import { StoneAvatar } from '@/components/stone-avatar'
 import { TraceCard } from '@/components/trace-card'
 import { PATH } from '@/constants/path'
+import { useAuth } from '@/lib/auth-context'
 import { getUserProfile, getUserTraceCards } from '@/lib/supabase/actions/profile'
 import type { TraceCard as TraceCardType } from '@/lib/types'
 import { ArrowLeft, BookOpen } from 'lucide-react'
@@ -20,6 +21,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
   const { id } = use(params)
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { user: currentUser } = useAuth()
   const fromPage = (searchParams.get('from') || PATH.HOME) as Route
 
   const [profile, setProfile] = useState<UserProfile | null | undefined>(undefined)
@@ -106,6 +108,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
               <TraceCard
                 key={card.id}
                 card={card}
+                currentUserId={currentUser?.id}
                 onCardClick={() =>
                   router.push(PATH.TRACE_WITH_FROM(card.id, PATH.PROFILE_DETAIL(id)))
                 }

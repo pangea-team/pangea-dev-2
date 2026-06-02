@@ -17,12 +17,13 @@ import { toggleHeart } from '@/lib/supabase/actions/reactions'
 import { requestShare } from '@/lib/supabase/actions/share'
 import type { TraceCard as TraceCardType } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { ArrowLeftRight, Heart, MessageCircle } from 'lucide-react'
+import { ArrowLeftRight, Heart, MessageCircle, Users } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 interface TraceCardProps {
   card: TraceCardType
+  currentUserId?: string
   onCardClick?: () => void
 }
 
@@ -40,12 +41,13 @@ function formatDate(date: Date): string {
   return date.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })
 }
 
-export function TraceCard({ card, onCardClick }: TraceCardProps) {
+export function TraceCard({ card, currentUserId, onCardClick }: TraceCardProps) {
   const router = useRouter()
   const [hearted, setHearted] = useState(card.userReaction?.hearted ?? false)
-
   const [heartCount, setHeartCount] = useState(card.reactions.heart)
+  const [shareStatus, setShareStatus] = useState(card.shareStatus)
   const [showExchangeDialog, setShowExchangeDialog] = useState(false)
+  const isOwner = currentUserId ? card.user.id === currentUserId : false
 
   const handleAvatarClick = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -58,13 +60,14 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
   }
 
   const handleConfirmExchange = async () => {
+    const prevStatus = shareStatus
+    setShareStatus('pending')
+    setShowExchangeDialog(false)
     try {
       await requestShare(card.id, card.user.id)
-      setShowExchangeDialog(false)
-      // toast.success('거래를 신청했습니다')
     } catch (err) {
       console.error('거래 신청 실패:', err)
-      // toast.error(err.message)
+      setShareStatus(prevStatus)
     }
   }
 
@@ -106,15 +109,32 @@ export function TraceCard({ card, onCardClick }: TraceCardProps) {
           </span>
           <span className="text-body-sm text-muted-foreground">{formatDate(card.createdAt)}</span>
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-muted-foreground hover:text-primary gap-1.5"
-          onClick={handleExchangeRequest}
-        >
-          <span className="text-body-sm">Share</span>
-          <ArrowLeftRight className="size-4" />
-        </Button>
+        {!(shareStatus === 'none' && isOwner) && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className={cn(
+              'text-muted-foreground gap-1.5',
+              shareStatus === 'none' && 'hover:text-primary',
+            )}
+            onClick={handleExchangeRequest}
+            disabled={shareStatus !== 'none'}
+          >
+            {shareStatus === 'accepted' ? (
+              <>
+                <span className="text-body-sm">Shared</span>
+                <Users className="size-4" />
+              </>
+            ) : shareStatus === 'pending' ? (
+              <span className="text-body-sm">요청중</span>
+            ) : (
+              <>
+                <span className="text-body-sm">Share</span>
+                <ArrowLeftRight className="size-4" />
+              </>
+            )}
+          </Button>
+        )}
       </div>
 
       {/* Card Content */}

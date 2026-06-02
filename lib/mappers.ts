@@ -43,7 +43,11 @@ export type CommentRow = {
   profiles: ProfileRow | null
 }
 
-export function mapTraceCard(row: TraceCardRow, userHearted = false): TraceCard {
+export function mapTraceCard(
+  row: TraceCardRow,
+  userHearted = false,
+  shareStatus: 'none' | 'pending' | 'accepted' = 'none',
+): TraceCard {
   return {
     id: row.id,
     userId: row.user_id,
@@ -75,6 +79,7 @@ export function mapTraceCard(row: TraceCardRow, userHearted = false): TraceCard 
       comment: row.comments[0]?.count ?? 0,
     },
     userReaction: { hearted: userHearted },
+    shareStatus,
   }
 }
 

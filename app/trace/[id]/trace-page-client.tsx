@@ -30,16 +30,19 @@ import { useRef, useState } from 'react'
 interface TracePageClientProps {
   card: TraceCard
   initialComments: Comment[]
+  currentUserId?: string
 }
 
-export function TracePageClient({ card, initialComments }: TracePageClientProps) {
+export function TracePageClient({ card, initialComments, currentUserId }: TracePageClientProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const fromPage = (searchParams.get('from') || PATH.HOME) as Route
 
   const { user: currentUser } = useAuth()
+  const isOwner = currentUserId ? card.user.id === currentUserId : false
   const [hearted, setHearted] = useState(card.userReaction?.hearted ?? false)
   const [heartCount, setHeartCount] = useState(card.reactions.heart)
+  const [shareStatus, setShareStatus] = useState(card.shareStatus)
   const [comments, setComments] = useState<Comment[]>(initialComments)
   const [newComment, setNewComment] = useState('')
   const [pendingFile, setPendingFile] = useState<File | null>(null)
@@ -62,13 +65,14 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
   }
 
   const handleConfirmExchange = async () => {
+    const prevStatus = shareStatus
+    setShareStatus('pending')
+    setShowExchangeDialog(false)
     try {
       await requestShare(card.id, card.user.id)
-      setShowExchangeDialog(false)
-      // toast.success('거래를 신청했습니다')
     } catch (err) {
       console.error('거래 신청 실패:', err)
-      // toast.error(err.message)
+      setShareStatus(prevStatus)
     }
   }
 
@@ -240,15 +244,32 @@ export function TracePageClient({ card, initialComments }: TracePageClientProps)
                 <p className="text-heading-sm text-foreground">{card.user.nickname}</p>
               </div>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground hover:text-primary gap-1.5"
-              onClick={handleExchangeRequest}
-            >
-              <span className="text-body-sm">Share</span>
-              <ArrowLeftRight className="size-4" />
-            </Button>
+            {!(shareStatus === 'none' && isOwner) && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className={cn(
+                  'text-muted-foreground gap-1.5',
+                  shareStatus === 'none' && 'hover:text-primary',
+                )}
+                onClick={handleExchangeRequest}
+                disabled={shareStatus !== 'none'}
+              >
+                {shareStatus === 'accepted' ? (
+                  <>
+                    <span className="text-body-sm">Shared</span>
+                    <Users className="size-4" />
+                  </>
+                ) : shareStatus === 'pending' ? (
+                  <span className="text-body-sm">요청중</span>
+                ) : (
+                  <>
+                    <span className="text-body-sm">Share</span>
+                    <ArrowLeftRight className="size-4" />
+                  </>
+                )}
+              </Button>
+            )}
           </div>
 
           {/* Me Section */}
