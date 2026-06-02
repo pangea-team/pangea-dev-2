@@ -2,7 +2,7 @@ import { StoneAvatar } from '@/components/stone-avatar'
 import { PATH } from '@/constants/path'
 import type { NotificationType } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { ArrowLeftRight, Check, Heart, MessageCircle } from 'lucide-react'
+import { Check, Heart, MessageCircle } from 'lucide-react'
 import Link from 'next/link'
 
 function getNotificationIcon(type: NotificationType) {
@@ -11,9 +11,7 @@ function getNotificationIcon(type: NotificationType) {
       return <Heart className="size-4 text-foreground fill-current" />
     case 'comment':
       return <MessageCircle className="size-4 text-foreground" />
-    case 'exchange_request':
-      return <ArrowLeftRight className="size-4 text-foreground" />
-    case 'exchange_accepted':
+    case 'exchange_matched':
       return <Check className="size-4 text-(--color-success)" />
     default:
       return null
@@ -82,7 +80,10 @@ export function NotificationItem({
       >
         <p className="text-body-sm">
           <span className="font-semibold">{notification.fromUser.nickname}</span>
-          <span className="text-muted-foreground"> 님이 {notification.message}</span>
+          <span className="text-muted-foreground">
+            {' '}
+            님{notification.type === 'exchange_matched' ? '과' : '이'} {notification.message}
+          </span>
         </p>
         {notification.traceCard && (
           <p className="text-caption text-muted-foreground mt-1 truncate">
