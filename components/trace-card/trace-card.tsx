@@ -17,9 +17,11 @@ import { toggleHeart } from '@/lib/supabase/actions/reactions'
 import { requestShare } from '@/lib/supabase/actions/share'
 import type { TraceCard as TraceCardType } from '@/lib/types'
 import { cn } from '@/lib/utils'
+import { useQueryClient } from '@tanstack/react-query'
 import { ArrowLeftRight, Heart, MessageCircle, Users } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 interface TraceCardProps {
   card: TraceCardType
@@ -43,6 +45,7 @@ function formatDate(date: Date): string {
 
 export function TraceCard({ card, currentUserId, onCardClick }: TraceCardProps) {
   const router = useRouter()
+  const queryClient = useQueryClient()
   const [hearted, setHearted] = useState(card.userReaction?.hearted ?? false)
   const [heartCount, setHeartCount] = useState(card.reactions.heart)
   const [shareStatus, setShareStatus] = useState(card.shareStatus)
@@ -64,9 +67,11 @@ export function TraceCard({ card, currentUserId, onCardClick }: TraceCardProps) 
     setShowExchangeDialog(false)
     try {
       await requestShare(card.id, card.user.id)
+      queryClient.invalidateQueries({ queryKey: ['world-feed'] })
     } catch (err) {
-      console.error('거래 신청 실패:', err)
+      console.error('Share 요청 실패:', err)
       setShareStatus('none')
+      toast.error('Share 요청에 실패했어요. 다시 시도해 주세요.')
     }
   }
 
@@ -83,6 +88,7 @@ export function TraceCard({ card, currentUserId, onCardClick }: TraceCardProps) 
       console.error('좋아요 실패:', err)
       setHearted(wasHearted)
       setHeartCount((prev) => (wasHearted ? prev + 1 : prev - 1))
+      toast.error('좋아요 처리에 실패했어요.')
     }
   }
 

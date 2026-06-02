@@ -21,6 +21,7 @@ import { requestShare } from '@/lib/supabase/actions/share'
 import { createClient } from '@/lib/supabase/client'
 import type { Comment, TraceCard } from '@/lib/types'
 import { cn } from '@/lib/utils'
+import { useQueryClient } from '@tanstack/react-query'
 import {
   ArrowLeft,
   ArrowLeftRight,
@@ -34,7 +35,8 @@ import {
 import type { Route } from 'next'
 import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
 
 interface TracePageClientProps {
   card: TraceCard
@@ -47,6 +49,7 @@ export function TracePageClient({ card, initialComments, currentUserId }: TraceP
   const searchParams = useSearchParams()
   const fromPage = (searchParams.get('from') || PATH.HOME) as Route
 
+  const queryClient = useQueryClient()
   const { user: currentUser } = useAuth()
   const isOwner = currentUserId ? card.user.id === currentUserId : false
   const [hearted, setHearted] = useState(card.userReaction?.hearted ?? false)
@@ -69,6 +72,31 @@ export function TracePageClient({ card, initialComments, currentUserId }: TraceP
     router.push(PATH.PROFILE_WITH_FROM(userId, PATH.TRACE(card.id)))
   }
 
+  useEffect(() => {
+    const supabase = createClient()
+    const channel = supabase
+      .channel(`share-request-${card.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'share_requests',
+          filter: `trace_card_id=eq.${card.id}`,
+        },
+        (payload) => {
+          if ((payload.new as { status: string })?.status === 'accepted') {
+            setShareStatus('accepted')
+          }
+        },
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [card.id])
+
   const handleExchangeRequest = () => {
     setShowExchangeDialog(true)
   }
@@ -78,9 +106,11 @@ export function TracePageClient({ card, initialComments, currentUserId }: TraceP
     setShowExchangeDialog(false)
     try {
       await requestShare(card.id, card.user.id)
+      queryClient.invalidateQueries({ queryKey: ['world-feed'] })
     } catch (err) {
-      console.error('거래 신청 실패:', err)
+      console.error('Share 요청 실패:', err)
       setShareStatus('none')
+      toast.error('Share 요청에 실패했어요. 다시 시도해 주세요.')
     }
   }
 
@@ -96,6 +126,7 @@ export function TracePageClient({ card, initialComments, currentUserId }: TraceP
       console.error('좋아요 실패:', err)
       setHearted(wasHearted)
       setHeartCount((prev) => (wasHearted ? prev + 1 : prev - 1))
+      toast.error('좋아요 처리에 실패했어요.')
     }
   }
 
@@ -199,6 +230,7 @@ export function TracePageClient({ card, initialComments, currentUserId }: TraceP
       console.error('댓글 저장 실패:', err)
       setComments((prev) => prev.filter((c) => c.id !== tempId))
       setNewComment(content)
+      setCommentError('댓글 저장에 실패했어요. 다시 시도해 주세요.')
       // orphan: uploadedImageUrl이 있다면 Storage 파일은 남음 (추후 cron으로 정리)
     } finally {
       setIsSubmitting(false)
