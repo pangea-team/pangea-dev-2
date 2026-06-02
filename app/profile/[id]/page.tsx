@@ -3,42 +3,38 @@
 import { StoneAvatar } from '@/components/stone-avatar'
 import { TraceCard } from '@/components/trace-card'
 import { PATH } from '@/constants/path'
-import { useAuth } from '@/lib/auth-context'
 import { getUserProfile, getUserTraceCards } from '@/lib/supabase/actions/profile'
-import type { TraceCard as TraceCardType } from '@/lib/types'
+import { useQuery } from '@tanstack/react-query'
 import { ArrowLeft, BookOpen } from 'lucide-react'
 import type { Route } from 'next'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { use, useEffect, useState } from 'react'
+import { use } from 'react'
 
 interface UserProfilePageProps {
   params: Promise<{ id: string }>
 }
 
-type UserProfile = NonNullable<Awaited<ReturnType<typeof getUserProfile>>>
-
 export default function UserProfilePage({ params }: UserProfilePageProps) {
   const { id } = use(params)
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { user: currentUser } = useAuth()
   const fromPage = (searchParams.get('from') || PATH.HOME) as Route
 
-  const [profile, setProfile] = useState<UserProfile | null | undefined>(undefined)
-  const [userCards, setUserCards] = useState<TraceCardType[]>([])
-  const [loading, setLoading] = useState(true)
+  const { data, isPending } = useQuery({
+    queryKey: ['user-profile', id],
+    queryFn: () =>
+      Promise.all([getUserProfile(id), getUserTraceCards(id)]).then(([profile, cardsResult]) => ({
+        profile,
+        cards: cardsResult.cards,
+        currentUserId: cardsResult.currentUserId,
+      })),
+  })
 
-  useEffect(() => {
-    Promise.all([getUserProfile(id), getUserTraceCards(id)])
-      .then(([p, cards]) => {
-        setProfile(p)
-        setUserCards(cards)
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false))
-  }, [id])
+  const profile = data?.profile
+  const userCards = data?.cards ?? []
+  const currentUserId = data?.currentUserId
 
-  if (!loading && profile === null) {
+  if (!isPending && profile === null) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <p className="text-muted-foreground">사용자를 찾을 수 없습니다.</p>
@@ -99,7 +95,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
 
         {/* Traces */}
         <div className="divide-y divide-border">
-          {loading ? (
+          {isPending ? (
             <div className="px-4 py-8 text-center">
               <p className="text-body-sm text-muted-foreground">불러오는 중...</p>
             </div>
@@ -108,7 +104,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
               <TraceCard
                 key={card.id}
                 card={card}
-                currentUserId={currentUser?.id}
+                currentUserId={currentUserId}
                 onCardClick={() =>
                   router.push(PATH.TRACE_WITH_FROM(card.id, PATH.PROFILE_DETAIL(id)))
                 }

@@ -21,7 +21,16 @@ import { requestShare } from '@/lib/supabase/actions/share'
 import { createClient } from '@/lib/supabase/client'
 import type { Comment, TraceCard } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { ArrowLeft, ArrowLeftRight, Heart, ImageIcon, MessageCircle, Send, X } from 'lucide-react'
+import {
+  ArrowLeft,
+  ArrowLeftRight,
+  Heart,
+  ImageIcon,
+  MessageCircle,
+  Send,
+  Users,
+  X,
+} from 'lucide-react'
 import type { Route } from 'next'
 import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'

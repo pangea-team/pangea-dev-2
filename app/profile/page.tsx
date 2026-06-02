@@ -8,23 +8,18 @@ import { TraceCard } from '@/components/trace-card'
 import { PATH } from '@/constants/path'
 import { useAuth } from '@/lib/auth-context'
 import { getMyTraceCards } from '@/lib/supabase/actions/profile'
-import type { TraceCard as TraceCardType } from '@/lib/types'
+import { useQuery } from '@tanstack/react-query'
 import { BookOpen } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
 
 export default function ProfilePage() {
   const router = useRouter()
   const { user } = useAuth()
-  const [userCards, setUserCards] = useState<TraceCardType[]>([])
-  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    getMyTraceCards()
-      .then(setUserCards)
-      .catch(console.error)
-      .finally(() => setLoading(false))
-  }, [])
+  const { data: userCards = [], isPending } = useQuery({
+    queryKey: ['my-trace-cards'],
+    queryFn: getMyTraceCards,
+  })
 
   return (
     <RequireAuth redirectTo={PATH.PROFILE}>
@@ -64,7 +59,7 @@ export default function ProfilePage() {
 
           {/* Traces */}
           <div className="divide-y divide-border">
-            {loading ? (
+            {isPending ? (
               <div className="px-4 py-8 text-center">
                 <p className="text-body-sm text-muted-foreground">불러오는 중...</p>
               </div>
