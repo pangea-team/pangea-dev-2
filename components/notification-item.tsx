@@ -62,19 +62,18 @@ export function NotificationItem({
         !notification.isRead && 'bg-primary/5',
       )}
     >
-      <Link
-        href={PATH.PROFILE_WITH_FROM(notification.fromUser.id, PATH.DISCOVER)}
-        className="relative shrink-0"
-      >
-        <StoneAvatar
-          seed={notification.fromUser.id}
-          alt={notification.fromUser.nickname}
-          className="size-10"
-        />
+      <div className="relative shrink-0">
+        <Link href={PATH.PROFILE_WITH_FROM(notification.fromUser.id, PATH.DISCOVER)}>
+          <StoneAvatar
+            seed={notification.fromUser.id}
+            alt={notification.fromUser.nickname}
+            className="size-10"
+          />
+        </Link>
         <div className="absolute -bottom-1 -right-1 size-5 rounded-full bg-background flex items-center justify-center">
           {getNotificationIcon(notification.type)}
         </div>
-      </Link>
+      </div>
 
       <button
         type="button"
