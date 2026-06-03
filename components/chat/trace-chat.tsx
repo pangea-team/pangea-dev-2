@@ -6,6 +6,7 @@ import { isFileUIPart, isTextUIPart } from 'ai'
 import { DefaultChatTransport } from 'ai'
 import { ImageIcon, Loader2, Send, X } from 'lucide-react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { useRef, useState } from 'react'
 
 interface TraceChatProps {
@@ -21,6 +22,8 @@ export function TraceChat({ conversationId }: TraceChatProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
 
+  const router = useRouter()
+
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
       api: '/api/chat',
@@ -29,8 +32,18 @@ export function TraceChat({ conversationId }: TraceChatProps) {
   })
 
   const isStreaming = status === 'streaming' || status === 'submitted'
+
+  const traceCompleted = messages.some((msg) =>
+    msg.parts.some(
+      (part) =>
+        part.type === 'tool-create_trace' &&
+        part.state === 'output-available' &&
+        (part.output as { success?: boolean } | undefined)?.success,
+    ),
+  )
+
   const hasImage = messages.some((m) => m.role === 'user' && m.parts.some((p) => p.type === 'file'))
-  const canSend = (text.trim() || pendingFile) && !isStreaming && !isUploading
+  const canSend = (text.trim() || pendingFile) && !isStreaming && !isUploading && !traceCompleted
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -182,6 +195,23 @@ export function TraceChat({ conversationId }: TraceChatProps) {
             </div>
           )}
           <div ref={bottomRef} />
+        </div>
+      )}
+
+      {/* Trace 완료 배너 */}
+      {traceCompleted && (
+        <div className="rounded-2xl border border-border bg-muted/50 px-5 py-4 flex flex-col gap-3 items-center text-center">
+          <p className="text-body-sm font-medium text-foreground">Trace 생성이 완료되었습니다 🎉</p>
+          <p className="text-caption text-muted-foreground">
+            프로필에서 저장된 Trace를 확인해보세요
+          </p>
+          <button
+            type="button"
+            onClick={() => router.push('/profile')}
+            className="rounded-full bg-foreground text-background text-body-sm px-5 py-2 hover:opacity-80 transition-opacity"
+          >
+            프로필에서 확인해보기
+          </button>
         </div>
       )}
 
