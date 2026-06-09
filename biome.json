@@ -1,0 +1,84 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "ignore": [
+      ".next",
+      "node_modules",
+      "public",
+      "lib/supabase/database.types.ts",
+      "pnpm-lock.yaml",
+      ".vercel",
+      "supabase/.branches",
+      "supabase/.temp",
+      "components/ui/**",
+      "hooks/use-toast.ts",
+      "components/theme-provider.tsx"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100,
+    "lineEnding": "lf"
+  },
+  "organizeImports": {
+    "enabled": true
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "style": {
+        "useImportType": "error",
+        "useNodejsImportProtocol": "error"
+      },
+      "suspicious": {
+        "noExplicitAny": "warn",
+        "noArrayIndexKey": "warn"
+      },
+      "correctness": {
+        "useExhaustiveDependencies": "warn",
+        "noUnusedImports": "error",
+        "noUnusedVariables": "warn"
+      },
+      "a11y": {
+        "useKeyWithClickEvents": "off"
+      },
+      "complexity": {
+        "noBannedTypes": "warn"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "jsxQuoteStyle": "double",
+      "semicolons": "asNeeded",
+      "trailingCommas": "all",
+      "arrowParentheses": "always"
+    }
+  },
+  "json": {
+    "formatter": {
+      "enabled": true,
+      "indentWidth": 2
+    }
+  },
+  "overrides": [
+    {
+      "include": ["lib/supabase/**"],
+      "linter": {
+        "rules": {
+          "style": { "noNonNullAssertion": "off" }
+        }
+      }
+    }
+  ]
+}
