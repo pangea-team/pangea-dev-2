@@ -1,15 +1,15 @@
 # AGENTS.md
 
-Behavioral guidelines for all AI agents (Claude Code, Cursor, etc.) working on this repository. Merge with task-specific instructions as needed.
+Behavioral guidelines for AI agents (Claude Code) working on this repository. Merge with task-specific instructions as needed.
 
 **Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
 
 ## Project Context
 
-**Project:** PANGEA (2차 MVP, 검증용)
+**Project:** PANGEA (MVP 0.3.0, 검증용)
 **Stack:** Next.js 16, TypeScript, React, Supabase, Tailwind CSS v4
 **Package Manager:** pnpm
-**Version:** 0.2.0-beta
+**Version:** 0.3.0
 
 ## 1. Think Before Coding
 
@@ -149,6 +149,38 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 `components/ui/*`는 shadcn/ui 라이브러리 코드이므로 직접 수정하지 말 것. 동작 변경이 필요하면 사용자에게 보고하고 wrapper 컴포넌트를 만드는 방향으로 제안.
 
+## 7. Verification (필수)
+
+**코드를 변경한 경우, 작업 완료 후 반드시 검증 게이트를 통과시킨다.** (문서/설정만 변경한 trivial한 경우는 판단에 맡김.)
+
+- 코드 변경 후 다음을 실행하고 통과시킬 것:
+  - `pnpm check` (Biome — **주의: `--write`라 파일을 자동 수정함. 변경된 내용 확인할 것**)
+  - `pnpm test` (Vitest)
+- 실패 시: 스스로 원인을 파악해 수정하고 다시 실행. 통과할 때까지 반복.
+- 검증 없이 "완료"라고 보고하지 말 것.
+- 통과 후 변경된 파일 목록과 주요 diff 요약, "왜 그렇게 했는지"를 보고할 것.
+
+## 8. Database (Supabase)
+
+**모든 테이블에 RLS(Row Level Security)가 적용되어 있다.** (`supabase/migrations/`)
+
+- 기본 원칙: 사용자는 본인 데이터만 수정 가능. RLS 정책을 임의로 비활성화하지 말 것.
+- 단, 정당한 경우 `security definer` 함수로 RLS를 우회하는 패턴이 이미 존재함
+  (예: 매칭 자격 확인, 가입 트리거). 이런 패턴이 필요해 보이면 임의 판단 말고 사용자에게 보고.
+- 새 테이블 추가 시 RLS 활성화 + 정책 정의를 함께 할 것.
+
+### 네이밍 / 데이터 변환
+- DB는 snake_case, 앱은 camelCase. 변환은 **`lib/mappers.ts`**가 전담(`mapTraceCard`, `mapComment`).
+  DB 쿼리 결과를 mapper 없이 직접 사용하지 말 것 — 타입 불일치 발생.
+- **주의 매핑:** DB `representative_sentence` → TS `meThought` (mapTraceCard 내). 한쪽만 바꾸지 말 것.
+- `layers` 필드: JSONB 저장, 레거시(추후 제거 예정). 일부 컴포넌트가 아직 렌더링하므로
+  당장 제거하지 말되, **새 기능에서 새로 의존하지 말 것**.
+
+### 마이그레이션
+- 스키마 변경은 **dev(로컬/preview)에 먼저 적용·검증 후 prod에 적용**. 순서 역전 금지.
+- 마이그레이션 후 `pnpm db:types`로 TS 타입 재생성 (로컬 Supabase 기준 `--local`).
+- 환경: main=prod(prod Supabase) / develop·feature=preview(dev Supabase).
+
 ---
 
-**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, fewer hardcoded styles bypassing the design system, and clarifying questions come before implementation rather than after mistakes.
+**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, fewer hardcoded styles bypassing the design system, verification runs before "done" is reported, and clarifying questions come before implementation rather than after mistakes.
