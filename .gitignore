@@ -55,3 +55,6 @@ supabase/.temp/
 # Typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Understand Anything
+.understand-anything/
