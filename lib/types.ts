@@ -75,6 +75,44 @@ export interface Comment {
   createdAt: Date
 }
 
+// Shared History (함께 읽기)
+export type SharedParticipant = {
+  id: string
+  name: string
+  color: string // 파스텔 hex, 아바타·타임라인 탭에 사용
+  meThought?: string // DB: representative_sentence. 주인 대표문장: participants.find(p => p.id === ownerId)?.meThought
+}
+
+export type SharedIndexComment = {
+  id: string
+  participantId: string // DB: participant_id
+  content: string // DB: content
+  imageUrl?: string // DB: image_url
+  createdAt: Date // DB: created_at
+}
+
+export type SharedIndex = {
+  id: string
+  participantId: string // DB: participant_id
+  pageNumber: number // DB: page_number
+  content: string // DB: content
+  imageUrl?: string // DB: image_url
+  comments: SharedIndexComment[]
+  createdAt: Date // DB: created_at
+}
+
+export type Shared = {
+  id: string
+  bookId: string
+  title: string
+  author: string
+  totalPages: number
+  ownerId: string // 이 책을 올린 주인. currentUserId와 비교: ownerId === me → 공유 중, ownerId !== me → 읽는 중
+  exchangeStatus: 'reading' | 'returning' | 'arrived' | 'done' // 교환 진행 상태
+  participants: SharedParticipant[]
+  indexes: SharedIndex[]
+}
+
 // 피드 필터
 export type FeedFilter = 'all' | 'following' | 'recent'
 
