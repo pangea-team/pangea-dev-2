@@ -5,6 +5,8 @@ export const PATH = {
   ACTIVITY: '/activity',
   CREATE: '/create',
   DISCOVER: '/discover',
+  SHARED: '/shared' as Route,
+  SHARED_DETAIL: (id: string) => `/shared/${id}` as Route,
   LOGIN: '/login',
   ONBOARDING: '/onboarding',
   PROFILE: '/profile',
@@ -16,4 +18,6 @@ export const PATH = {
     `/profile/${id}?from=${encodeURIComponent(from)}` as Route,
   LOGIN_WITH_REDIRECT: (redirect: string) =>
     `/login?redirect=${encodeURIComponent(redirect)}` as Route,
+  SHARED_DETAIL_INDEX_DETAIL: (id: string, indexId: string) =>
+    `/shared/${id}/index/${indexId}` as Route,
 } as const

@@ -2,13 +2,14 @@
 
 import { PATH } from '@/constants/path'
 import { cn } from '@/lib/utils'
-import { Globe, Lightbulb, PlusCircle, User } from 'lucide-react'
+import { Globe, Library, Lightbulb, PlusCircle, User } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
 const navItems = [
   { href: PATH.HOME, icon: Globe },
+  { href: PATH.SHARED, icon: Library },
   { href: PATH.CREATE, icon: PlusCircle },
   { href: PATH.DISCOVER, icon: Lightbulb },
   { href: PATH.PROFILE, icon: User },
