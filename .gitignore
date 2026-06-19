@@ -56,5 +56,8 @@ supabase/.temp/
 *.tsbuildinfo
 next-env.d.ts
 
+# Claude Code skill 
+.claude/skills/
+
 # Understand Anything
 .understand-anything/
